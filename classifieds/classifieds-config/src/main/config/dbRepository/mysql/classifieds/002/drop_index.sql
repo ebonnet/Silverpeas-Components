@@ -1,0 +1,2 @@
+drop index ind_classifieds on sc_classifieds_classifieds;
+drop index ind_classifieds_subscribes on sc_classifieds_subscribes;

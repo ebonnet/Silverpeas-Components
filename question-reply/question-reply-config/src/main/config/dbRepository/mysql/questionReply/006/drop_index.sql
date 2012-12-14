@@ -1,0 +1,3 @@
+drop index sc_questionreply_question.questionreply_instanceid on sc_questionreply_question;
+
+drop index sc_questionreply_recipient.questionreply_userid on sc_questionreply_recipient;

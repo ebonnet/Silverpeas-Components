@@ -1,0 +1,1 @@
+create index ind_contact_groupfather on sc_contact_groupfather (fatherid, instanceid);

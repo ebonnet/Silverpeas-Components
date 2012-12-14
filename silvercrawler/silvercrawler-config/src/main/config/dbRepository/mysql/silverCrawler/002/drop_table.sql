@@ -1,0 +1,1 @@
+drop table sc_silvercrawler_statistic;

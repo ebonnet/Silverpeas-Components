@@ -1,0 +1,1 @@
+alter table sc_rss_channels drop primary key;

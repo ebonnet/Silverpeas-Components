@@ -1,0 +1,4 @@
+drop index sc_formsonline_userrights.ind_sc_formsonline_userrights_1 on sc_formsonline_userrights ;
+drop index sc_formsonline_userrights.ind_sc_formsonline_userrights_2 on sc_formsonline_userrights ;
+drop index sc_formsonline_grouprights.ind_sc_formsonline_grouprights_1 on sc_formsonline_grouprights;   
+drop index sc_formsonline_grouprights.ind_sc_formsonline_grouprights_2 on sc_formsonline_grouprights;   

@@ -1,0 +1,15 @@
+delete from sc_websites_icons where iconsid = 0;
+delete from sc_websites_icons where iconsid = 1;
+delete from sc_websites_icons where iconsid = 2;
+delete from sc_websites_icons where iconsid = 3;
+delete from sc_websites_icons where iconsid = 4;
+delete from sc_websites_icons where iconsid = 5;
+delete from sc_websites_icons where iconsid = 6;
+delete from sc_websites_icons where iconsid = 7;
+delete from sc_websites_icons where iconsid = 8;
+delete from sc_websites_icons where iconsid = 9;
+delete from sc_websites_icons where iconsid = 10;
+delete from sc_websites_icons where iconsid = 11;
+delete from sc_websites_icons where iconsid = 12;
+delete from sc_websites_icons where iconsid = 13;
+delete from sc_websites_icons where iconsid = 14;

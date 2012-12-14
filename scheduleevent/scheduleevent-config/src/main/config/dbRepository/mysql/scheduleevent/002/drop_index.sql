@@ -1,0 +1,3 @@
+drop index ind_sc_scheduleevent_contributor_1 ON sc_scheduleevent_contributor ;
+drop index ind_sc_scheduleevent_contributor_2 ON sc_scheduleevent_contributor ;
+drop index ind_sc_scheduleevent_response_1 ON sc_scheduleevent_response; 

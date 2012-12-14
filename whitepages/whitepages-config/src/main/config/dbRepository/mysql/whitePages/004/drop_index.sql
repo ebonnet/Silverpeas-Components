@@ -1,0 +1,2 @@
+drop index whitepages_instid on sc_whitepages_card;
+drop index whitepages_searchfieldsinstid on sc_whitepages_searchfields;

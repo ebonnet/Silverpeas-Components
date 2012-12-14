@@ -1,0 +1,1 @@
+drop table sc_connecteurjdbc_connectinfo;

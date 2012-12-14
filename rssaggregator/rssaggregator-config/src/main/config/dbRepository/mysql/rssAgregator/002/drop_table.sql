@@ -1,0 +1,1 @@
+drop table sc_rss_channels;
