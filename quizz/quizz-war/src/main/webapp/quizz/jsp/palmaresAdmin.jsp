@@ -33,8 +33,8 @@ response.setDateHeader ("Expires",-1); //prevents caching at the proxy server
 
 <%@ include file="checkQuizz.jsp" %>
 <%
-String m_context = GeneralPropertiesManager.getString("ApplicationURL");
-String iconsPath = GeneralPropertiesManager.getGeneralResourceLocator().getString("ApplicationURL");
+String m_context = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
+String iconsPath = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 
 //Icons
 String folderSrc = iconsPath + "/util/icons/delete.gif";
@@ -45,10 +45,10 @@ String folderSrc = iconsPath + "/util/icons/delete.gif";
 	<title></title>
 	<view:looknfeel/>
   <%
-  ResourceLocator settings = quizzScc.getSettings();
+  SettingBundle settings = quizzScc.getSettings();
   String space = quizzScc.getSpaceLabel();
   String component = quizzScc.getComponentLabel();
-  String m_Context = GeneralPropertiesManager.getString("ApplicationURL");
+  String m_Context = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 
   String currentQuizzTitle="";
   int currentQuizzPoints=0;

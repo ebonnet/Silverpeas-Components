@@ -23,7 +23,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@page import="com.stratelia.webactiv.forums.control.helpers.ForumListHelper"%>
+<%@page import="org.silverpeas.components.forums.control.helpers.ForumListHelper"%>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
     response.setHeader("Cache-Control", "no-store"); //HTTP 1.1
@@ -45,8 +45,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title></title>
-<view:looknfeel/>
-<script type="text/javascript" src="<%=context%>/util/javaScript/checkForm.js"></script>
+<view:looknfeel withCheckFormScript="true"/>
 <script type="text/javascript" src="<%=context%>/forums/jsp/javaScript/forums.js"></script>
 </head>
 <body <%addBodyOnload(out, fsc, "document.forms['forumsForm'].elements['forumKeywords'].focus();");%>>
@@ -56,7 +55,7 @@
     BrowseBar browseBar = window.getBrowseBar();
     browseBar.setDomainName(fsc.getSpaceLabel());
     browseBar.setComponentName(fsc.getComponentLabel(), ActionUrl.getUrl("main"));
-    browseBar.setPath(ForumListHelper.navigationBar(forumId, resource, fsc));
+    browseBar.setPath(ForumListHelper.navigationBar(forumId, fsc));
 
     out.println(window.printBefore());
     Frame frame=graphicFactory.getFrame();

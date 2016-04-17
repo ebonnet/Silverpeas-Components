@@ -25,14 +25,13 @@
 --%>
 
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.io.PrintWriter"%>
-<%@ page import="java.io.IOException"%>
+<%@ page import="com.stratelia.webactiv.survey.control.FileHelper"%>
+<%@ page import="org.silverpeas.core.web.http.HttpRequest"%>
+<%@ page import="org.silverpeas.core.util.SettingBundle"%>
 <%@ page import="java.io.File"%>
-<%@ page import="java.io.FileInputStream"%>
-<%@ page import="java.io.ObjectInputStream"%>
-<%@ page import="com.stratelia.webactiv.survey.control.FileHelper" %>
-<%@ page import="java.text.ParsePosition"%>
-<%@ page import="org.silverpeas.servlet.HttpRequest" %>
+<%@ page import="java.io.IOException"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.buttons.Button" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.frame.Frame" %>
 
 <%@ include file="checkSurvey.jsp" %>
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view"%>
@@ -40,7 +39,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%!
-void displayAnswer(int i, String style, ResourcesWrapper resources, List<ComponentInstLight> galleries, JspWriter out) throws IOException {
+void displayAnswer(int i, String style, MultiSilverpeasBundle resources, List<ComponentInstLight> galleries, JspWriter out) throws IOException {
   String inputName = "answer" + i;
   
   out.println("<div class=\"field\">");
@@ -104,7 +103,7 @@ void displayAnswer(int i, String style, ResourcesWrapper resources, List<Compone
     String nextAction = "";
     String style = FileUploadUtil.getOldParameter(items, "questionStyle");
 
-    String m_context = GeneralPropertiesManager.getGeneralResourceLocator().getString("ApplicationURL");
+    String m_context = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 
     String anonymousCheck = "";
     String anonymous = FileUploadUtil.getOldParameter(items, "AnonymousAllowed");
@@ -124,10 +123,8 @@ void displayAnswer(int i, String style, ResourcesWrapper resources, List<Compone
       action = "CreatePoll";
     }
 
-    ResourceLocator uploadSettings = new ResourceLocator("com.stratelia.webactiv.util.uploads.uploadSettings",
-        surveyScc.getLanguage());
-    ResourceLocator settings = new ResourceLocator("org.silverpeas.survey.surveySettings",
-        surveyScc.getLanguage());
+    SettingBundle uploadSettings = ResourceLocator.getSettingBundle("org.silverpeas.util.uploads.uploadSettings");
+    SettingBundle settings = ResourceLocator.getSettingBundle("org.silverpeas.survey.surveySettings");
 
     creationDate = resources.getOutputDate(new Date());
     beginDate = resources.getInputDate(new Date());
@@ -200,15 +197,13 @@ void displayAnswer(int i, String style, ResourcesWrapper resources, List<Compone
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <title></title>
-    <link type="text/css" href="<%=m_context%>/util/styleSheets/fieldset.css" rel="stylesheet" />
-    <view:looknfeel/>
+    <view:looknfeel withFieldsetStyle="true" withCheckFormScript="true"/>
     <style type="text/css">
       .thumbnailPreviewAndActions {
         display: none;
       }
     </style>
     <view:includePlugin name="datepicker"/>
-<script type="text/javascript" src="<%=m_context%>/util/javaScript/checkForm.js"></script>
 <script type="text/javascript">
   function sendData()
   {

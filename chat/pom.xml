@@ -2,18 +2,28 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.silverpeas</groupId>
+    <groupId>org.silverpeas</groupId>
     <artifactId>components</artifactId>
-    <version>5.15-SNAPSHOT</version>
+    <version>6.0-SNAPSHOT</version>
   </parent>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>jChatBox</groupId>
+        <artifactId>jChatBox</artifactId>
+        <version>2.6</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   
-  <groupId>com.silverpeas.components</groupId>
+  <groupId>org.silverpeas.components</groupId>
   <artifactId>chat</artifactId>
   <packaging>pom</packaging>
-  <name>chat Component</name>
+  <name>Silverpeas Chat Component</name>
   <modules>
-    <module>chat-jar</module>
+    <module>chat-configuration</module>
+    <module>chat-library</module>
     <module>chat-war</module>
-    <module>chat-config</module>
   </modules>
 </project>

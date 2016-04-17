@@ -55,7 +55,7 @@ String displayCredits(int nb_max_user_votes , int nb_user_votes)  throws QuizzEx
 }
 %>
 <%
-String m_context = GeneralPropertiesManager.getString("ApplicationURL");
+String m_context = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 %>
 <html>
 <head>
@@ -64,7 +64,7 @@ String m_context = GeneralPropertiesManager.getString("ApplicationURL");
 </head>
 <body bgcolor="#FFFFFF" leftmargin="5" topmargin="5" marginwidth="5" marginheight="5">
   <%
-  ResourceLocator settings = quizzScc.getSettings();
+  SettingBundle settings = quizzScc.getSettings();
   String space = quizzScc.getSpaceLabel();
   String component = quizzScc.getComponentLabel();
 

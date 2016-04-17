@@ -32,7 +32,8 @@ response.setDateHeader ("Expires",-1); //prevents caching at the proxy server
 %>
 
 <%@ include file="checkKmelia.jsp" %>
-<%@ include file="topicReport.jsp.inc" %>
+<%@ include file="topicReport.jsp" %>
+<%@ page import="org.silverpeas.components.kmelia.model.KmeliaPublication" %>
 
 <%@taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view"%>
 
@@ -56,8 +57,6 @@ String id 			= (String) request.getAttribute("PubId");
 String wizardLast	= (String) request.getAttribute("WizardLast");
 String wizardRow	= (String) request.getAttribute("WizardRow");
 String currentLang 	= (String) request.getAttribute("Language");
-
-SilverTrace.info("kmelia","JSPdesign", "root.MSG_GEN_PARAM_VALUE","ACTION pubManager = "+action);
 
 TopicDetail currentTopic = null;
 
@@ -114,10 +113,8 @@ if (isEnd) {
 <html>
 <head>
 <title></title>
-<view:looknfeel/>
-<link type="text/css" href="<%=m_context%>/util/styleSheets/fieldset.css" rel="stylesheet" />
+<view:looknfeel withFieldsetStyle="true" withCheckFormScript="true"/>
 <script type="text/javascript" src="<%=m_context%>/util/javaScript/dateUtils.js"></script>
-<script type="text/javascript" src="<%=m_context%>/util/javaScript/checkForm.js"></script>
 <script type="text/javascript">
 function topicGoTo(id) {
 	location.href="GoToTopic?Id="+id;

@@ -26,14 +26,10 @@
 
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view"%>
-<%@ page import="java.io.PrintWriter"%>
-<%@ page import="java.io.IOException"%>
+<%@ page import="com.stratelia.webactiv.survey.control.FileHelper"%>
+<%@ page import="org.silverpeas.core.web.http.HttpRequest"%>
+<%@ page import="org.silverpeas.core.util.SettingBundle"%>
 <%@ page import="java.io.File"%>
-<%@ page import="java.io.FileInputStream"%>
-<%@ page import="java.io.ObjectInputStream"%>
-<%@ page import="java.beans.*"%>
-<%@ page import="com.stratelia.webactiv.survey.control.FileHelper" %>
-<%@ page import="org.silverpeas.servlet.HttpRequest" %>
 <%@ include file="checkSurvey.jsp" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -45,7 +41,7 @@
 <view:setBundle bundle="${requestScope.resources.multilangBundle}" />
 
 <%!
-  void displaySurveyHeader(QuestionContainerDetail surveyDetail, ResourcesWrapper resources, SurveySessionController surveyScc, JspWriter out, GraphicElementFactory gef) throws SurveyException {
+  void displaySurveyHeader(QuestionContainerDetail surveyDetail, MultiSilverpeasBundle resources, SurveySessionController surveyScc, JspWriter out, GraphicElementFactory gef) throws SurveyException {
     try{
           QuestionContainerHeader surveyHeader = surveyDetail.getHeader();
           String title = EncodeHelper.javaStringToHtmlString(surveyHeader.getTitle());
@@ -81,13 +77,13 @@
 
 <%
 String nextAction = "";
-String m_context = GeneralPropertiesManager.getString("ApplicationURL");
+String m_context = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 
 //Icons
 String mandatoryField = m_context + "/util/icons/mandatoryField.gif";
 String px =  m_context + "/util/icons/colorPix/1px.gif";
 
-ResourceLocator surveySettings = new ResourceLocator("org.silverpeas.survey.surveySettings", surveyScc.getLanguage());
+SettingBundle surveySettings = ResourceLocator.getSettingBundle("org.silverpeas.survey.surveySettings");
 
 String nbMaxAnswers = surveySettings.getString("NbMaxAnswers");
 
@@ -173,9 +169,8 @@ while (itemIter.hasNext()) {
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title></title>
-<view:looknfeel/>
+<view:looknfeel withCheckFormScript="true"/>
 <script type="text/javascript" src="<%=m_context%>/util/javaScript/dateUtils.js"></script>
-<script type="text/javascript" src="<%=m_context%>/util/javaScript/checkForm.js"></script>
 <script language="JavaScript1.2">
 function sendData() {
     if (isCorrectForm()) {

@@ -1,0 +1,1 @@
+La petite annonce <b>$classified.title$</b> doit être validée.

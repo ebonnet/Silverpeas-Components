@@ -31,7 +31,8 @@
 <fmt:setLocale value="${requestScope.resources.language}"/>
 <view:setBundle bundle="${requestScope.resources.multilangBundle}" />
 
-<%@ page import="com.stratelia.webactiv.forums.control.helpers.ForumListHelper"%>
+<%@ page import="org.silverpeas.components.forums.control.helpers.ForumListHelper"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.window.Window" %>
 
 <%@ include file="checkForums.jsp"%>
 <%
@@ -41,7 +42,7 @@
 %>
 <%!
 public void listFolders(JspWriter out, String userId, boolean admin, int rootId, int parentId,
-        String indent, ResourceLocator resource, ForumsSessionController fsc)
+        String indent, LocalizationBundle resource, ForumsSessionController fsc)
     throws ForumsException
 {
     try
@@ -132,11 +133,9 @@ public void listFolders(JspWriter out, String userId, boolean admin, int rootId,
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title></title>
-    <view:looknfeel />
+    <view:looknfeel withFieldsetStyle="true" withCheckFormScript="true"/>
     <view:includePlugin name="wysiwyg"/>
     <view:includePlugin name="popup"/>
-	<link type="text/css" href="<c:url value='/util/styleSheets/fieldset.css'/>" rel="stylesheet" />
-    <script type="text/javascript" src="<%=context%>/util/javaScript/checkForm.js"></script>
     <script type="text/javascript" src="<%=context%>/forums/jsp/javaScript/forums.js"></script>
     <script type="text/javascript">
 <% if (move) { %>
@@ -168,7 +167,7 @@ function validateMessage() {
     BrowseBar browseBar = window.getBrowseBar();
     browseBar.setDomainName(fsc.getSpaceLabel());
     browseBar.setComponentName(fsc.getComponentLabel(), ActionUrl.getUrl("main"));
-    browseBar.setPath(ForumListHelper.navigationBar(forumId, resource, fsc));
+    browseBar.setPath(ForumListHelper.navigationBar(forumId, fsc));
 
     out.println(window.printBefore());
     Frame frame=graphicFactory.getFrame();

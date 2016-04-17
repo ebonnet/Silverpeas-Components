@@ -24,7 +24,8 @@
 
 --%>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="com.silverpeas.util.CollectionUtil" %>
+<%@ page import="org.silverpeas.core.util.CollectionUtil" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.frame.Frame" %>
 <%
     response.setHeader("Cache-Control", "no-store"); //HTTP 1.1
     response.setHeader("Pragma", "no-cache"); //HTTP 1.0
@@ -38,10 +39,10 @@
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view"%>
 
 <fmt:setLocale value="${sessionScope['SilverSessionController'].favoriteLanguage}" />
-<view:setBundle basename="com.stratelia.webactiv.forums.multilang.forumsBundle"/>
+<view:setBundle basename="org.silverpeas.forums.multilang.forumsBundle"/>
 
 <%!
-public String navigationBar(int forumId, ResourceLocator resource, ForumsSessionController fsc)
+public String navigationBar(int forumId, ForumsSessionController fsc)
     throws ForumsException
 {
     String navigation = "";
@@ -117,11 +118,6 @@ public void listFolders(JspWriter out, int rootId, int forumId, int parentId, St
     int params = getIntParameter(request, "params");
 
     int action = getIntParameter(request, "action", 1);
-
-    SilverTrace.debug("forums", "JSPeditForumInfo", "root.MSG_GEN_PARAM_VALUE",
-        "isAdmin=" + isAdmin + " ; " + "forumId=" + forumId + " ; " + "call=" + call
-        + " ; " + "params=" + params + " ; " + "action=" + action);
-
     int parentId = 0;
     boolean update = false;
   	if (action == 1) {
@@ -148,9 +144,7 @@ public void listFolders(JspWriter out, int rootId, int forumId, int parentId, St
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">  
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-<link type="text/css" href="<%=context%>/util/styleSheets/fieldset.css" rel="stylesheet" />
-<view:looknfeel/>
-<script type="text/javascript" src="<%=context%>/util/javaScript/checkForm.js"></script>
+<view:looknfeel withFieldsetStyle="true" withCheckFormScript="true"/>
 <script type="text/javascript" src="<%=context%>/forums/jsp/javaScript/forums.js"></script>
 <script type="text/javascript">
 <%
@@ -262,7 +256,7 @@ $(document).ready(function() {
     BrowseBar browseBar = window.getBrowseBar();
     browseBar.setDomainName(fsc.getSpaceLabel());
     browseBar.setComponentName(fsc.getComponentLabel(), ActionUrl.getUrl("main"));
-    browseBar.setPath(navigationBar(forumId, resource, fsc));
+    browseBar.setPath(navigationBar(forumId, fsc));
     browseBar.setExtraInformation(resource.getString("creatnewForum"));
 
     if (!isReader)

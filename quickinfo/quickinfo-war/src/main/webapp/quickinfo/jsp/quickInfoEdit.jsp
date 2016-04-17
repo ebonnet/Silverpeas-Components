@@ -23,7 +23,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@page import="com.silverpeas.thumbnail.model.ThumbnailDetail"%>
+<%@page import="org.silverpeas.core.io.media.image.thumbnail.model.ThumbnailDetail"%>
 <%@page import="org.silverpeas.components.quickinfo.model.News"%>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
@@ -41,8 +41,9 @@
 <c:set var="appSettings" value="${requestScope['AppSettings']}"/>
 
 <%@ include file="checkQuickInfo.jsp" %>
-<%@ page import="com.stratelia.silverpeas.peasCore.URLManager" %>
-<%@ page import="com.silverpeas.util.EncodeHelper" %>
+<%@ page import="org.silverpeas.core.util.URLUtil" %>
+<%@ page import="org.silverpeas.core.persistence.jdbc.DBUtil" %>
+<%@ page import="org.silverpeas.core.contribution.publication.model.PublicationDetail" %>
 
 <%
 News news = (News) request.getAttribute("info");
@@ -82,7 +83,8 @@ if (quickInfoDetail != null) {
   	if (news.isMandatory()) {
   	  broadcastBlockingChecked = "checked=\"checked\"";
   	}
-  	pageContext.setAttribute("thumbnailBackURL", URLManager.getFullApplicationURL(request)+URLManager.getURL("useless", componentId)+"View?Id="+news.getId(), PageContext.PAGE_SCOPE);
+  	pageContext.setAttribute("thumbnailBackURL", URLUtil.getFullApplicationURL(request)+
+				URLUtil.getURL("useless", componentId)+"View?Id="+news.getId(), PageContext.PAGE_SCOPE);
 }
 %>
 
@@ -97,11 +99,10 @@ if (quickInfoDetail != null) {
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>QuickInfo - Edition</title>
-<link type="text/css" href="<%=m_context%>/util/styleSheets/fieldset.css" rel="stylesheet" />
-<view:looknfeel/>
+<view:looknfeel withFieldsetStyle="true" withCheckFormScript="true"/>
 <view:includePlugin name="datepicker"/>
 <view:includePlugin name="wysiwyg"/>
-<script type="text/javascript" src="<%=m_context%>/util/javaScript/checkForm.js"></script>
+<view:includePlugin name="popup"/>
 <script type="text/javascript" src="js/quickinfo.js"></script>
 <script type="text/javascript">
 function isCorrectForm() {
@@ -111,6 +112,11 @@ function isCorrectForm() {
 	if (isWhitespace($("#Name").val())) {
   	  errorMsg +=" - '<fmt:message key="GML.title" />' <fmt:message key="GML.MustBeFilled" />\n";
   	  errorNb++; 
+    } else {
+      if ($("#Name").val().length > 150) {
+   		errorMsg +=" - '<fmt:message key="GML.title" />' <fmt:message key="GML.data.error.message.string.limit"><fmt:param value="150"/></fmt:message>\n";
+    	errorNb++; 
+      }
     }
     
 	if ($("#Description").val().length > 300) {
@@ -177,7 +183,7 @@ function abortNews() {
 }
 
 $(document).ready(function() {
-	<view:wysiwyg replace="Content" language="<%=language%>" width="98%" height="300" toolbar="quickInfo" displayFileBrowser="${false}"/>
+	<view:wysiwyg replace="Content" language="<%=language%>" width="98%" height="300" toolbar="quickInfo" displayFileBrowser="${true}" componentId="${curQuickInfo.componentInstanceId}" objectId="${curQuickInfo.publicationId}" />
 });
 </script>
 </head>
@@ -192,7 +198,7 @@ $(document).ready(function() {
 	<view:operationPane>
 	  <fmt:message var="deleteMsg" key="GML.delete"/>
 	  <fmt:message var="deleteConfirmMsg" key="supprimerQIConfirmation"/>
-	  <view:operation altText="${deleteMsg}" icon="${deleteIconUrl}" action="javascript:onclick=confirmDelete(${news.id}, '${deleteConfirmMsg}')"/>
+	  <view:operation altText="${deleteMsg}" icon="${deleteIconUrl}" action="javascript:onclick=confirmDelete('${curQuickInfo.id}', '${deleteConfirmMsg}')"/>
 	</view:operationPane>
 </c:if>
 
@@ -214,7 +220,7 @@ $(document).ready(function() {
       <label class="txtlibform" for="name"><fmt:message key="GML.title" /> </label>
       <div class="champs">
         <c:if test="${not empty curQuickInfo}"><c:set var="curName" value="${curQuickInfo.title}"/></c:if>
-        <input type="text" name="Name" size="50" id="Name" maxlength="<%=DBUtil.getTextFieldLength()%>" value="<view:encodeHtmlParagraph string="${curName}"/>" />
+        <input type="text" name="Name" size="50" id="Name" maxlength="400" value="<view:encodeHtmlParagraph string="${curName}"/>" />
         &nbsp;<img border="0" src="<%=m_context%>/util/icons/mandatoryField.gif" width="5" height="5"/>
       </div>
     </div>
@@ -243,6 +249,9 @@ $(document).ready(function() {
     <div class="field" id="contentArea">
       <label class="txtlibform" for="content"><fmt:message key="quickinfo.news.content" /> </label>
       <div class="champs">
+      	<div class="container-wysiwyg wysiwyg-fileStorage">			
+   			<viewTags:displayToolBarWysiwyg editorName="Content" componentId="${curQuickInfo.componentInstanceId}" objectId="${curQuickInfo.publicationId}" />
+		</div>
         <textarea name="Content" id="Content" rows="50" cols="10"><%=codeHtml%></textarea>
       </div>
     </div>
@@ -259,7 +268,7 @@ $(document).ready(function() {
 		      		<label for="BeginDate" class="txtlibform"><fmt:message key="GML.dateBegin" /></label>
 		      		<div class="champs">
 		        		<input type="text" class="dateToPick" id="BeginDate" name="BeginDate" size="12" value="<%=beginDate%>" maxlength="<%=DBUtil.getDateFieldLength()%>"/>
-		        		<span class="txtsublibform">&nbsp;<%=resources.getString("ToHour")%>&nbsp;</span>
+		        		<span class="txtsublibform">&nbsp;<%=resources.getString("quickinfo.ToHour")%>&nbsp;</span>
 						<input id="beginHour" class="inputHour" type="text" name="BeginHour" value="<%=beginHour%>" size="5" maxlength="5" /> <i>(hh:mm)</i>
 		      		</div>
 	    		</div>
@@ -267,7 +276,7 @@ $(document).ready(function() {
 	      			<label for="EndDate" class="txtlibform"><fmt:message key="GML.dateEnd" /></label>
 	      			<div class="champs">
 	        			<input type="text" class="dateToPick" id="EndDate" name="EndDate" size="12" value="<%=endDate%>" maxlength="<%=DBUtil.getDateFieldLength()%>"/>
-	        			<span class="txtsublibform">&nbsp;<%=resources.getString("ToHour")%>&nbsp;</span>
+	        			<span class="txtsublibform">&nbsp;<%=resources.getString("quickinfo.ToHour")%>&nbsp;</span>
 						<input id="endHour" class="inputHour" type="text" name="EndHour" value="<%=endHour %>" size="5" maxlength="5" /> <i>(hh:mm)</i>
 	      			</div>
 	    		</div>
@@ -286,6 +295,10 @@ $(document).ready(function() {
 		</fieldset>
 	</div>
 </div>
+
+<c:if test="${newOneInProgress}">
+  <view:fileUpload fieldset="true" jqueryFormSelector="form[name='newsForm']" />
+</c:if>
 
 <c:choose>
 <c:when test="${empty curQuickInfo.taxonomyPositions}">
@@ -307,17 +320,12 @@ $(document).ready(function() {
 	<view:button label="${buttonSaveDraft}" action="javascript:onclick=saveNews()"/>
 </c:when>
 <c:otherwise>
-	<view:button label="${buttonOK}" action="javascript:onclick=saveNews()"/>
+	<view:button label="${buttonOK}" action="javascript:onclick=saveNews()">
+    <view:confirmComponentSubscriptionNotificationSending jsValidationCallbackMethodName="isCorrectForm"/>
+  </view:button>
 </c:otherwise>
 </c:choose>
-<c:choose>
-<c:when test="${newOneInProgress}">
-<view:button label="${buttonCancel}" action="javascript:onclick=abortNews()"/>
-</c:when>
-<c:otherwise>
 <view:button label="${buttonCancel}" action="Main"/>
-</c:otherwise>
-</c:choose>
 </view:buttonPane>
     
 </view:frame>

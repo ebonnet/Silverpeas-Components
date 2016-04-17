@@ -36,30 +36,30 @@ response.setDateHeader ("Expires",-1);          //prevents caching at the proxy 
 %>
 <c:out value="${error}"/>
 
-<%@ page import="com.silverpeas.delegatednews.control.DelegatedNewsSessionController"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.GraphicElementFactory "%>
-<%@ page import="com.stratelia.webactiv.util.GeneralPropertiesManager"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.arrayPanes.ArrayPane"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.arrayPanes.ArrayLine"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.arrayPanes.ArrayColumn"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.arrayPanes.ArrayCellText"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.iconPanes.IconPane"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.icons.Icon"%>
-<%@ page import="com.stratelia.silverpeas.util.ResourcesWrapper"%>
+<%@ page import="org.silverpeas.components.delegatednews.control.DelegatedNewsSessionController"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.GraphicElementFactory "%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.arraypanes.ArrayPane"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.arraypanes.ArrayLine"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.arraypanes.ArrayColumn"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.arraypanes.ArrayCellText"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.iconpanes.IconPane"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.icons.Icon"%>
+<%@ page import="org.silverpeas.core.util.MultiSilverpeasBundle"%>
+<%@ page import="org.silverpeas.core.util.ResourceLocator" %>
 
 
 <%@ page errorPage="../../admin/jsp/errorpageMain.jsp"%>
 <%
 	DelegatedNewsSessionController newsScc = (DelegatedNewsSessionController) request.getAttribute("DelegatedNews");
 	GraphicElementFactory gef = (GraphicElementFactory) session.getAttribute("SessionGraphicElementFactory");
-	ResourcesWrapper resources = (ResourcesWrapper)request.getAttribute("resources");
+	MultiSilverpeasBundle resources = (MultiSilverpeasBundle)request.getAttribute("resources");
 	
 	if (newsScc == null) {
 	    // No session controller in the request -> security exception
-	    String sessionTimeout = GeneralPropertiesManager.getGeneralResourceLocator().getString("sessionTimeout");
+	    String sessionTimeout = ResourceLocator.getGeneralSettingBundle().getString("sessionTimeout");
 	    getServletConfig().getServletContext().getRequestDispatcher(sessionTimeout).forward(request, response);
 	    return;
 	}
-	String m_context = GeneralPropertiesManager.getGeneralResourceLocator().getString("ApplicationURL");
+	String m_context = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 	
 %>

@@ -1,3 +1,5 @@
+<%@ page import="org.silverpeas.core.util.DateUtil" %>
+<%@ page import="org.silverpeas.core.util.URLUtil" %>
 <%--
 
     Copyright (C) 2000 - 2013 Silverpeas
@@ -35,13 +37,11 @@
 <%@ include file="checkQuizz.jsp"%>
 
 <jsp:useBean id="currentQuizz" scope="session"
-	class="com.stratelia.webactiv.util.questionContainer.model.QuestionContainerDetail" />
+	class="org.silverpeas.core.questioncontainer.container.model.QuestionContainerDetail" />
 
 <%
-  String m_context = GeneralPropertiesManager
-					.getGeneralResourceLocator().getString("ApplicationURL");
-			String iconsPath = GeneralPropertiesManager
-					.getGeneralResourceLocator().getString("ApplicationURL");
+  String m_context = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
+  String iconsPath = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 
 			//Icons
 			String folderSrc = iconsPath + "/util/icons/delete.gif";
@@ -54,7 +54,7 @@
 <title>___/ Silverpeas - Corporate Portal Organizer\__________________________________________</title>
 <view:looknfeel/>
 <%
-  ResourceLocator settings = quizzScc.getSettings();
+  SettingBundle settings = quizzScc.getSettings();
 			String space = quizzScc.getSpaceLabel();
 			String component = quizzScc.getComponentLabel();
 			session.removeAttribute("currentQuizz");
@@ -90,7 +90,7 @@ function deleteQuizz(quizz_id)
 }
 
 function clipboardPaste() { 
-  top.IdleFrame.document.location.replace('../..<%=URLManager.getURL(URLManager.CMP_CLIPBOARD)%>paste?compR=Rquizz&SpaceFrom=<%=quizzScc.getSpaceId()%>&ComponentFrom=<%=quizzScc.getComponentId()%>&JSPPage=<%=response.encodeURL(URLEncoder.encode("Main"))%>&TargetFrame=MyMain&message=REFRESH');
+  top.IdleFrame.document.location.replace('../..<%=URLUtil.getURL(URLUtil.CMP_CLIPBOARD)%>paste?compR=Rquizz&SpaceFrom=<%=quizzScc.getSpaceId()%>&ComponentFrom=<%=quizzScc.getComponentId()%>&JSPPage=<%=response.encodeURL(URLEncoder.encode("Main"))%>&TargetFrame=MyMain&message=REFRESH');
   // forcer le rafraichissmeent de la page
   document.location.reload();   
 }
@@ -111,7 +111,7 @@ function clipboardPaste() {
 			OperationPane operationPane = window.getOperationPane();
 			if (isAdmin && quizzScc.isPdcUsed()) {
 				operationPane.addOperation(pdcUtilizationSrc, resources
-						.getString("GML.PDC"),
+						.getString("GML.PDCParam"),
 						"javascript:onClick=openSPWindow('" + m_context
 								+ "/RpdcUtilization/jsp/Main?ComponentId="
 								+ quizzScc.getComponentId()
@@ -183,8 +183,7 @@ function clipboardPaste() {
 						.javaStringToHtmlParagraphe(quizzHeader
 								.getDescription()));
 
-				Date creationDate = DateUtil.parse(quizzHeader
-						.getCreationDate());
+				Date creationDate = DateUtil.parse(quizzHeader.getCreationDate());
 				ArrayCellText arrayCellText = arrayLine
 						.addArrayCellText(resources.getOutputDate(creationDate));
 				arrayCellText.setCompareOn(creationDate);

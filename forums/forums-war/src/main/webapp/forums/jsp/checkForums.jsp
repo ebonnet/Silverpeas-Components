@@ -29,28 +29,28 @@
 <%@ page import="java.util.Collection"%>
 <%@ page import="java.util.Date"%>
 <%@ page import="java.util.Iterator"%>
-<%@ page import="com.silverpeas.util.StringUtil"%>
-<%@ page import="com.silverpeas.util.EncodeHelper"%>
-<%@ page import="com.stratelia.silverpeas.peasCore.URLManager"%>
-<%@ page import="com.stratelia.silverpeas.silvertrace.SilverTrace"%>
-<%@ page import="com.stratelia.silverpeas.util.ResourcesWrapper"%>
-<%@ page import="com.stratelia.webactiv.beans.admin.UserDetail"%>
-<%@ page import="com.stratelia.webactiv.forums.forumsException.ForumsException"%>
-<%@ page import="com.stratelia.webactiv.forums.models.Forum"%>
-<%@ page import="com.stratelia.webactiv.forums.models.Message"%>
-<%@ page import="com.stratelia.webactiv.forums.control.ForumsSessionController"%>
-<%@ page import="com.stratelia.webactiv.forums.url.ActionUrl"%>
-<%@ page import="com.stratelia.webactiv.util.DBUtil"%>
-<%@ page import="com.stratelia.webactiv.util.GeneralPropertiesManager"%>
-<%@ page import="com.stratelia.webactiv.util.ResourceLocator"%>
-<%@ page import="com.stratelia.webactiv.util.node.model.NodeDetail"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.GraphicElementFactory"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.board.Board"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.browseBars.BrowseBar"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.buttonPanes.ButtonPane"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.frame.Frame"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.operationPanes.OperationPane"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.window.Window"%>
+<%@ page import="org.silverpeas.core.util.StringUtil"%>
+<%@ page import="org.silverpeas.core.util.EncodeHelper"%>
+<%@ page import="org.silverpeas.core.util.URLUtil"%>
+<%@ page import="org.silverpeas.core.silvertrace.SilverTrace"%>
+<%@ page import="org.silverpeas.core.util.MultiSilverpeasBundle"%>
+<%@ page import="org.silverpeas.core.admin.user.model.UserDetail"%>
+<%@ page import="org.silverpeas.components.forums.service.ForumsException"%>
+<%@ page import="org.silverpeas.components.forums.model.Forum"%>
+<%@ page import="org.silverpeas.components.forums.model.Message"%>
+<%@ page import="org.silverpeas.components.forums.control.ForumsSessionController"%>
+<%@ page import="org.silverpeas.components.forums.url.ActionUrl"%>
+<%@ page import="org.silverpeas.core.persistence.jdbc.DBUtil"%>
+<%@ page import="org.silverpeas.core.util.ResourceLocator"%>
+<%@ page import="org.silverpeas.core.node.model.NodeDetail"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.GraphicElementFactory"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.board.Board"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.browsebars.BrowseBar"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.buttonpanes.ButtonPane"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.frame.Frame"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.operationpanes.OperationPane"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.window.Window"%>
+<%@ page import="org.silverpeas.core.util.LocalizationBundle" %>
 <%@ page errorPage="../../admin/jsp/errorpage.jsp"%>
 <%!  
   public static String IMAGE_UPDATE = "../../util/icons/update.gif";
@@ -83,7 +83,7 @@
     return defaultValue;
   }
 
-  public String convertDate(Date date, ResourcesWrapper resources) {
+  public String convertDate(Date date, MultiSilverpeasBundle resources) {
     return resources.getOutputDateAndHour(date);
   }
 
@@ -125,21 +125,21 @@
 <%
       ForumsSessionController fsc = (ForumsSessionController) request.getAttribute(
           "forumsSessionClientController");
-      ResourcesWrapper resources = (ResourcesWrapper) request.getAttribute("resources");
+      MultiSilverpeasBundle resources = (MultiSilverpeasBundle) request.getAttribute("resources");
 
-      ResourceLocator resource = new ResourceLocator(
-          "com.stratelia.webactiv.forums.multilang.forumsBundle", fsc.getLanguage());
+      LocalizationBundle resource = ResourceLocator.getLocalizationBundle(
+          "org.silverpeas.forums.multilang.forumsBundle", fsc.getLanguage());
 
       if (fsc == null) {
         // No forums session controller in the request -> security exception
-        String sessionTimeout = GeneralPropertiesManager.getGeneralResourceLocator().getString(
+        String sessionTimeout = ResourceLocator.getGeneralSettingBundle().getString(
             "sessionTimeout");
         getServletConfig().getServletContext().getRequestDispatcher(sessionTimeout).forward(request,
             response);
         return;
       }
 
-      String context = GeneralPropertiesManager.getGeneralResourceLocator().getString("ApplicationURL");
+      String context = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 
       GraphicElementFactory graphicFactory = (GraphicElementFactory) session.getAttribute(
           "SessionGraphicElementFactory");

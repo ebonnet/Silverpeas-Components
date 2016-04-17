@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2000 - 2013 Silverpeas
+/*
+ * Copyright (C) 2000 - 2016 Silverpeas
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -51,7 +51,7 @@
 
 /* Search zone */
 #searchZone {
-	margin-bottom: 10px;
+	margin: 1em;
 }
 
 #searchZone #searchLine {
@@ -657,7 +657,7 @@ a.button.refuse span {
 
 #creationArea .profilPhoto, #updateArea .profilPhoto {
 	position:absolute;
-	top:0;
+	top:5px;
 	left:0;
 	width:30px;
 	height:30px;
@@ -685,9 +685,6 @@ a.button.refuse span {
 
 #codificationArea, #pubNameArea, #descriptionArea , #keywordsArea, #authorArea, #draftOutArea, #endArea, #beginArea, #thumb, #validatorArea{
 	width:98%;
-	clear:both;
-	display:block;
-	float:none;
 }
 
 #stateArea img, #languageArea img {
@@ -792,25 +789,41 @@ a.button.refuse span {
 .table-result-statistics .principal-element-table {
 	font-weight:bold;
  }
- 
-/*tree view splitter style*/ 
-#splitter {
-	min-width: 500px;	
-	min-height: 100px;	
-	height: 100%;
-	border: 0;
-}
 
-/*** leftPane ****/
-#splitter #treeDiv1 {
-	overflow:auto;
-	width:250px;
+#pubList {
+    padding:6px 14px;
 }
 
 /*** rightPane ****/
-#rightSide {
+#treeDiv1 {
 	overflow:auto;
-	left:300px;
+}
+
+.wrap{
+  width: 100%;
+  border: 0;
+  font-size: 0;
+}
+
+.wrap .resizable{
+  width:30%;
+  padding:0;
+  display:block;
+  float:left;
+}
+
+.wrap .resizable.resizable2{
+  width:70%;
+}
+
+.wrap .ui-resizable-e{
+  background:#f2f2f2 url("../../../util/icons/splitter/layout_sprite_vertical.png") 1px center no-repeat ;
+  width: 7px;
+  display:block !important;
+  cursor: e-resize;
+  right: -5px;
+  top: 0;
+  bottom: 0;
 }
 
 #footer {
@@ -825,10 +838,6 @@ a.button.refuse span {
 	color: #000000;
 }
 
-.vsplitbar {
-	width: 7px;
-	background: #F2F2F2 url(/silverpeas/util/icons/splitter/layout_sprite_vertical.png) 1px center no-repeat;
-}
 
 .basDroiteFrame img, 
 .basMilieuFrame img,
@@ -891,4 +900,9 @@ a.button.refuse span {
 	padding: 0px 10px 7px 10px;
 	text-decoration:underline;
 	clear: both;
+}
+
+#commentInfo a {
+  background:transparent url(/silverpeas/util/icons/talk2user.gif) 0 0 no-repeat;
+  padding-left:20px;
 }

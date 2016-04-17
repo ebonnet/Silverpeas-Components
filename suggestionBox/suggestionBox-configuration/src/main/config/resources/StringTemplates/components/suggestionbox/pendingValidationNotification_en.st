@@ -1,0 +1,1 @@
+Suggestion <b>$title$</b> have to be validated.

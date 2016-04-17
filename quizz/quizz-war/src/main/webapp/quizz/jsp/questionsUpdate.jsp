@@ -31,7 +31,7 @@ response.setHeader("Pragma","no-cache"); //HTTP 1.0
 response.setDateHeader ("Expires",-1); //prevents caching at the proxy server
 %>
 
-<jsp:useBean id="quizzUnderConstruction" scope="session" class="com.stratelia.webactiv.util.questionContainer.model.QuestionContainerDetail" />
+<jsp:useBean id="quizzUnderConstruction" scope="session" class="org.silverpeas.core.questioncontainer.container.model.QuestionContainerDetail" />
 <jsp:useBean id="questionsVector" scope="session" class="java.util.ArrayList" />
 <jsp:useBean id="questionsResponses" scope="session" class="java.util.HashMap" />
 <jsp:useBean id="currentQuizzId" scope="session" class="java.lang.String" />
@@ -39,7 +39,7 @@ response.setDateHeader ("Expires",-1); //prevents caching at the proxy server
 <%@ include file="checkQuizz.jsp" %>
 
 <%!
-  String displayQuestionsUpdateView(List<Question> questions, GraphicElementFactory gef, String m_context, QuizzSessionController quizzScc,ResourceLocator settings, ResourcesWrapper resources) throws QuizzException {
+  String displayQuestionsUpdateView(List<Question> questions, GraphicElementFactory gef, String m_context, QuizzSessionController quizzScc,SettingBundle settings, MultiSilverpeasBundle resources) throws QuizzException {
         String questionUpSrc = "icons/questionUp.gif";
         String questionDownSrc = "icons/questionDown.gif";
         String questionDeleteSrc = "icons/questionDelete.gif";
@@ -167,13 +167,13 @@ response.setDateHeader ("Expires",-1); //prevents caching at the proxy server
 String action = request.getParameter("Action");
 String quizzId = request.getParameter("QuizzId");
 
-String m_context = GeneralPropertiesManager.getString("ApplicationURL");
+String m_context = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 
 //Icons
 String topicAddSrc = m_context + "/util/icons/folderAdd.gif";
 String mandatoryField = m_context + "/util/icons/mandatoryField.gif";
 
-ResourceLocator settings = quizzScc.getSettings();
+SettingBundle settings = quizzScc.getSettings();
 
 QuestionContainerDetail quizz = null;
 

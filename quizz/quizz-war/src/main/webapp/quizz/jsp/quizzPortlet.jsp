@@ -33,11 +33,11 @@ response.setDateHeader ("Expires",-1); //prevents caching at the proxy server
 <%@ include file="checkQuizz.jsp" %>
 
 
-<jsp:useBean id="currentQuizz" scope="session" class="com.stratelia.webactiv.util.questionContainer.model.QuestionContainerDetail" />
+<jsp:useBean id="currentQuizz" scope="session" class="org.silverpeas.core.questioncontainer.container.model.QuestionContainerDetail" />
 
 <%
-String m_context = GeneralPropertiesManager.getGeneralResourceLocator().getString("ApplicationURL");
-String iconsPath = GeneralPropertiesManager.getGeneralResourceLocator().getString("ApplicationURL");
+String m_context = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
+String iconsPath = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 
 //Icons
 String folderSrc = iconsPath + "/util/icons/delete.gif";
@@ -53,7 +53,7 @@ String componentId = quizzScc.getComponentId();
 	<TITLE>___/ Silverpeas - Corporate Portal Organizer \__________________________________________</TITLE>
 	<view:looknfeel/>
   <%
-  ResourceLocator settings = quizzScc.getSettings();
+  SettingBundle settings = quizzScc.getSettings();
   String space = quizzScc.getSpaceLabel();
   String component = quizzScc.getComponentLabel();
   session.removeAttribute("currentQuizz");

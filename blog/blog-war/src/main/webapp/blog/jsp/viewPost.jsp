@@ -23,16 +23,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@page import="com.silverpeas.blog.control.StyleSheet"%>
-<%@page import="com.silverpeas.blog.control.WallPaper"%>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view"%>
 <%@page import="java.util.GregorianCalendar"%>
+<%@ page import="org.silverpeas.core.util.DateUtil" %>
+<%@ page import="org.silverpeas.components.blog.model.PostDetail" %>
+<%@page import="org.silverpeas.components.blog.control.StyleSheet"%>
+<%@page import="org.silverpeas.components.blog.control.WallPaper"%>
 <%@ include file="check.jsp" %>
 
 <% 
 // recuperation des parametres
-PostDetail	post		= (PostDetail) request.getAttribute("Post");
+PostDetail post		= (PostDetail) request.getAttribute("Post");
 Collection<NodeDetail>	categories	= (Collection) request.getAttribute("Categories");
 Collection<Archive>		archives	= (Collection) request.getAttribute("Archives");
 Collection<LinkDetail>	links		= (Collection) request.getAttribute("Links");
@@ -79,7 +81,7 @@ StyleSheet styleSheet = (StyleSheet) request.getAttribute("StyleSheet");
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title></title>
-<view:looknfeel/>
+<view:looknfeel withCheckFormScript="true"/>
 <% if(wallPaper != null) { %>
 <style type="text/css">
 #blog #blogContainer #bandeau {
@@ -93,7 +95,6 @@ StyleSheet styleSheet = (StyleSheet) request.getAttribute("StyleSheet");
   <%=styleSheet.getContent()%>
 </style>
 <% } %>
-<script type="text/javascript" src="<%=m_context%>/util/javaScript/checkForm.js"></script>
 <script type="text/javascript">
 	var notifyWindow = window;
 		
@@ -137,7 +138,7 @@ out.println(window.printBefore());
          %>
 		 
 		  <div id="navBlog">
-			<%@ include file="colonneDroite.jsp.inc" %>
+			<%@ include file="colonneDroite.jsp" %>
 		  </div>
 		 
 		  <div id="<%=blocClass%>">

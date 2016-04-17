@@ -1,0 +1,2 @@
+<b>$senderName$</b> souhaite que vous participiez à l'&eacute;v&eacute;nement <b>$eventName$</b>.
+Pour cela, merci de lui faire part de vos disponibilit&eacute;s au plus vite en cliquant sur le lien ci-joint.

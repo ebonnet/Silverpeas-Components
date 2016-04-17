@@ -25,9 +25,19 @@
 --%>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@page import="java.util.GregorianCalendar"%>
-<%@page import="java.io.File"%>
-<%@page import="com.silverpeas.blog.control.WallPaper"%>
-<%@page import="com.silverpeas.blog.control.StyleSheet"%>
+<%@page import="org.silverpeas.components.blog.control.WallPaper"%>
+<%@page import="org.silverpeas.components.blog.control.StyleSheet"%>
+<%@ page import="org.silverpeas.core.util.StringUtil" %>
+<%@ page import="org.silverpeas.core.util.EncodeHelper" %>
+<%@ page import="org.silverpeas.core.util.DateUtil" %>
+<%@ page import="org.silverpeas.core.admin.service.OrganizationControllerProvider" %>
+<%@ page import="org.silverpeas.components.blog.model.Archive" %>
+<%@ page import="org.silverpeas.components.blog.model.PostDetail" %>
+<%@ page import="org.silverpeas.core.mylinks.model.LinkDetail" %>
+<%@ page import="org.silverpeas.core.admin.user.model.UserDetail" %>
+<%@ page import="org.silverpeas.core.admin.user.model.SilverpeasRole" %>
+<%@ page import="org.silverpeas.core.node.model.NodeDetail" %>
+<%@ page import="org.silverpeas.core.util.URLUtil" %>
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view"%>
 <%@ include file="check.jsp" %>
 <%
@@ -59,7 +69,7 @@ if (SilverpeasRole.admin.equals(SilverpeasRole.valueOf(profile)) || SilverpeasRo
    operationPane.addOperation("useless", resource.getString("blog.viewCategory"), "ViewCategory");
 
    String url = m_context + blogUrl + "Main";
-   String lien = m_context + URLManager.getURL(URLManager.CMP_MYLINKSPEAS) + "ComponentLinks?InstanceId="+ instanceId + "&amp;UrlReturn=" + url;
+   String lien = m_context + URLUtil.getURL(URLUtil.CMP_MYLINKSPEAS) + "ComponentLinks?InstanceId="+ instanceId + "&amp;UrlReturn=" + url;
    operationPane.addOperation("useless", resource.getString("blog.viewLinks"), lien);
    operationPane.addOperation("useless", resource.getString("blog.customize"), "javascript:onClick=customize();");
    operationPane.addOperation("useless", resource.getString("blog.updateFooter"), "UpdateFooter");
@@ -79,11 +89,10 @@ if (!m_MainSessionCtrl.getCurrentUserDetail().isAccessGuest() && isUserSubscribe
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title><%=componentLabel%></title>
-<view:looknfeel/>
+<view:looknfeel withCheckFormScript="true"/>
 <% if (StringUtil.isDefined(rssURL)) { %>
 <link rel="alternate" type="application/rss+xml" title="<%=componentLabel%> : <%=resource.getString("blog.rssLast")%>" href="<%=m_context+rssURL%>"/>
 <% } %>
-<script type="text/javascript" src="<%=m_context%>/util/javaScript/checkForm.js"></script>
 <script type="text/javascript">
 <!--
 function openSPWindow(fonction, windowName) {
@@ -228,7 +237,7 @@ function hideStyleSheetFile() {
       <h2><a href="<%="Main"%>"><%=componentLabel%></a></h2>
     </div>
     <div id="navBlog">
-      <%@ include file="colonneDroite.jsp.inc" %>
+      <%@ include file="colonneDroite.jsp" %>
     </div>
     <div id="postsList">
       <%
@@ -265,7 +274,8 @@ function hideStyleSheetFile() {
           if (visible) {
           %>
       <div id="post<%=postId%>" class="post <%=blocClass%>">
-        <div class="titreTicket"> <a href="<%="ViewPost?PostId=" + postId%>"><%=EncodeHelper.javaStringToHtmlString(post.getPublication().getName())%></a> <span class="status">(<%=status%>)</span>
+        <div class="titreTicket"> <a href="<%="ViewPost?PostId=" + postId%>"><%=EncodeHelper
+            .javaStringToHtmlString(post.getPublication().getName())%></a> <span class="status">(<%=status%>)</span>
           <%  if ( link != null && !link.equals("")) {  %>
           <span class="permalink"><a href="<%=link%>"><img src="<%=resource.getIcon("blog.link")%>" alt='<%=resource.getString("blog.CopyPostLink")%>' title='<%=resource.getString("blog.CopyPostLink")%>'/></a></span>
           <%  } %>
@@ -294,7 +304,7 @@ function hideStyleSheetFile() {
 			  <%=resource.getString("GML.creationDate")%> <%=resource.getOutputDate(post.getPublication().getCreationDate())%> <%=resource.getString("GML.by")%> <%=post.getCreatorName() %>
 			  <% if (!resource.getOutputDate(post.getPublication().getCreationDate()).equals(resource.getOutputDate(post.getPublication().getUpdateDate())) || !post.getPublication().getCreatorId().equals(post.getPublication().getUpdaterId()))
 				   {
-				  UserDetail updater = m_MainSessionCtrl.getOrganisationController().getUserDetail(post.getPublication().getUpdaterId());
+				  UserDetail updater = OrganizationControllerProvider.getOrganisationController().getUserDetail(post.getPublication().getUpdaterId());
 				  String updaterName = "Unknown";
 				  if (updater != null)
 				  updaterName = updater.getDisplayedName();

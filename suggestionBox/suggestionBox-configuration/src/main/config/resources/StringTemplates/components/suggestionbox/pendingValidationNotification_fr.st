@@ -1,0 +1,1 @@
+L'idée <b>$title$</b> doit être validée.

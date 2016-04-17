@@ -25,7 +25,10 @@
 --%>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view"%>
-<%@ page import="jChatBox.Util.*,jChatBox.Chat.*,jChatBox.*,java.util.*,java.text.SimpleDateFormat,com.stratelia.silverpeas.silvertrace.*,com.stratelia.silverpeas.chat.control.*" %>
+<%@ page import="jChatBox.Util.*,jChatBox.Chat.*,jChatBox.*,java.util.*,java.text.SimpleDateFormat,org.silverpeas.core.silvertrace.*,com.stratelia.silverpeas.chat.control.*" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.tabs.TabbedPane" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.iconpanes.IconPane" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.icons.Icon" %>
 <%@ include file="../configureme.jsp" %>
 <%@ include file="../checkChat.jsp" %>
 <jsp:useBean id="UserLogin" class="jChatBox.Service.UserLogin" scope="page" />
@@ -117,7 +120,9 @@
 		%><jsp:forward page="<%= response.encodeURL(jspDisplay) %>" /><%
 	}
 %>
-<html>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <%
 browseBar.setDomainName(spaceLabel);
 browseBar.setComponentName(componentLabel, "Main");
@@ -209,7 +214,7 @@ function ready()
 function enterPopup(identifiant)
 {
 	document.chat.chatrooms.value=identifiant;
-	manageWindow('open','redirect.jsp?chatrooms='+identifiant+'&name=<%= request.getAttribute("chat_fullName") %>','popupChat','650', '400', 'menubar=no,scrollbars=no,statusbar=no');
+	manageWindow('open','redirect.jsp?chatrooms='+identifiant+'&name=<%= request.getAttribute("chat_fullName") %>','popupChat','800', '400', 'menubar=no,scrollbars=no,statusbar=no');
 }
 </script>
 </head>

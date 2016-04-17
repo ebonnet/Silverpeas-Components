@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2000 - 2013 Silverpeas
+/*
+ * Copyright (C) 2000 - 2016 Silverpeas
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -417,9 +417,6 @@ br.clear {
 
 /******** pour fieldset *************/
 #urlArea, #titleArea, #descriptionArea, #downloadArea,  #fileArea, #authorArea, #keywordArea, #generalArea, #fileNameArea {
-  clear: both;
-  display: block;
-  float: none;
   width: 98%;
 }
 
@@ -440,6 +437,10 @@ br.clear {
   display: none;
 }
 
+#allInfo legend {
+  background: transparent url("../../../util/icons/component/gallerySmall.gif") 11px 0 no-repeat;
+}
+
 #photoInfo legend {
   background: transparent url("../icons/icon-photo.gif") 11px 0 no-repeat;
 }
@@ -456,6 +457,7 @@ br.clear {
   background: transparent url("../icons/icon-streaming.png") 11px 0 no-repeat;
 }
 
+#allOptions legend,
 #photoOptions legend,
 #videoOptions legend,
 #soundOptions legend,

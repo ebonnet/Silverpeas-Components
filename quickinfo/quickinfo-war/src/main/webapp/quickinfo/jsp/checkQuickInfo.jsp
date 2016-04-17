@@ -31,37 +31,16 @@ response.setHeader("Pragma","no-cache"); //HTTP 1.0
 response.setDateHeader ("Expires",-1); //prevents caching at the proxy server
 %>
 
-
-<%@ page import="javax.servlet.*"%>
-<%@ page import="javax.servlet.http.*"%>
-<%@ page import="javax.servlet.jsp.*"%>
-<%@ page import="java.io.PrintWriter"%>
-<%@ page import="java.io.IOException"%>
-<%@ page import="java.io.FileInputStream"%>
-<%@ page import="java.io.ObjectInputStream"%>
-<%@ page import="java.util.Vector"%>
-<%@ page import="java.beans.*"%>
-
-<%@ page import="java.util.*"%>
-<%@ page import="com.stratelia.webactiv.util.*"%>
-<%@ page import="com.stratelia.webactiv.beans.admin.*"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.*"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.buttons.*"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.buttonPanes.*"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.frame.Frame"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.board.Board"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.window.*"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.browseBars.*"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.operationPanes.*"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.arrayPanes.*"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.iconPanes.IconPane"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.icons.Icon"%>
-<%@ page import="com.stratelia.webactiv.quickinfo.control.*"%>
-<%@ page import="com.stratelia.webactiv.util.publication.model.*"%>
-<%@ page import="com.stratelia.silverpeas.peasCore.URLManager"%>
-<%@ page import="com.stratelia.silverpeas.silvertrace.SilverTrace"%>
-<%@ page import="com.stratelia.silverpeas.util.ResourcesWrapper"%>
-<%@ page import="com.silverpeas.util.EncodeHelper"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.frame.Frame"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.board.Board"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.iconpanes.IconPane"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.icons.Icon"%>
+<%@ page import="org.silverpeas.core.util.URLUtil"%>
+<%@ page import="org.silverpeas.core.util.MultiSilverpeasBundle"%>
+<%@ page import="org.silverpeas.core.util.EncodeHelper"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.GraphicElementFactory" %>
+<%@ page import="org.silverpeas.components.quickinfo.control.QuickInfoSessionController" %>
+<%@ page import="org.silverpeas.core.util.ResourceLocator" %>
 
 <%@ page errorPage="../../admin/jsp/errorpage.jsp"%>
 
@@ -70,7 +49,7 @@ response.setDateHeader ("Expires",-1); //prevents caching at the proxy server
 
   QuickInfoSessionController quickinfo = (QuickInfoSessionController) request.getAttribute("quickinfo");
   
-  ResourcesWrapper resources = (ResourcesWrapper)request.getAttribute("resources");
+  MultiSilverpeasBundle resources = (MultiSilverpeasBundle)request.getAttribute("resources");
 
   String language = resources.getLanguage();
   String[] browseContext = (String[]) request.getAttribute("browseContext");
@@ -82,10 +61,10 @@ response.setDateHeader ("Expires",-1); //prevents caching at the proxy server
 
   if (quickinfo == null) {
       // No quickinfo session controller in the request -> security exception
-      String sessionTimeout = GeneralPropertiesManager.getString("sessionTimeout");
+      String sessionTimeout = ResourceLocator.getGeneralSettingBundle().getString("sessionTimeout");
       getServletConfig().getServletContext().getRequestDispatcher(sessionTimeout).forward(request, response);
       return;
   }
 
-  String m_context = URLManager.getApplicationURL();
+  String m_context = URLUtil.getApplicationURL();
 %>

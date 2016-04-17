@@ -31,15 +31,18 @@ response.setHeader("Pragma","no-cache"); //HTTP 1.0
 response.setDateHeader ("Expires",-1); //prevents caching at the proxy server
 %>
 
-<jsp:useBean id="quizzUnderConstruction" scope="session" class="com.stratelia.webactiv.util.questionContainer.model.QuestionContainerDetail" />
+<jsp:useBean id="quizzUnderConstruction" scope="session" class="org.silverpeas.core.questioncontainer.container.model.QuestionContainerDetail" />
 <jsp:useBean id="questionsVector" scope="session" class="java.util.ArrayList" />
 <jsp:useBean id="questionsResponses" scope="session" class="java.util.HashMap" />
 
 <%@ include file="checkQuizz.jsp" %>
+<%@ page import="org.silverpeas.core.persistence.jdbc.DBUtil" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.buttons.Button" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.frame.Frame" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view"%>
 <fmt:setLocale value="${sessionScope['SilverSessionController'].favoriteLanguage}" />
-<view:setBundle basename="com.stratelia.webactiv.quizz.multilang.quizz"/>
+<view:setBundle basename="org.silverpeas.quizz.multilang.quizz"/>
 
 <%
 //Retrieve parameters
@@ -55,13 +58,13 @@ String notice= request.getParameter("notice");
 String nbAnswersNeeded = request.getParameter("nbAnswersNeeded");
 String nbAnswersMax = request.getParameter("nbAnswersMax");
 
-String m_context = GeneralPropertiesManager.getString("ApplicationURL");
+String m_context = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 
 //Icons
 String topicAddSrc = m_context + "/util/icons/folderAdd.gif";
 String mandatoryField = m_context + "/util/icons/mandatoryField.gif";
 
-ResourceLocator settings = quizzScc.getSettings();
+SettingBundle settings = quizzScc.getSettings();
 
 QuestionContainerDetail quizz = null;
 if (action.equals("SendQuizzHeader")) {
@@ -117,10 +120,8 @@ if (action.equals("UpdateQuizzHeader")) {
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title></title>
-<link type="text/css" href="<%=m_context%>/util/styleSheets/fieldset.css" rel="stylesheet" />
-<view:looknfeel/>
+<view:looknfeel withFieldsetStyle="true" withCheckFormScript="true"/>
 <view:includePlugin name="datepicker"/>
-<script type="text/javascript" src="<%=m_context%>/util/javaScript/checkForm.js"></script>
 <script type="text/javascript">
 function sendData() {
   if (isCorrectForm()) {
@@ -232,12 +233,12 @@ function isCorrectForm() {
         result = true;
         break;
     case 1 :
-        errorMsg = "<%=resources.getString("GML.ThisFormContain")%> 1 <%=resources.getString("GML.error")%> : \n" + errorMsg;
+        errorMsg = "<%=resources.getString("GML.ThisFormContains")%> 1 <%=resources.getString("GML.error")%> : \n" + errorMsg;
         window.alert(errorMsg);
         result = false;
         break;
     default :
-        errorMsg = "<%=resources.getString("GML.ThisFormContain")%> " + errorNb + " <%=resources.getString("GML.errors")%> :\n" + errorMsg;
+        errorMsg = "<%=resources.getString("GML.ThisFormContains")%> " + errorNb + " <%=resources.getString("GML.errors")%> :\n" + errorMsg;
         window.alert(errorMsg);
         result = false;
         break;
@@ -354,7 +355,8 @@ function isCorrectForm() {
 </div>
 
 <%
-  Button cancelButton = (Button) gef.getFormButton(resources.getString("GML.cancel"), "Main.jsp", false);
+  Button
+      cancelButton = (Button) gef.getFormButton(resources.getString("GML.cancel"), "Main.jsp", false);
   Button validateButton = (Button) gef.getFormButton(resources.getString("GML.validate"), "javascript:onClick=sendData()", false);
   ButtonPane buttonPane = gef.getButtonPane();
   buttonPane.addButton(validateButton);

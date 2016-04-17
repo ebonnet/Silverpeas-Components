@@ -27,19 +27,25 @@
 
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view"%>
-<%@ taglib tagdir="/WEB-INF/tags/silverpeas/util" prefix="viewTags" %>
+<%@taglib tagdir="/WEB-INF/tags/silverpeas/util" prefix="viewTags" %>
 
-<%@page import="com.silverpeas.thumbnail.ThumbnailSettings"%>
-<%@page import="com.silverpeas.thumbnail.model.ThumbnailDetail"%>
-<%@page import="com.stratelia.webactiv.beans.admin.ComponentInstLight"%>
-<%@page import="com.stratelia.webactiv.util.FileServerUtils" %>
-<%@page import="org.silverpeas.kmelia.jstl.KmeliaDisplayHelper"%>
-<%@page import="org.silverpeas.util.URLUtils"%>
-<%@page import="com.stratelia.webactiv.kmelia.model.KmeliaPublication" %>
+<%@page import="org.silverpeas.core.io.media.image.thumbnail.ThumbnailSettings"%>
+<%@page import="org.silverpeas.core.io.media.image.thumbnail.model.ThumbnailDetail"%>
+<%@page import="org.silverpeas.components.kmelia.jstl.KmeliaDisplayHelper"%>
+<%@page import="org.silverpeas.components.kmelia.model.KmeliaPublication" %>
+<%@page import="org.silverpeas.core.i18n.I18NHelper" %>
+<%@ page import="java.util.StringTokenizer" %>
+<%@ page import="java.util.Date" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.browsebars.BrowseBar" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.board.Board" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.operationpanes.OperationPane" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.frame.Frame" %>
+
+<c:set var="attachmentsEnabled" value="${requestScope['AttachmentsEnabled']}"/>
 
 <%@include file="checkKmelia.jsp" %>
-<%@include file="publicationsList.jsp.inc" %>
-<%@include file="topicReport.jsp.inc" %>
+<%@include file="publicationsList.jsp" %>
+<%@include file="topicReport.jsp" %>
 
 
 <%!  //Icons
@@ -83,7 +89,7 @@
 
     String nextAction = "";
 
-    ResourceLocator publicationSettings = new ResourceLocator("org.silverpeas.util.publication.publicationSettings", resources.getLanguage());
+    SettingBundle publicationSettings = ResourceLocator.getSettingBundle("org.silverpeas.publication.publicationSettings");
 
     KmeliaPublication kmeliaPublication = (KmeliaPublication) request.getAttribute("Publication");
     UserDetail ownerDetail = null;
@@ -104,11 +110,9 @@
 
     String resultThumbnail =  request.getParameter("resultThumbnail");
     boolean errorThumbnail = false;
-	if(resultThumbnail != null && !"ok".equals(resultThumbnail)){
-		errorThumbnail = true;
-	}
-
-    SilverTrace.info("kmelia", "JSPdesign", "root.MSG_GEN_PARAM_VALUE", "ACTION pubManager = " + action);
+    if(resultThumbnail != null && !"ok".equals(resultThumbnail)){
+      errorThumbnail = true;
+    }
 
     //Icons
     mandatorySrc = m_context + "/util/icons/mandatoryField.gif";
@@ -144,9 +148,6 @@
 
     String linkedPathString = displayPath(path, true, 3, language) + name;
     String pathString = displayPath(path, false, 3, language);
-
-    Button cancelButton = gef.getFormButton(resources.getString("GML.cancel"), "GoToCurrentTopic", false);
-    Button validateButton = null;
 
 //Action = View, New, Add, UpdateView, Update, Delete, LinkAuthorView, SameSubjectView ou SameTopicView
     if (action.equals("UpdateView") || action.equals("ValidateView")) {
@@ -267,20 +268,16 @@
       nextAction = "AddPublication";
 	}
 
-    validateButton = gef.getFormButton(resources.getString("GML.validate"), "javascript:onClick=sendPublicationDataToRouter('" + nextAction + "');", false);
-
-	String backUrl = URLManager.getFullApplicationURL(request) + URLManager.getURL("kmelia", null, componentId) + "ToUpdatePublicationHeader";
+	String backUrl = URLUtil.getFullApplicationURL(request) + URLUtil.getURL("kmelia", null, componentId) + "ToUpdatePublicationHeader";
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <title></title>
-    <view:looknfeel/>
+    <view:looknfeel withFieldsetStyle="true" withCheckFormScript="true"/>
     <view:includePlugin name="datepicker"/>
     <view:includePlugin name="popup"/>
-    <link type="text/css" href="<%=m_context%>/util/styleSheets/fieldset.css" rel="stylesheet" />
-    <script type="text/javascript" src="<%=m_context%>/util/javaScript/checkForm.js"></script>
     <script type="text/javascript" src="<%=m_context%>/util/javaScript/i18n.js"></script>
     <script type="text/javascript">
       var favoriteWindow = window;
@@ -433,12 +430,12 @@
             result = true;
             break;
           case 1 :
-            errorMsg = "<%=resources.getString("GML.ThisFormContains")%> 1 <%=resources.getString("GML.error")%> : \n" + errorMsg;
-            window.alert(errorMsg);
+            error.msg = "<%=resources.getString("GML.ThisFormContains")%> 1 <%=resources.getString("GML.error")%> : \n" + error.msg;
+            window.alert(error.msg);
             break;
           default :
-            errorMsg = "<%=resources.getString("GML.ThisFormContains")%> " + errorNb + " <%=resources.getString("GML.errors")%> :\n" + errorMsg;
-            window.alert(errorMsg);
+            error.msg = "<%=resources.getString("GML.ThisFormContains")%> " + error.nb + " <%=resources.getString("GML.errors")%> :\n" + error.msg;
+            window.alert(error.msg);
             break;
         }
         return result;
@@ -525,7 +522,7 @@
           if (kmeliaScc.getSessionClone() == null && isNotificationAllowed) {
             operationPane.addOperation(alertSrc, resources.getString("GML.notify"), "javaScript:alertUsers();");
           }
-          String urlPublication = URLManager.getSimpleURL(URLManager.URL_PUBLI, pubDetail.getPK().getId());
+          String urlPublication = URLUtil.getSimpleURL(URLUtil.URL_PUBLI, pubDetail.getPK().getId());
 	      pathString = EncodeHelper.javaStringToHtmlString(pubDetail.getName(language));
 	      String namePath = spaceLabel + " > " + componentLabel;
 	      if (!pathString.equals("")) {
@@ -614,7 +611,7 @@
 				</div>
 				<% } %>
 
-				<% if (I18NHelper.isI18N) { %>
+				<% if (I18NHelper.isI18nContentActivated) { %>
 				<div class="field" id="languageArea">
 					<label for="language" class="txtlibform"><%=resources.getString("GML.language")%></label>
 					<div class="champs">
@@ -778,6 +775,18 @@
 
 	</div>
 
+    <c:if test="${attachmentsEnabled}">
+      <view:fileUpload fieldset="true" jqueryFormSelector="form[name='pubForm']" />
+    </c:if>
+
+    <% if (kmeliaScc.isReminderUsed()) {%>
+    <div class="table">
+      <div class="cell">
+        <view:dateReminder resourceId="<%=id %>" resourceType="<%=PublicationDetail.getResourceType() %>" userId="<%= kmeliaScc.getUserId()%>" language="<%= language%>"/>
+      </div>
+    </div>
+    <% } %>
+
     <% if (!kmaxMode) {
         if ("New".equals(action)) { %>
           	<view:pdcNewContentClassification componentId="<%= componentId %>" nodeId="<%= kmeliaScc.getCurrentFolderId() %>"/>
@@ -800,11 +809,29 @@
   <%
         out.println(frame.printMiddle());
         if(isOwner || !"user".equalsIgnoreCase(profile)) {
-          ButtonPane buttonPane = gef.getButtonPane();
-          buttonPane.addButton(validateButton);
-          buttonPane.addButton(cancelButton);
-          buttonPane.setHorizontalPosition();
-          out.println("<br/><center>" + buttonPane.print() + "</center><br/>");
+          %>
+          <view:buttonPane>
+            <c:set var="saveLabel"><%=resources.getString("GML.validate")%></c:set>
+            <c:set var="saveAction"><%="javascript:onClick=sendPublicationDataToRouter('" + nextAction + "');"%></c:set>
+            <c:set var="cancelLabel"><%=resources.getString("GML.cancel")%></c:set>
+            <view:button label="${saveLabel}" action="${saveAction}">
+              <c:set var="subscriptionManagementContext" value="${requestScope.subscriptionManagementContext}"/>
+              <c:if test="${not empty subscriptionManagementContext}">
+                <jsp:useBean id="subscriptionManagementContext" type="org.silverpeas.core.subscription.util.SubscriptionManagementContext"/>
+                <c:if test="${subscriptionManagementContext.entityStatusBeforePersistAction.validated
+                      and subscriptionManagementContext.entityStatusAfterPersistAction.validated
+                      and subscriptionManagementContext.entityPersistenceAction.update}">
+                  <view:confirmResourceSubscriptionNotificationSending
+                      jsValidationCallbackMethodName="isCorrectForm"
+                      subscriptionResourceType="${subscriptionManagementContext.linkedSubscriptionResource.type}"
+                      subscriptionResourceId="${subscriptionManagementContext.linkedSubscriptionResource.id}"/>
+
+                </c:if>
+              </c:if>
+            </view:button>
+            <view:button label="${cancelLabel}" action="GoToCurrentTopic"/>
+          </view:buttonPane>
+          <%
         }
         out.println(frame.printAfter());
         out.println(window.printAfter());

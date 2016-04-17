@@ -30,13 +30,13 @@
 
 <%
 List 				xmlForms	= (List) request.getAttribute("XMLForms");
-Collection			modelUsed	= (Collection) request.getAttribute("ModelUsed");
+Collection modelUsed	= (Collection) request.getAttribute("ModelUsed");
 
 String linkedPathString = kmeliaScc.getSessionPath();
 
 // declaration des boutons
 Button validateButton = gef.getFormButton(resources.getString("GML.validate"), "javascript:onClick=sendData();", false);
-Button cancelButton = gef.getFormButton(resources.getString("GML.cancel"), "Main", false);
+Button cancelButton = gef.getFormButton(resources.getString("GML.cancel"), "GoToCurrentTopic", false);
 
 %>
 <html>

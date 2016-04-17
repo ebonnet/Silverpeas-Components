@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2000 - 2013 Silverpeas
+/*
+ * Copyright (C) 2000 - 2016 Silverpeas
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -24,19 +24,22 @@
 
 package com.silverpeas.mydb;
 
-import com.stratelia.silverpeas.peasCore.ComponentContext;
-import com.stratelia.silverpeas.peasCore.MainSessionController;
-import com.stratelia.webactiv.applicationIndexer.control.ComponentIndexerInterface;
+import org.silverpeas.core.admin.component.model.ComponentInst;
+import org.silverpeas.core.web.index.components.ComponentIndexation;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 /**
  * MyDB Indexer.
  * @author Antoine HEDIN
  */
-public class MyDBIndexer implements ComponentIndexerInterface {
+@Singleton
+@Named("myDB" + ComponentIndexation.QUALIFIER_SUFFIX)
+public class MyDBIndexer implements ComponentIndexation {
 
   @Override
-  public void index(MainSessionController mainSessionCtrl,
-      ComponentContext context) throws Exception {
+  public void index(ComponentInst componentInst) throws Exception {
 
   }
 

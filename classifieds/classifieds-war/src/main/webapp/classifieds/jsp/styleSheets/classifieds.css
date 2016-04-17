@@ -405,6 +405,10 @@ div.tableBoard {
 	color:#666
 }
 
+.principalContent #classified_content_form .forms .fields {
+	width:auto;
+}
+
 #classified_contact_link {
 	border-radius:8px;
 	padding:0.5em;
@@ -508,9 +512,6 @@ div.tableBoard {
     background: url("../../../util/icons/component/formsOnlineSmall.gif") no-repeat scroll 11px 0 transparent;
 }
 #classifiedNumberArea, #classifiedNameArea, #descriptionArea, #creationDateArea, #updateDateArea, #validationDateArea, #mandatoryArea, .field.thumb {
-    clear: both;
-    display: block;
-    float: none;
     width: 98%;
 }
 #descriptionArea textarea, #classifiedNameArea input{
@@ -557,15 +558,6 @@ div.tableBoard {
     border:1px solid #DDDDDD;
 }
 
-#pubThumb {
-    height: 90%;
-}
-
-#specifiedInfo {
-    height: 90%;
-}
-
 .classifiedForm .table {
 	margin-bottom:15px
 }
-

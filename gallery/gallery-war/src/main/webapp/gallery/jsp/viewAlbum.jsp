@@ -30,6 +30,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view" %>
 <%@ taglib tagdir="/WEB-INF/tags/silverpeas/gallery" prefix="gallery" %>
+<%@ taglib tagdir="/WEB-INF/tags/silverpeas/util" prefix="viewTags" %>
 
 <%-- Set resource bundle --%>
 <c:set var="userLanguage" value="${requestScope.resources.language}"/>
@@ -37,13 +38,13 @@
 <view:setBundle bundle="${requestScope.resources.multilangBundle}"/>
 <view:setBundle bundle="${requestScope.resources.iconsBundle}" var="icons"/>
 
-<view:setConstant var="adminRole" constant="com.stratelia.webactiv.SilverpeasRole.admin"/>
-<view:setConstant var="publisherRole" constant="com.stratelia.webactiv.SilverpeasRole.publisher"/>
-<view:setConstant var="writerRole" constant="com.stratelia.webactiv.SilverpeasRole.writer"/>
-<view:setConstant var="userRole" constant="com.stratelia.webactiv.SilverpeasRole.user"/>
+<view:setConstant var="adminRole" constant="org.silverpeas.core.admin.user.model.SilverpeasRole.admin"/>
+<view:setConstant var="publisherRole" constant="org.silverpeas.core.admin.user.model.SilverpeasRole.publisher"/>
+<view:setConstant var="writerRole" constant="org.silverpeas.core.admin.user.model.SilverpeasRole.writer"/>
+<view:setConstant var="userRole" constant="org.silverpeas.core.admin.user.model.SilverpeasRole.user"/>
 
 <c:set var="greaterUserRole" value="${requestScope.greaterUserRole}"/>
-<jsp:useBean id="greaterUserRole" type="com.stratelia.webactiv.SilverpeasRole"/>
+<jsp:useBean id="greaterUserRole" type="org.silverpeas.core.admin.user.model.SilverpeasRole"/>
 
 <c:set var="componentId" value="${requestScope.browseContext[3]}"/>
 
@@ -121,19 +122,17 @@
 <c:url var="lastResultIcon" value="${lastResultIcon}"/>
 
 <c:set var="currentAlbum" value="${requestScope.CurrentAlbum}"/>
-<jsp:useBean id="currentAlbum" type="com.silverpeas.gallery.model.AlbumDetail"/>
+<jsp:useBean id="currentAlbum" type="org.silverpeas.components.gallery.model.AlbumDetail"/>
 <c:set var="albums" value="${requestScope.Albums}"/>
-<jsp:useBean id="albums" type="java.util.List<com.silverpeas.gallery.model.AlbumDetail>"/>
-
-<c:set var="maximumFileSize" value="<%=FileRepositoryManager.getUploadMaximumFileSize()%>"/>
+<jsp:useBean id="albums" type="java.util.List<org.silverpeas.components.gallery.model.AlbumDetail>"/>
 
 <c:set var="userId" value="${requestScope.UserId}"/>
 <c:set var="path" value="${requestScope.Path}"/>
-<jsp:useBean id="path" type="java.util.List<com.stratelia.webactiv.util.node.model.NodeDetail>"/>
+<jsp:useBean id="path" type="java.util.List<org.silverpeas.core.node.model.NodeDetail>"/>
 <c:set var="nbMediaPerPage" value="${requestScope.NbMediaPerPage}"/>
 <c:set var="currentPageIndex" value="${requestScope.CurrentPageIndex}"/>
 <c:set var="mediaResolution" value="${requestScope.MediaResolution}"/>
-<jsp:useBean id="mediaResolution" type="com.silverpeas.gallery.constant.MediaResolution"/>
+<jsp:useBean id="mediaResolution" type="org.silverpeas.components.gallery.constant.MediaResolution"/>
 <c:set var="dragAndDropEnable" value="${requestScope.DragAndDropEnable}"/>
 <c:set var="isViewMetadata" value="${requestScope.IsViewMetadata}"/>
 <c:set var="isViewList" value="${requestScope.IsViewList}"/>
@@ -143,9 +142,10 @@
 <c:set var="isBasket" value="${requestScope.IsBasket}"/>
 <c:set var="isGuest" value="${requestScope.IsGuest}"/>
 <c:set var="isExportEnable" value="${requestScope.IsExportEnable}"/>
+<c:set var="isMediaSelectable" value="${greaterUserRole eq userRole and isBasket or isExportEnable}"/>
 
-<view:setConstant var="PREVIEW_RESOLUTION" constant="com.silverpeas.gallery.constant.MediaResolution.PREVIEW"/>
-<view:setConstant var="ORIGINAL_RESOLUTION" constant="com.silverpeas.gallery.constant.MediaResolution.ORIGINAL"/>
+<view:setConstant var="PREVIEW_RESOLUTION" constant="org.silverpeas.components.gallery.constant.MediaResolution.PREVIEW"/>
+<view:setConstant var="ORIGINAL_RESOLUTION" constant="org.silverpeas.components.gallery.constant.MediaResolution.ORIGINAL"/>
 
 <c:set var="Silverpeas_Album_ComponentId" value="${componentId}" scope="session"/>
 
@@ -157,8 +157,6 @@
   <view:includePlugin name="popup"/>
   <view:includePlugin name="embedPlayer"/>
   <view:progressMessage/>
-  <script type="text/javascript" src="<c:url value="/gallery/jsp/javaScript/dragAndDrop.js"/>"></script>
-  <script type="text/javascript" src="<c:url value="/util/javaScript/upload_applet.js"/>"></script>
   <script type="text/javascript">
 var currentGallery = {
   'id' : "${currentAlbum.id}",
@@ -188,15 +186,7 @@ function deleteConfirm(id, nom) {
   <c:if test="${dragAndDropEnable}">
 function uploadCompleted(s) {
   location.href =
-      "<c:url value="${silfn:componentURL(componentId)}ViewAlbum?Id=${currentAlbum.id}"/>";
-}
-
-function showDnD() {
-  var url = "<c:url value="${silfn:fullApplicationURL(pageContext.request)}/RgalleryDragAndDrop/jsp/Drop?UserId=${userId}&ComponentId=${componentId}&AlbumId=${currentAlbum.id}"/>";
-  var message = "<c:url value="${silfn:fullApplicationURL(pageContext.request)}/upload/Gallery_${userLanguage}.html"/>";
-  showHideDragDrop(url, message, '<fmt:message key="GML.applet.dnd.alt"/>',
-      '${maximumFileSize}', '<c:url value="/"/>', '<fmt:message key="GML.DragNDropExpand"/>',
-      '<fmt:message key="GML.DragNDropCollapse"/>');
+      "<c:url value="${silfn:componentURL(componentId)}ViewAlbum?Id=${currentAlbum.id}"/>&deselectAll=true";
 }
   </c:if>
   <c:if test="${greaterUserRole.isGreaterThanOrEquals(publisherRole)}">
@@ -350,7 +340,7 @@ function CutSelectedMedia() {
 </c:if>
   </script>
 <c:if test="${not empty currentAlbum.media}">
-  <gallery:handlePhotoPreview jquerySelector="${'.mediaPreview'}" />
+  <gallery:handleMediaPreview jquerySelector="${'.mediaPreview'}" />
 </c:if>
   <gallery:diaporama/>
 </head>
@@ -403,7 +393,7 @@ function CutSelectedMedia() {
     <view:operationOfCreation action="${addStreamingAction}" altText="${addStreamingLabel}" icon="${addStreamingIcon}"/>
   </c:if>
   <%-- Basket for users --%>
-  <c:if test="${greaterUserRole eq userRole and isBasket or isExportEnable}">
+  <c:if test="${isMediaSelectable}">
     <view:operationSeparator/>
     <view:operation action="javascript:onClick=sendToBasket()" altText="${addToBasketSelectedMediaLabel}" icon="${addToBasketSelectedMediaIcon}"/>
     <view:operation action="BasketView" altText="${viewBasketLabel}" icon="${viewBasketIcon}"/>
@@ -435,21 +425,6 @@ function CutSelectedMedia() {
         </td>
       </tr>
     </table>
-    <c:if test="${greaterUserRole.isGreaterThanOrEquals(writerRole) and dragAndDropEnable}">
-      <!-- Displaying the Drag&Drop area -->
-      <center>
-        <table width="98%">
-          <tr>
-            <td align="right"><a href="javascript:showDnD()"
-                                 id="dNdActionLabel"><%=resource.getString("GML.DragNDropExpand")%>
-            </a>
-
-              <div id="DragAndDrop" style="background-color: #CDCDCD; border: 1px solid #CDCDCD; padding: 0" valign="top"></div>
-            </td>
-          </tr>
-        </table>
-      </center>
-    </c:if>
     <gallery:displayAlbumContent currentAlbum="${currentAlbum}"
                                  mediaList="${currentAlbum.media}"
                                  selectedIds="${selectedIds}"
@@ -458,8 +433,7 @@ function CutSelectedMedia() {
                                  nbMediaPerPage="${nbMediaPerPage}"
                                  currentPageIndex="${currentPageIndex}"
                                  isViewList="${isViewList}"
-                                 greaterUserRole="${greaterUserRole}"
-                                 isBasket="${isBasket}"/>
+                                 selectable="${isMediaSelectable}"/>
     <c:choose>
       <c:when test="${empty currentAlbum.media and empty albums and greaterUserRole.isGreaterThanOrEquals(publisherRole)}">
         <c:set var="templateUserRole" value="${publisherRole}"/>
@@ -472,7 +446,7 @@ function CutSelectedMedia() {
       </c:when>
     </c:choose>
     <c:if test="${not empty templateUserRole}">
-      <div id="folder-empty" class="inlineMessage">
+      <div id="folder-empty" class="inlineMessage dragAndDropUpload">
         <view:applyTemplate locationBase="components:gallery" name="galleryEmptyAlbum">
           <view:templateParam name="dragAndDropEnable" value="${dragAndDropEnable}"/>
           <view:templateParam name="albumPart" value="${templateUserRole eq publisherRole}"/>
@@ -515,5 +489,18 @@ function CutSelectedMedia() {
   <input type="hidden" name="Id"/>
 </form>
 <view:progressMessage/>
+<c:if test="${greaterUserRole.isGreaterThanOrEquals(writerRole) and dragAndDropEnable}">
+  <c:url var="uploadCompletedUrl" value="/RgalleryDragAndDrop/jsp/Drop">
+    <c:param name="ComponentId" value="${componentId}"/>
+    <c:param name="AlbumId" value="${currentAlbum.id}"/>
+  </c:url>
+  <c:url var="helpContentUrl" value="/upload/Gallery_${userLanguage}.html"/>
+  <viewTags:commonDragAndDrop domSelector=".dragAndDropUpload"
+                              domHelpHighlightSelector=".tableBoard"
+                              componentInstanceId="${componentId}"
+                              uploadCompletedUrl="${uploadCompletedUrl}"
+                              uploadCompletedUrlSuccess="uploadCompleted"
+                              helpContentUrl="${helpContentUrl}"/>
+</c:if>
 </body>
 </html>

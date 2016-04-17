@@ -23,24 +23,24 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@page import="com.silverpeas.util.i18n.I18NHelper"%>
-<%@page import="com.stratelia.silverpeas.util.ResourcesWrapper"%>
-<%@page import="com.stratelia.webactiv.util.node.model.NodeDetail"%>
-<%@page import="com.silverpeas.util.EncodeHelper"%>
-<%@page import="com.stratelia.webactiv.util.GeneralPropertiesManager"%>
+<%@page import="org.silverpeas.core.i18n.I18NHelper"%>
+<%@page import="org.silverpeas.core.util.MultiSilverpeasBundle"%>
+<%@page import="org.silverpeas.core.node.model.NodeDetail"%>
+<%@page import="org.silverpeas.core.util.EncodeHelper"%>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view"%>
-<%@ page import="com.stratelia.webactiv.beans.admin.ProfileInst"%>
+<%@ page import="org.silverpeas.core.util.ResourceLocator" %>
+<%@ page import="org.silverpeas.components.kmelia.control.KmeliaSessionController" %>
 <c:url var="mandatoryFieldUrl" value="/util/icons/mandatoryField.gif"/>
 <fmt:setLocale value="${sessionScope[sessionController].language}" />
 <view:setBundle bundle="${requestScope.resources.multilangBundle}" />
 <view:setBundle bundle="${requestScope.resources.iconsBundle}" var="icons" />
-<% com.stratelia.webactiv.kmelia.control.KmeliaSessionController kmeliaScc = (com.stratelia.webactiv.kmelia.control.KmeliaSessionController) request.getAttribute("kmelia");%>
+<% KmeliaSessionController kmeliaScc = (KmeliaSessionController) request.getAttribute("kmelia");%>
   <% if(kmeliaScc == null ) {
     // No session controller in the request -> security exception
-    String sessionTimeout = GeneralPropertiesManager.getGeneralResourceLocator().getString("sessionTimeout");
+    String sessionTimeout = ResourceLocator.getGeneralSettingBundle().getString("sessionTimeout");
     getServletConfig().getServletContext().getRequestDispatcher(sessionTimeout).forward(request, response);
     return;
     }
@@ -49,7 +49,7 @@
   <fmt:message var="validateButtonLabel" key="GML.validate"/>
   <c:set var="node" value="${requestScope.NodeDetail}" scope="page"/>
   <%
-  ResourcesWrapper resources = (ResourcesWrapper)request.getAttribute("resources");
+  MultiSilverpeasBundle resources = (MultiSilverpeasBundle)request.getAttribute("resources");
   String translation = (String) request.getAttribute("Translation");
   String language = (String) request.getAttribute("Language");
   NodeDetail node = (NodeDetail) request.getAttribute("NodeDetail");
@@ -68,11 +68,11 @@
   }
 
   %>
+  <c:set var="userHasAdminAccess" value="<%=kmeliaScc.isTopicAdmin(node.getNodePK().getId())%>"/>
   <html>
     <head>
-      <view:looknfeel />
+      <view:looknfeel withCheckFormScript="true"/>
       <title><fmt:message key="GML.popupTitle" /></title>
-      <script type="text/javascript" src="<c:url value="/util/javaScript/checkForm.js" />"></script>
       <script type="text/javascript" src="<c:url value="/util/javaScript/i18n.js" />"></script>
       <script language="JavaScript" type="text/javascript">
         function topicGoTo(id)
@@ -237,12 +237,13 @@
               </table>
             </form>
           </view:board>
-          <br/><center>
+          <br/>
+          <c:if test="${userHasAdminAccess}">
             <view:buttonPane>
-              <view:button action="javascript:onClick=sendData();" label="${validateButtonLabel}" disabled="false" />
-              <view:button action="javascript:onClick=cancelData();" label="${cancelButtonLabel}" disabled="false" />
+              <view:button action="javascript:onClick=sendData();" label="${validateButtonLabel}" disabled="false"/>
+              <view:button action="javascript:onClick=cancelData();" label="${cancelButtonLabel}" disabled="false"/>
             </view:buttonPane>
-          </center>
+          </c:if>
         </view:frame>
       </view:window>
     </body>

@@ -1,3 +1,5 @@
+<%@ page import="org.silverpeas.core.util.EncodeHelper" %>
+<%@ page import="org.silverpeas.core.questioncontainer.container.model.QuestionContainerDetail" %>
 <%--
 
     Copyright (C) 2000 - 2013 Silverpeas
@@ -24,6 +26,9 @@
 
 --%>
 
+<%@ page import="org.silverpeas.core.admin.user.model.UserDetail" %>
+<%@ page import="org.silverpeas.core.util.ResourceLocator" %>
+
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view"%>
 <%@ include file="checkSurvey.jsp" %>
@@ -33,7 +38,7 @@ Collection<String> 	users 	= (Collection<String>) request.getAttribute("Users");
 QuestionContainerDetail survey = (QuestionContainerDetail) request.getAttribute("Survey");
 
 Button close = gef.getFormButton(resources.getString("GML.close"), "javaScript:window.close();", false);
-String iconsPath = GeneralPropertiesManager.getString("ApplicationURL");
+String iconsPath = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -64,9 +69,10 @@ function viewResultByUser(userId, userName) {
 	if (users != null) {	
 	  	ArrayCellText cell = null; 
 	    for (String userId : users) {
-			 UserDetail user = surveyScc.getUserDetail(userId);	
+			 UserDetail user = surveyScc.getUserDetail(userId);
 			 ArrayLine ligne = arrayPane.addArrayLine();
-			 String url = "<a href=\"javaScript:onclick=viewResultByUser('"+userId+"','"+EncodeHelper.javaStringToHtmlString(user.getDisplayedName())+"');\">"+EncodeHelper.javaStringToHtmlString(user.getLastName()+" "+user.getFirstName())+"</a>";
+			 String url = "<a href=\"javaScript:onclick=viewResultByUser('"+userId+"','"+
+           EncodeHelper.javaStringToHtmlString(user.getDisplayedName())+"');\">"+EncodeHelper.javaStringToHtmlString(user.getLastName()+" "+user.getFirstName())+"</a>";
 			 cell = ligne.addArrayCellText(url);
 			 cell.setCompareOn(user.getLastName()+" "+user.getFirstName());
       	}

@@ -23,7 +23,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@page import="com.stratelia.webactiv.forums.control.helpers.ForumListHelper" %>
+<%@page import="org.silverpeas.components.forums.control.helpers.ForumListHelper" %>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%
   response.setHeader("Cache-Control", "no-store"); //HTTP 1.1
@@ -38,7 +38,7 @@
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view" %>
 
 <fmt:setLocale value="${sessionScope['SilverSessionController'].favoriteLanguage}"/>
-<view:setBundle basename="com.stratelia.webactiv.forums.multilang.forumsBundle"/>
+<view:setBundle basename="org.silverpeas.forums.multilang.forumsBundle"/>
 
 <%
   int messageId = getIntParameter(request, "params");
@@ -53,8 +53,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title></title>
-  <view:looknfeel/>
-  <script type="text/javascript" src="<%=context%>/util/javaScript/checkForm.js"></script>
+  <view:looknfeel withCheckFormScript="true"/>
   <script type="text/javascript" src="<%=context%>/forums/jsp/javaScript/forums.js"></script>
   <script type="text/javascript">
     function validateMessage() {
@@ -68,7 +67,7 @@
   </script>
 </head>
 <body>
-<view:browseBar path="<%=ForumListHelper.navigationBar(forumId, resource, fsc)%>"/>
+<view:browseBar path="<%=ForumListHelper.navigationBar(forumId, fsc)%>"/>
 <view:window>
   <view:frame>
     <view:board>

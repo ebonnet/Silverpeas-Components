@@ -31,11 +31,15 @@
 <view:setBundle bundle="${requestScope.resources.multilangBundle}"/>
 <view:setBundle bundle="${requestScope.resources.iconsBundle}" var="icons"/>
 
+<%@ page import="org.silverpeas.core.util.DateUtil" %>
+<%@ page import="org.silverpeas.components.almanach.model.Periodicity" %>
+<%@ page import="org.silverpeas.components.almanach.model.EventDetail" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.operationpanes.OperationPane" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.frame.Frame" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.window.Window" %>
 <%@ include file="checkAlmanach.jsp" %>
 
 <%
-	String language = almanach.getLanguage();
-
 	EventDetail event = (EventDetail) request.getAttribute("Event");
 	Date startDate = (Date) request.getAttribute("EventStartDate");
 	Date endDate = (Date) request.getAttribute("EventEndDate");
@@ -47,8 +51,9 @@
 	String description = "";
 	String id = event.getPK().getId();
 	String title = EncodeHelper.javaStringToHtmlString(event.getTitle());
-	if (StringUtil.isDefined(event.getWysiwyg())) {
-		description = event.getWysiwyg();
+  String wysiwyg = event.getWysiwyg(false);
+	if (StringUtil.isDefined(wysiwyg)) {
+		description = wysiwyg;
 	} else if (StringUtil.isDefined(event.getDescription())) {
 		description = EncodeHelper.javaStringToHtmlParagraphe(event.getDescription());
 	}
@@ -79,11 +84,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title><%=resources.getString("GML.popupTitle")%></title>
-<view:looknfeel/>
+<view:looknfeel withFieldsetStyle="true" withCheckFormScript="true"/>
 <view:includePlugin name="datepicker"/>
 <view:includePlugin name="wysiwyg"/>
-<link type="text/css" href="<%=m_context%>/util/styleSheets/fieldset.css" rel="stylesheet" />
-<script type="text/javascript" src="<%=m_context%>/util/javaScript/checkForm.js"></script>
 <script type="text/javascript">
 <!--
 function getCKEditor() {
@@ -100,9 +103,8 @@ function reallyUpdate() {
 	document.eventForm.submit();
 }
 
-function eventDeleteConfirm(t, id)
-{
-    if (window.confirm("<%=EncodeHelper.javaStringToJsString(almanach.getString("suppressionConfirmation"))%> '" + t + "' ?")){
+function eventDeleteConfirm() {
+    if (window.confirm("<%=EncodeHelper.javaStringToJsString(almanach.getString("suppressionConfirmation"))%> ?")){
     	<% if (event.getPeriodicity() != null ) { %>
     		displayBoxOnDelete();
     	<% } else { %>
@@ -370,18 +372,16 @@ $(document).ready(function(){
         width: 650});
 	
 	changeUnity();
-	
-	<view:wysiwyg replace="Description" language="${language}" width="600" height="300" toolbar="almanach" displayFileBrowser="${false}"/>
+
+	<view:wysiwyg replace="Description" language="${language}" width="98%" height="300" toolbar="almanach" displayFileBrowser="${true}" objectId="<%=event.getId()%>" componentId="<%=event.getInstanceId()%>"/>
 });
 //-->
 </script>
 </head>
 <body onload="document.eventForm.Title.focus()">
   <%
-    Window 		window 		= graphicFactory.getWindow();
-    Frame 		frame		= graphicFactory.getFrame();
-    Board 		board 		= graphicFactory.getBoard();
-    TabbedPane 	tabbedPane 	= graphicFactory.getTabbedPane();
+    Window window 		= graphicFactory.getWindow();
+    Frame frame		= graphicFactory.getFrame();
 
     OperationPane operationPane = window.getOperationPane();
 
@@ -390,13 +390,10 @@ $(document).ready(function(){
 	browseBar.setComponentName(componentLabel, "almanach.jsp");
 	browseBar.setExtraInformation(event.getTitle());
 
-    operationPane.addOperation(m_context + "/util/icons/almanach_to_del.gif", almanach.getString("supprimerEvenement"), "javascript:onClick=eventDeleteConfirm('" + EncodeHelper.javaStringToJsString(title) + "','" + id +"')");
-    out.println(window.printBefore());
+  operationPane.addOperation(m_context + "/util/icons/almanach_to_del.gif",
+      almanach.getString("GML.delete"), "javascript:onClick=eventDeleteConfirm()");
+  out.println(window.printBefore());
 
-	tabbedPane.addTab(almanach.getString("evenement"), "viewEventContent.jsp?Id="+id+"&Date="+startDateString, false);
-	tabbedPane.addTab(almanach.getString("entete"), "editEvent.jsp?Id="+id+"&Date="+startDateString, true);
-
-	out.println(tabbedPane.print());
 	out.println(frame.printBefore());
 %>
 <form name="eventForm" action="ReallyUpdateEvent" method="post">
@@ -453,7 +450,7 @@ $(document).ready(function(){
 			</div>
 			
 			<div class="field" id="eventPriorityArea">
-				<label for="eventPriority" class="txtlibform"><fmt:message key='GML.priority'/></label>
+				<label for="eventPriority" class="txtlibform"><fmt:message key='event.important'/></label>
 				<div class="champs">
 					<input type="checkbox" class="checkbox" name="Priority" id="eventPriority" value="checkbox" <%if (event.getPriority() != 0) out.print("checked=\"checked\"");%>/>
 				</div>

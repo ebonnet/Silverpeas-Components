@@ -35,7 +35,7 @@
 <view:setBundle bundle="${requestScope.resources.multilangBundle}"/>
 <view:setBundle bundle="${requestScope.resources.iconsBundle}" var="icons"/>
 
-<view:setConstant var="userRole" constant="com.stratelia.webactiv.SilverpeasRole.user"/>
+<view:setConstant var="userRole" constant="org.silverpeas.core.admin.user.model.SilverpeasRole.user"/>
 
 <%-- Default values --%>
 <c:set var="_formName" value="mediaForm"/>
@@ -56,14 +56,14 @@
 </c:if>
 
 <%@ attribute name="currentAlbum" required="false"
-              type="com.silverpeas.gallery.model.AlbumDetail"
+              type="org.silverpeas.components.gallery.model.AlbumDetail"
               description="The current album." %>
 
 <%@ attribute name="mediaList" required="true"
               type="java.util.List"
               description="The album path." %>
 <jsp:useBean id="mediaList"
-             type="java.util.List<com.silverpeas.gallery.model.Media>"
+             type="java.util.List<org.silverpeas.components.gallery.model.Media>"
              scope="page"/>
 <%@ attribute name="selectedIds" required="true"
               type="java.util.List"
@@ -76,7 +76,7 @@
               description="Indicates, if true, that metadata of photo must be displayed." %>
 
 <%@ attribute name="mediaResolution" required="true"
-              type="com.silverpeas.gallery.constant.MediaResolution"
+              type="org.silverpeas.components.gallery.constant.MediaResolution"
               description="The album path." %>
 <%@ attribute name="isViewList" required="true"
               type="java.lang.Boolean"
@@ -93,13 +93,9 @@
               type="java.lang.String"
               description="Current keyword search." %>
 
-<%@ attribute name="greaterUserRole" required="true"
-              type="com.stratelia.webactiv.SilverpeasRole"
-              description="Greater user role." %>
-
-<%@ attribute name="isBasket" required="true"
+<%@ attribute name="selectable" required="true"
               type="java.lang.Boolean"
-              description="Greater user role." %>
+              description="Images are selectable" %>
 
 <c:set var="firstMediaIndex" value="${nbMediaPerPage * currentPageIndex}"/>
 <c:set var="lastMediaIndex" value="${firstMediaIndex + nbMediaPerPage - 1}"/>
@@ -170,163 +166,155 @@
 </script>
 
 <c:if test="${not empty mediaList}">
-  <view:board>
-    <form name="${_formName}" action="${_formAction}">
-      <c:if test="${currentAlbum != null}">
-        <input type="hidden" name="AlbumId" value="${currentAlbum.id}"/>
-      </c:if>
-      <c:if test="${searchKeyword != null}">
-        <input type="hidden" name="SearchKeyWord" value="${searchKeyword}">
-      </c:if>
-      <input type="hidden" name="Index"/>
-      <input type="hidden" name="SelectedIds"/>
-      <input type="hidden" name="NotSelectedIds"/>
+  <div class="dragAndDropUpload">
+    <view:board>
+      <form name="${_formName}" action="${_formAction}">
+        <c:if test="${currentAlbum != null}">
+          <input type="hidden" name="AlbumId" value="${currentAlbum.id}"/>
+        </c:if>
+        <c:if test="${searchKeyword != null}">
+          <input type="hidden" name="SearchKeyWord" value="${searchKeyword}">
+        </c:if>
+        <input type="hidden" name="Index"/>
+        <input type="hidden" name="SelectedIds"/>
+        <input type="hidden" name="NotSelectedIds"/>
 
-      <c:set var="textColumnCount" value="${typeAff eq 'medium_list' ? 2 : 0}"/>
-      <table width="98%" border="0" cellspacing="0" cellpadding="0" align="center">
-        <tr>
-          <td colspan="${nbMediaPerLine + textColumnCount}" align="center">
-            <gallery:albumListHeader currentMediaResolution="${mediaResolution}"
-                                     nbMediaPerPage="${nbMediaPerPage}"
-                                     currentPageIndex="${currentPageIndex}"
-                                     mediaList="${mediaList}"/>
-          </td>
-        </tr>
-      </table>
-      <table class="listing-media">
-        <c:set var="cellWidth" value="${100 / nbMediaPerLine}"/>
-        <c:forEach var="media" items="${mediaList}" begin="${firstMediaIndex}" end="${lastMediaIndex}" varStatus="loop">
-          <c:set var="internalMedia" value="${media.internalMedia}"/>
-          <c:set var="mediaSrcValue" value="${not empty internalMedia ? internalMedia.fileName : media.streaming.homepageUrl}"/>
-          <c:set var="mediaTitle" value="${(not empty media.title and media.title != mediaSrcValue) ? media.title : mediaSrcValue}"/>
-          <c:set var="isNewLine" value="${loop.index % nbMediaPerLine == 0}"/>
-          <c:set var="isEndLine"
-                 value="${loop.last or loop.index % nbMediaPerLine == (nbMediaPerLine-1)}"/>
-          <c:if test="${isNewLine}">
+        <c:set var="textColumnCount" value="${typeAff eq 'medium_list' ? 2 : 0}"/>
+        <table width="98%" border="0" cellspacing="0" cellpadding="0" align="center">
+          <tr>
+            <td colspan="${nbMediaPerLine + textColumnCount}" align="center">
+              <gallery:albumListHeader currentMediaResolution="${mediaResolution}"
+                                       nbMediaPerPage="${nbMediaPerPage}"
+                                       currentPageIndex="${currentPageIndex}"
+                                       mediaList="${mediaList}"/>
+            </td>
+          </tr>
+        </table>
+        <table class="listing-media">
+          <c:set var="cellWidth" value="${100 / nbMediaPerLine}"/>
+          <c:forEach var="media" items="${mediaList}" begin="${firstMediaIndex}" end="${lastMediaIndex}" varStatus="loop">
+            <c:set var="internalMedia" value="${media.internalMedia}"/>
+            <c:set var="mediaSrcValue" value="${not empty internalMedia ? internalMedia.fileName : media.streaming.homepageUrl}"/>
+            <c:set var="mediaTitle" value="${(not empty media.title and media.title != mediaSrcValue) ? media.title : mediaSrcValue}"/>
+            <c:set var="isNewLine" value="${loop.index % nbMediaPerLine == 0}"/>
+            <c:set var="isEndLine"
+                   value="${loop.last or loop.index % nbMediaPerLine == (nbMediaPerLine-1)}"/>
+            <c:if test="${isNewLine}">
+              <tr>
+                <td colspan="${nbMediaPerLine + textColumnCount}">&nbsp;</td>
+              </tr>
+              <tr>
+            </c:if>
+            <c:set var="mediaBackgroundClass" value="${media.visible ? 'fondPhoto' : 'fondPhotoNotVisible'}"/>
+            <c:set var="mediaChecked" value="${selectedIds.contains(media.id) ? 'checked' : ''}"/>
+            <c:choose>
+              <%-- Default media display or small media display --%>
+              <c:when test="${typeAff eq 'default' or typeAff eq 'small_list'}">
+                <td class="a-media ${typeAff eq 'small_list' ? 'aff-small': 'aff-tiny'}" width="${cellWidth}%">
+                  <div class="${mediaBackgroundClass}">
+                    <div class="cadrePhoto">
+                      <a href="MediaView?MediaId=${media.id}${not empty searchKeyword ? '&SearchKeyWord='.concat(searchKeyword) : ''}">
+                        <gallery:displayMediaInAlbumContent media="${media}" mediaResolution="${mediaResolution}"/>
+                      </a>
+                    </div>
+                    <c:if test="${selectable}">
+                      <div>
+                        <input type="checkbox" name="SelectMedia" value="${media.id}" ${mediaChecked}/>
+                      </div>
+                    </c:if>
+
+                    <c:if test="${typeAff eq 'small_list'}">
+                      <div class="txtlibform"><c:out value="${silfn:truncate(mediaTitle, 50)}"/></div>
+                      <c:if test="${not empty media.description}">
+                        <div class="media-description"><c:out value="${media.description}"/></div>
+                      </c:if>
+                    </c:if>
+                  </div>
+                </td>
+              </c:when>
+              <c:otherwise>
+                <c:if test="${selectable}">
+                  <td class="a-media aff-list checkbox">
+                    <input type="checkbox" name="SelectMedia" value="${media.id}" ${mediaChecked}/>
+                  </td>
+                </c:if>
+                <td class="a-media aff-list vignette">
+                  <div class="${mediaBackgroundClass}">
+                    <div class="cadrePhoto">
+                      <a href="MediaView?MediaId=${media.id}">
+                        <gallery:displayMediaInAlbumContent media="${media}" mediaResolution="${mediaResolution}"/>
+                      </a>
+                    </div>
+                  </div>
+                </td>
+                <td class="a-media aff-list details forms" >
+                <ul class="fields ui-sortable">
+                  <li class="field field_category media-name">
+                    <label class="txtlibform"><fmt:message key="GML.title"/> :</label>
+
+                    <div class="fieldInput"><c:out value="${mediaTitle}"/></div>
+                  </li>
+                  <c:if test="${not empty media.description}">
+                    <li class="field field_category media-name">
+                      <label class="txtlibform"><fmt:message key="GML.description"/> :</label>
+
+                      <div class="fieldInput"><c:out value="${media.description}"/></div>
+                    </li>
+                  </c:if>
+                  <c:if test="${not empty media.author}">
+                    <li class="field field_category media-name">
+                      <label class="txtlibform"><fmt:message key="GML.author"/> :</label>
+
+                      <div class="fieldInput"><c:out value="${media.author}"/></div>
+                    </li>
+                  </c:if>
+                  <c:if test="${isViewMetadata and media.type.photo}">
+                    <c:set var="photoMedia" value="${media.photo}"/>
+                    <c:forEach var="metaDataKey" items="${photoMedia.metaDataProperties}">
+                      <li class="field field_category media-name">
+                        <c:set var="metaData" value="${photoMedia.getMetaData(metaDataKey)}"/>
+                        <jsp:useBean id="metaData" type="org.silverpeas.components.gallery.model.MetaData"/>
+                        <label class="txtlibform"><c:out value="${metaData.label}"/> :</label>
+
+                        <div class="fieldInput">
+                          <c:out value="${metaData.date ? silfn:formatDateAndHour(metaData.dateValue, __userLanguage) : metaData.value}"/>
+                        </div>
+                      </li>
+                    </c:forEach>
+                  </c:if>
+                  <c:if test="${not empty media.keyWord}">
+                    <li class="field field_category media-name">
+                      <label class="txtlibform"><fmt:message key="gallery.keyword"/> :</label>
+
+                      <div class="fieldInput">
+                        <c:set var="delims" value=" "/>
+                        <c:forEach var="keyword" items="${silfn:splitOnWhitespace(media.keyWord)}">
+                          <a href="SearchKeyWord?SearchKeyWord=${keyword}"><c:out value="${keyword}"/></a>
+                        </c:forEach>
+                      </div>
+                    </li>
+                  </c:if>
+                </ul>
+              </c:otherwise>
+            </c:choose>
+            <c:if test="${isEndLine}">
+              </tr>
+            </c:if>
+          </c:forEach>
+          <c:if test="${fn:length(mediaList) > nbMediaPerPage}">
             <tr>
               <td colspan="${nbMediaPerLine + textColumnCount}">&nbsp;</td>
             </tr>
-            <tr>
-          </c:if>
-          <c:set var="mediaBackgroundClass" value="${media.visible ? 'fondPhoto' : 'fondPhotoNotVisible'}"/>
-          <c:set var="mediaChecked" value="${selectedIds.contains(media.id) ? 'checked' : ''}"/>
-          <c:choose>
-            <%-- Default media display or small media display --%>
-            <c:when test="${typeAff eq 'default' or typeAff eq 'small_list'}">
-              <td class="a-media ${typeAff eq 'small_list' ? 'aff-small': 'aff-tiny'}" width="${cellWidth}%">
-                <div class="${mediaBackgroundClass}">
-                  <div class="cadrePhoto">
-                    <a href="MediaView?MediaId=${media.id}${not empty searchKeyword ? '&SearchKeyWord='.concat(searchKeyword) : ''}">
-                      <c:set var="classPreview" value="mediaPreview" />
-                      <c:set var="thumbnailUrl" value="${media.getApplicationThumbnailUrl(PREVIEW_RESOLUTION)}"/>
-                      <c:if test="${media.type.video}">
-                        <c:if test="${fn:contains(thumbnailUrl, '/thumbnail/') }">
-                          <img class="type-media" src="<c:url value="/gallery/jsp/icons/video_66x50.png"/>" />
-                        </c:if>
-                        <c:set var="classPreview" value="mediaPreview videoPreview" />
-                      </c:if>
-                      <img id="imgId_${media.id}" class="${classPreview}" tipTitle="<c:out value="${media.title}"/>"
-                           tipUrl="${thumbnailUrl}" src="${media.getApplicationThumbnailUrl(mediaResolution)}"
-                           border="0" alt="<c:out value='${media.title}'/>" width="${mediaResolution.width}" />
-                    </a>
-                  </div>
-                  <c:if test="${not (greaterUserRole eq userRole and not isBasket)}">
-                  <div>
-                    <input type="checkbox" name="SelectMedia" value="${media.id}" ${mediaChecked}/>
-                  </div>
-                  </c:if>
-
-                  <c:if test="${typeAff eq 'small_list'}">
-                    <div class="txtlibform"><c:out value="${silfn:truncate(mediaTitle, 50)}"/></div>
-                    <c:if test="${not empty media.description}">
-                      <div class="media-description"><c:out value="${media.description}"/></div>
-                    </c:if>
-                  </c:if>
-                </div>
+            <tr class="intfdcolor4 pagination">
+              <td colspan="${nbMediaPerLine + textColumnCount}">
+                <view:pagination action="doPagination" actionIsJsFunction="${true}"
+                                 currentPage="${currentPageIndex}"
+                                 nbItemsPerPage="${nbMediaPerPage}" totalNumberOfItems="${fn:length(mediaList)}"/>
               </td>
-            </c:when>
-            <c:otherwise>
-              <td class="a-media aff-list checkbox">
-                <input type="checkbox" name="SelectMedia" value="${media.id}" ${mediaChecked}/>
-              </td>
-              <td class="a-media aff-list vignette">
-                <div class="${mediaBackgroundClass}">
-                  <div class="cadrePhoto">
-                    <a href="MediaView?MediaId=${media.id}">
-                      <img class="mediaPreview" tipTitle="<c:out value="${media.title}"/>"
-                           tipUrl="${media.getApplicationThumbnailUrl(PREVIEW_RESOLUTION)}"
-                           src="${media.getApplicationThumbnailUrl(mediaResolution)}" border="0" alt="<c:out value='${media.title}'/>"/>
-                    </a>
-                  </div>
-                </div>
-              </td>
-              <td class="a-media aff-list details forms" >
-              <ul class="fields ui-sortable">
-                <li class="field field_category media-name">
-                  <label class="txtlibform"><fmt:message key="GML.title"/> :</label>
-
-                  <div class="fieldInput"><c:out value="${mediaTitle}"/></div>
-                </li>
-                <c:if test="${not empty media.description}">
-                  <li class="field field_category media-name">
-                    <label class="txtlibform"><fmt:message key="GML.description"/> :</label>
-
-                    <div class="fieldInput"><c:out value="${media.description}"/></div>
-                  </li>
-                </c:if>
-                <c:if test="${not empty media.author}">
-                  <li class="field field_category media-name">
-                    <label class="txtlibform"><fmt:message key="GML.author"/> :</label>
-
-                    <div class="fieldInput"><c:out value="${media.author}"/></div>
-                  </li>
-                </c:if>
-                <c:if test="${isViewMetadata and media.type.photo}">
-                  <c:set var="photoMedia" value="${media.photo}"/>
-                  <c:forEach var="metaDataKey" items="${photoMedia.metaDataProperties}">
-                    <li class="field field_category media-name">
-                      <c:set var="metaData" value="${photoMedia.getMetaData(metaDataKey)}"/>
-                      <jsp:useBean id="metaData" type="com.silverpeas.gallery.model.MetaData"/>
-                      <label class="txtlibform"><c:out value="${metaData.label}"/> :</label>
-
-                      <div class="fieldInput">
-                        <c:out value="${metaData.date ? silfn:formatDateAndHour(metaData.dateValue, __userLanguage) : metaData.value}"/>
-                      </div>
-                    </li>
-                  </c:forEach>
-                </c:if>
-                <c:if test="${not empty media.keyWord}">
-                  <li class="field field_category media-name">
-                    <label class="txtlibform"><fmt:message key="gallery.keyword"/> :</label>
-
-                    <div class="fieldInput">
-                      <c:set var="delims" value=" "/>
-                      <c:forEach var="keyword" items="${silfn:splitOnWhitespace(media.keyWord)}">
-                        <a href="SearchKeyWord?SearchKeyWord=${keyword}"><c:out value="${keyword}"/></a>
-                      </c:forEach>
-                    </div>
-                  </li>
-                </c:if>
-              </ul>
-            </c:otherwise>
-          </c:choose>
-          <c:if test="${isEndLine}">
             </tr>
           </c:if>
-        </c:forEach>
-        <c:if test="${fn:length(mediaList) > nbMediaPerPage}">
-          <tr>
-            <td colspan="${nbMediaPerLine + textColumnCount}">&nbsp;</td>
-          </tr>
-          <tr class="intfdcolor4 pagination">
-            <td colspan="${nbMediaPerLine + textColumnCount}">
-              <view:pagination action="doPagination" actionIsJsFunction="${true}"
-                               currentPage="${currentPageIndex}"
-                               nbItemsPerPage="${nbMediaPerPage}" totalNumberOfItems="${fn:length(mediaList)}"/>
-            </td>
-          </tr>
-        </c:if>
-      </table>
-    </form>
-  </view:board>
+        </table>
+      </form>
+    </view:board>
+  </div>
 </c:if>

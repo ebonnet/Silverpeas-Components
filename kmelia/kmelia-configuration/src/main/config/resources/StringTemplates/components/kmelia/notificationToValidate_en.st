@@ -1,0 +1,1 @@
+Publication <b>$publicationName$</b> has to be validated.

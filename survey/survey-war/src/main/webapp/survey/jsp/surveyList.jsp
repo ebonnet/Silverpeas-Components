@@ -1,4 +1,6 @@
-<%--
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.browsebars.BrowseBar" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.GraphicElementFactory" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.operationpanes.OperationPane" %><%--
 
     Copyright (C) 2000 - 2013 Silverpeas
 
@@ -25,15 +27,6 @@
 --%>
 
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="javax.servlet.*"%>
-<%@ page import="javax.servlet.http.*"%>
-<%@ page import="javax.servlet.jsp.*"%>
-<%@ page import="java.io.PrintWriter"%>
-<%@ page import="java.io.IOException"%>
-<%@ page import="java.io.File"%>
-<%@ page import="java.io.FileInputStream"%>
-<%@ page import="java.io.ObjectInputStream"%>
-<%@ page import="java.beans.*"%>
 
 <%@ include file="checkSurvey.jsp"%>
 
@@ -63,10 +56,10 @@
   String pdcUtilizationSrc = "";
   String linkSrc = "";
   String m_context =
-      GeneralPropertiesManager.getGeneralResourceLocator().getString("ApplicationURL");
+      ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 
   ArrayPane buildSurveyArrayToAdmin(GraphicElementFactory gef, SurveySessionController surveyScc,
-      int view, Collection surveys, ResourcesWrapper resources,
+      int view, Collection surveys, MultiSilverpeasBundle resources,
       javax.servlet.ServletRequest request, javax.servlet.http.HttpSession session,
       boolean pollingStationMode) throws ParseException {
 
@@ -212,7 +205,7 @@
   }
 
   ArrayPane buildSurveyArrayToUser(GraphicElementFactory gef, SurveySessionController surveyScc,
-      int view, Collection surveys, ResourcesWrapper resources,
+      int view, Collection surveys, MultiSilverpeasBundle resources,
       javax.servlet.ServletRequest request, javax.servlet.http.HttpSession session,
       boolean pollingStationMode) throws ParseException {
 
@@ -305,7 +298,7 @@
   String action = (String) request.getParameter("Action");
   String profile = (String) request.getParameter("Profile");
   String iconsPath =
-      GeneralPropertiesManager.getGeneralResourceLocator().getString("ApplicationURL");
+      ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 
   //Icons
   lockSrc = iconsPath + "/util/icons/checkoutFile.gif";
@@ -414,7 +407,7 @@ function closeSurvey(surveyId) {
 }
 
 function clipboardPaste() {     
-	  top.IdleFrame.document.location.replace('../..<%=URLManager.getURL(URLManager.CMP_CLIPBOARD, null, null)%>paste?compR=RSurvey&SpaceFrom=<%=spaceId%>&ComponentFrom=<%=componentId%>&JSPPage=<%=response.encodeURL(URLEncoder.encode("surveyList", "UTF-8"))%>&TargetFrame=MyMain&message=REFRESH');
+	  top.IdleFrame.document.location.replace('../..<%=URLUtil.getURL(URLUtil.CMP_CLIPBOARD, null, null)%>paste?compR=RSurvey&SpaceFrom=<%=spaceId%>&ComponentFrom=<%=componentId%>&JSPPage=<%=response.encodeURL(URLEncoder.encode("surveyList", "UTF-8"))%>&TargetFrame=MyMain&message=REFRESH');
 	}
 
 function openSPWindow(fonction, windowName){
@@ -435,7 +428,7 @@ function openSPWindow(fonction, windowName){
     OperationPane operationPane = window.getOperationPane();
     if (SilverpeasRole.admin.toString().equals(profile) &&
         surveyScc.isPdcUsed()) {
-      operationPane.addOperation(pdcUtilizationSrc, resources.getString("GML.PDC"),
+      operationPane.addOperation(pdcUtilizationSrc, resources.getString("GML.PDCParam"),
           "javascript:openSPWindow('" + m_context + "/RpdcUtilization/jsp/Main?ComponentId=" +
           surveyScc.getComponentId() + "','utilizationPdc1')");
       operationPane.addLine();

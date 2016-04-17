@@ -29,17 +29,18 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view" %>
+<%@ taglib tagdir="/WEB-INF/tags/silverpeas/gallery" prefix="gallery" %>
 <%@ include file="check.jsp" %>
 <fmt:setLocale value="${requestScope.resources.language}"/>
 <view:setBundle bundle="${requestScope.resources.multilangBundle}"/>
 
-<view:setConstant var="TINY_RESOLUTION" constant="com.silverpeas.gallery.constant.MediaResolution.TINY"/>
+<view:setConstant var="TINY_RESOLUTION" constant="org.silverpeas.components.gallery.constant.MediaResolution.TINY"/>
 
 <c:set var="componentId" value="${requestScope.browseContext[3]}"/>
 <c:set var="root" value="${requestScope.root}"/>
-<jsp:useBean id="root" type="com.silverpeas.gallery.model.AlbumDetail"/>
+<jsp:useBean id="root" type="org.silverpeas.components.gallery.model.AlbumDetail"/>
 <c:set var="mediaList" value="${requestScope.MediaList}"/>
-<jsp:useBean id="mediaList" type="java.util.List<com.silverpeas.gallery.model.Media>"/>
+<jsp:useBean id="mediaList" type="java.util.List<org.silverpeas.components.gallery.model.Media>"/>
 
 <html>
 <head>
@@ -96,7 +97,8 @@
             <c:forEach var="media" items="${mediaList}">
               <div id="vignette">
                 <a href="javascript:onClick=goToImage('${media.id}')">
-                  <img src="${media.getApplicationThumbnailUrl(TINY_RESOLUTION)}" border="0" alt="<c:out value='${media.title}'/>" title="<c:out value='${media.title}'/>"></a>
+                  <gallery:displayMediaInAlbumContent media="${media}" mediaResolution="${TINY_RESOLUTION}" isPortletDisplay="true"/>
+                </a>
               </div>
             </c:forEach>
           </td>

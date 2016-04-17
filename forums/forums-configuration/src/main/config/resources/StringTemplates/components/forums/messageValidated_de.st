@@ -1,0 +1,1 @@
+$if(isSubject)$Ihr Motiv$else$Ihre Nachricht$endif$ <b>$title$</b> wurde validiert.

@@ -1,3 +1,4 @@
+<%@ page import="org.silverpeas.core.persistence.jdbc.DBUtil" %>
 <%--
 
     Copyright (C) 2000 - 2013 Silverpeas
@@ -29,7 +30,7 @@
 
 <html>
 <head>
-<view:looknfeel/>
+<view:looknfeel withCheckFormScript="true"/>
 <%
 	String login = myDBSC.getLogin();
 	if (login == null)
@@ -42,7 +43,6 @@
 		password = "";
 	}
 %>
-	<script type="text/javascript" src="<%=applicationURL%>/util/javaScript/checkForm.js"></script>
 	<script type="text/javascript">
 		function Driver(driverName, driverDescription, jdbcUrls)
 		{

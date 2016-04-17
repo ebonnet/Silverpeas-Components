@@ -35,15 +35,15 @@
 <view:setBundle bundle="${requestScope.resources.multilangBundle}"/>
 <view:setBundle bundle="${requestScope.resources.iconsBundle}" var="icons"/>
 
-<view:setConstant var="adminRole" constant="com.stratelia.webactiv.SilverpeasRole.admin"/>
-<view:setConstant var="publisherRole" constant="com.stratelia.webactiv.SilverpeasRole.publisher"/>
-<view:setConstant var="userRole" constant="com.stratelia.webactiv.SilverpeasRole.user"/>
+<view:setConstant var="adminRole" constant="org.silverpeas.core.admin.user.model.SilverpeasRole.admin"/>
+<view:setConstant var="publisherRole" constant="org.silverpeas.core.admin.user.model.SilverpeasRole.publisher"/>
+<view:setConstant var="userRole" constant="org.silverpeas.core.admin.user.model.SilverpeasRole.user"/>
 
-<view:setConstant var="SMALL_RESOLUTION" constant="com.silverpeas.gallery.constant.MediaResolution.SMALL"/>
-<view:setConstant var="PREVIEW_RESOLUTION" constant="com.silverpeas.gallery.constant.MediaResolution.PREVIEW"/>
+<view:setConstant var="SMALL_RESOLUTION" constant="org.silverpeas.components.gallery.constant.MediaResolution.SMALL"/>
+<view:setConstant var="PREVIEW_RESOLUTION" constant="org.silverpeas.components.gallery.constant.MediaResolution.PREVIEW"/>
 
 <c:set var="greaterUserRole" value="${requestScope.greaterUserRole}"/>
-<jsp:useBean id="greaterUserRole" type="com.stratelia.webactiv.SilverpeasRole"/>
+<jsp:useBean id="greaterUserRole" type="org.silverpeas.core.admin.user.model.SilverpeasRole"/>
 <c:set var="isPdcUsed" value="${requestScope.IsUsePdc}"/>
 <c:set var="isPrivateSearch" value="${requestScope.IsPrivateSearch}"/>
 <c:set var="isBasket" value="${requestScope.IsBasket}"/>
@@ -53,9 +53,9 @@
 
 <c:set var="componentId" value="${requestScope.browseContext[3]}"/>
 <c:set var="albumList" value="${requestScope.Albums}"/>
-<jsp:useBean id="albumList" type="java.util.List<com.silverpeas.gallery.model.AlbumDetail>"/>
+<jsp:useBean id="albumList" type="java.util.List<org.silverpeas.components.gallery.model.AlbumDetail>"/>
 <c:set var="mediaList" value="${requestScope.MediaList}"/>
-<jsp:useBean id="mediaList" type="java.util.List<com.silverpeas.gallery.model.Media>"/>
+<jsp:useBean id="mediaList" type="java.util.List<org.silverpeas.components.gallery.model.Media>"/>
 
 <c:set var="nbPerLine" value="${5}"/>
 
@@ -89,10 +89,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <view:looknfeel/>
+  <view:looknfeel withCheckFormScript="true"/>
   <view:includePlugin name="qtip"/>
   <script type="text/javascript" src="<c:url value="/util/javaScript/lucene/luceneQueryValidator.js"/>"></script>
-  <script type="text/javascript" src="<c:url value="/util/javaScript/checkForm.js"/>"></script>
   <script type="text/javascript" src="<c:url value="/util/javaScript/jquery/jquery.cookie.js"/>"></script>
   <script type="text/javascript">
 <c:if test="${greaterUserRole.isGreaterThanOrEquals(adminRole)}">
@@ -182,7 +181,7 @@ function checkLuceneQuery(query) {
 }
   </script>
 <c:if test="${not empty mediaList}">
-  <gallery:handlePhotoPreview jquerySelector="${'.mediaPreview'}"/>
+  <gallery:handleMediaPreview jquerySelector="${'.mediaPreview'}"/>
 </c:if>
 </head>
 <body>
@@ -291,18 +290,8 @@ function checkLuceneQuery(query) {
                         <table cellspacing="1" cellpadding="3" border="0" class="cadrePhoto">
                           <tr>
                             <td>
-                              <c:set var="classPreview" value="mediaPreview" />
-                              <c:set var="thumbnailUrl" value="${media.getApplicationThumbnailUrl(PREVIEW_RESOLUTION)}"/>
-                              <c:if test="${media.type.video}">
-                                <c:if test="${fn:contains(thumbnailUrl, '/thumbnail/') }">
-                                  <img class="type-media" src="<c:url value="/gallery/jsp/icons/video_66x50.png"/>" />
-                                </c:if>
-                                <c:set var="classPreview" value="mediaPreview videoPreview" />
-                              </c:if>
                               <a href="MediaView?MediaId=${media.id}">
-                                <img id="imgId_${media.id}" class="mediaPreview videoPreview" width="${SMALL_RESOLUTION.width}"
-                                     tipTitle="<c:out value="${media.title}"/>" tipUrl="${thumbnailUrl}"
-                                     src="${media.getApplicationThumbnailUrl(SMALL_RESOLUTION)}" border="0" alt="<c:out value='${media.title}'/>"/>
+                                <gallery:displayMediaInAlbumContent media="${media}" mediaResolution="${SMALL_RESOLUTION}"/>
                               </a>
                             </td>
                           </tr>

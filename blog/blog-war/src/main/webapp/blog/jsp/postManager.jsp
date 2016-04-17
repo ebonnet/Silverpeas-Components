@@ -25,7 +25,8 @@
 --%>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"
 	isELIgnored="false"%>
-<%@ taglib tagdir="/WEB-INF/tags/silverpeas/util" prefix="viewTags" %>	
+<%@ taglib tagdir="/WEB-INF/tags/silverpeas/util" prefix="viewTags" %>
+<%@ page import="org.silverpeas.components.blog.model.PostDetail" %>
 <%@ include file="check.jsp" %>
 
 <%
@@ -39,7 +40,7 @@
 <view:setBundle bundle="${requestScope.resources.iconsBundle}" var="icons" />
 
 <% 
-	PostDetail 	post			= (PostDetail) request.getAttribute("Post"); //never null
+	PostDetail post			= (PostDetail) request.getAttribute("Post"); //never null
 	Collection<NodeDetail> 	categories		= (Collection) request.getAttribute("AllCategories");
 	UserDetail  updater			= (UserDetail) request.getAttribute("Updater");
 	
@@ -70,12 +71,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title><fmt:message key="GML.popupTitle"/></title>
-	<link type="text/css" href="<%=m_context%>/util/styleSheets/fieldset.css" rel="stylesheet" />
-    <view:looknfeel/>
+    <view:looknfeel withFieldsetStyle="true" withCheckFormScript="true"/>
     <view:includePlugin name="datepicker"/>
     <view:includePlugin name="wysiwyg"/>
-	<script type="text/javascript" src="<%=m_context%>/util/javaScript/checkForm.js"></script>
-	
+
 	<fmt:message var="GML_title" key="GML.title"/>
 	<fmt:message var="GML_MustBeFilled" key="GML.MustBeFilled"/>
 	<fmt:message var="GML_ThisFormContains" key="GML.ThisFormContains"/>
@@ -143,7 +142,7 @@
 		}
 		
 		$(document).ready(function() {
-			<view:wysiwyg replace="Content" language="${language}" width="90%" height="300" toolbar="blog" 
+			<view:wysiwyg replace="editor" language="${language}" width="90%" height="300" toolbar="blog"
 				spaceId="<%=spaceId%>" spaceName="<%=spaceLabel%>" componentId="<%=instanceId%>" componentName="<%=componentLabel%>" 
 				browseInfo="<%=title%>" objectId="<%=post.getId()%>" />
 		
@@ -198,18 +197,18 @@
     </div>
     
     <div class="field" id="contentArea">
-		<label for="Content" class="txtlibform"><fmt:message key="blog.content"/></label>
+		<label for="editor" class="txtlibform"><fmt:message key="blog.content"/></label>
 		<div class="champs">
 			
 			<div class="container-wysiwyg wysiwyg-fileStorage">
 			
    				<viewTags:displayToolBarWysiwyg
-			        editorName="Content"
+			        editorName="editor"
 			        componentId="<%=instanceId%>" 
 			        objectId="<%=post.getId()%>" />
 			</div>
 			
-			<textarea rows="5" cols="10" name="Content" id="Content"><c:out value="<%=content%>" escapeXml="true"/></textarea>
+			<textarea rows="5" cols="10" name="editor" id="editor"><c:out value="<%=content%>" escapeXml="true"/></textarea>
 		</div>
 	</div>
     
@@ -270,7 +269,9 @@
     } else if ("UpdatePost".equals(action) && PublicationDetail.VALID.equals(post.getPublication().getStatus())) {
     %>
 		<view:button action="javascript:onClick=sendData();" disabled="false"
-                   label="${validateLabel}"/>
+                   label="${validateLabel}">
+      <view:confirmComponentSubscriptionNotificationSending jsValidationCallbackMethodName="isCorrectForm"/>
+		</view:button>
     <%
     }
     %>

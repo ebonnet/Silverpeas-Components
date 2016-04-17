@@ -33,7 +33,7 @@ response.setDateHeader ("Expires",-1); //prevents caching at the proxy server
 
 <%@ include file="checkQuizz.jsp" %>
 <%
-String m_context = GeneralPropertiesManager.getString("ApplicationURL");
+String m_context = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 %>
 <html>
 <head>
@@ -76,7 +76,7 @@ Vector infos(JspWriter out, Collection<Question> Questions, String questionId)  
   String quizz_id = (String) request.getParameter("quizz_id");
 
   //get SessionController, Language & Settings
-  ResourceLocator settings = quizzScc.getSettings();
+  SettingBundle settings = quizzScc.getSettings();
   
   //Get Space, component, and current quizz_id 
   String space = quizzScc.getSpaceLabel();
@@ -90,6 +90,7 @@ Vector infos(JspWriter out, Collection<Question> Questions, String questionId)  
 
   //objet window
   Window window = gef.getWindow();
+  window.setPopup(true);
   window.setWidth("100%");
   window.printBefore();
 

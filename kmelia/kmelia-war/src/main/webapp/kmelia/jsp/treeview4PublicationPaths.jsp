@@ -27,13 +27,13 @@
 
 <%@ page import="java.util.List"%>
 <%@ page import="java.util.Iterator"%>
-<%@ page import="com.stratelia.webactiv.util.node.model.NodeDetail"%>
-<%@ page import="com.stratelia.webactiv.util.publication.model.Alias" %>
-<%@ page import="com.stratelia.silverpeas.util.ResourcesWrapper"%>
-<%@ page import="com.silverpeas.util.EncodeHelper" %>
+<%@ page import="org.silverpeas.core.node.model.NodeDetail"%>
+<%@ page import="org.silverpeas.core.contribution.publication.model.Alias" %>
+<%@ page import="org.silverpeas.core.util.MultiSilverpeasBundle"%>
+<%@ page import="org.silverpeas.core.util.EncodeHelper" %>
 
 <%
-ResourcesWrapper resources = (ResourcesWrapper)request.getAttribute("resources");
+MultiSilverpeasBundle resources = (MultiSilverpeasBundle)request.getAttribute("resources");
 
 List 	otherTree 	= (List) request.getAttribute("Tree");
 String	currentLang = (String) request.getAttribute("Language");

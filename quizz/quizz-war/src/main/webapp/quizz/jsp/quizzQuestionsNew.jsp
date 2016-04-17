@@ -24,18 +24,25 @@
 
 --%>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
+<%@ page buffer="16kb" %>
 <%
 response.setHeader("Cache-Control","no-store"); //HTTP 1.1
 response.setHeader("Pragma","no-cache"); //HTTP 1.0
 response.setDateHeader ("Expires",-1); //prevents caching at the proxy server
 %>
 
-<jsp:useBean id="quizzUnderConstruction" scope="session" class="com.stratelia.webactiv.util.questionContainer.model.QuestionContainerDetail" />
+<jsp:useBean id="quizzUnderConstruction" scope="session" class="org.silverpeas.core.questioncontainer.container.model.QuestionContainerDetail" />
 <jsp:useBean id="questionsVector" scope="session" class="java.util.ArrayList" />
 <jsp:useBean id="questionsResponses" scope="session" class="java.util.HashMap" />
 
 <%@ include file="checkQuizz.jsp" %>
+<%@ page import="org.silverpeas.core.persistence.jdbc.DBUtil" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.GraphicElementFactory" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.board.Board" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.buttons.Button" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.operationpanes.OperationPane" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.frame.Frame" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.window.Window" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -46,7 +53,7 @@ response.setDateHeader ("Expires",-1); //prevents caching at the proxy server
 <%
 String    profile     = (String) request.getAttribute("Profile");
 
-String m_context = GeneralPropertiesManager.getString("ApplicationURL");
+String m_context = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 
 String exportSrc = m_context + "/util/icons/export.gif";
 String copySrc = m_context + "util/icons/copy.gif";
@@ -54,7 +61,7 @@ String copySrc = m_context + "util/icons/copy.gif";
 
 <%!
 //Display the quizz header
-String displayQuizzHeader(QuizzSessionController quizzScc, QuestionContainerHeader quizzHeader, ResourcesWrapper resources, GraphicElementFactory gef) {
+String displayQuizzHeader(QuizzSessionController quizzScc, QuestionContainerHeader quizzHeader, MultiSilverpeasBundle resources, GraphicElementFactory gef) {
   String title = quizzHeader.getTitle();
   String description = quizzHeader.getDescription();
   String comment = quizzHeader.getComment();
@@ -77,7 +84,7 @@ String displayQuizzHeader(QuizzSessionController quizzScc, QuestionContainerHead
   return r;
 }
 
-String displayQuizz(QuestionContainerDetail quizz, GraphicElementFactory gef, String m_context, QuizzSessionController quizzScc, ResourcesWrapper resources, ResourceLocator settings, JspWriter out) throws QuizzException {
+String displayQuizz(QuestionContainerDetail quizz, GraphicElementFactory gef, String m_context, QuizzSessionController quizzScc, MultiSilverpeasBundle resources, SettingBundle settings, JspWriter out) throws QuizzException {
   String r = "";
   Question question = null;
   Collection<Answer> answers = null;
@@ -112,7 +119,7 @@ String displayQuizz(QuestionContainerDetail quizz, GraphicElementFactory gef, St
   return r;
 }
 
-List<String> displayQuestions(QuestionContainerDetail quizz, int roundId,GraphicElementFactory gef, String m_context,QuizzSessionController quizzScc, ResourcesWrapper resources, ResourceLocator settings, Frame frame, JspWriter out) throws QuizzException {
+List<String> displayQuestions(QuestionContainerDetail quizz, int roundId,GraphicElementFactory gef, String m_context,QuizzSessionController quizzScc, MultiSilverpeasBundle resources, SettingBundle settings, Frame frame, JspWriter out) throws QuizzException {
   String r = "";
   String s = "";
   Question question = null;
@@ -182,7 +189,7 @@ List<String> displayQuestions(QuestionContainerDetail quizz, int roundId,Graphic
   return displayQuestions;
 }
 
-String displayQuestion(QuizzSessionController quizzScc, Question question, int i, String m_context, ResourceLocator settings, GraphicElementFactory gef, ResourcesWrapper resources) {
+String displayQuestion(QuizzSessionController quizzScc, Question question, int i, String m_context, SettingBundle settings, GraphicElementFactory gef, MultiSilverpeasBundle resources) {
   Collection<Answer> answers = question.getAnswers();
   Board board = gef.getBoard();
   String r = "";
@@ -290,7 +297,7 @@ String displayQuestion(QuizzSessionController quizzScc, Question question, int i
 }
 
 
-List<String> displayQuestionResult(QuestionContainerDetail quizz, Question question, int i, String m_context, ResourceLocator settings, QuizzSessionController quizzScc, boolean solutionAllowed, ResourcesWrapper resources) {
+List<String> displayQuestionResult(QuestionContainerDetail quizz, Question question, int i, String m_context, SettingBundle settings, QuizzSessionController quizzScc, boolean solutionAllowed, MultiSilverpeasBundle resources) {
 
   Collection<Answer> answers = question.getAnswers();
   Collection<QuestionResult> questionResults = question.getQuestionResults();
@@ -406,7 +413,6 @@ List<String> displayQuestionResult(QuestionContainerDetail quizz, Question quest
 		}
 		r += "</table></td></tr></table>";
 	} catch (NumberFormatException e) {
-		SilverTrace.info("Quizz","quizzQuestionsNew_JSP.displayQuestionResult","Quizz.EX_BAD_NUMBER_FORMAT");
 	}
 	displayQuestionResult.add(r);
 	displayQuestionResult.add(Integer.toString(questionUserScore));
@@ -415,7 +421,7 @@ List<String> displayQuestionResult(QuestionContainerDetail quizz, Question quest
 	return displayQuestionResult;
 }
 
-String displayQuizzHeaderPreview(QuizzSessionController quizzScc, QuestionContainerHeader quizzHeader, ResourcesWrapper resources, GraphicElementFactory gef) {
+String displayQuizzHeaderPreview(QuizzSessionController quizzScc, QuestionContainerHeader quizzHeader, MultiSilverpeasBundle resources, GraphicElementFactory gef) {
   Board board = gef.getBoard();
 	String title = EncodeHelper.javaStringToHtmlString(quizzHeader.getTitle());
   String description = EncodeHelper.javaStringToHtmlParagraphe(quizzHeader.getDescription());
@@ -439,7 +445,7 @@ String displayQuizzHeaderPreview(QuizzSessionController quizzScc, QuestionContai
 
 
 
-String displayQuizzPreview(QuestionContainerDetail quizz, GraphicElementFactory gef, String m_context,QuizzSessionController quizzScc, ResourcesWrapper resources, ResourceLocator settings) throws QuizzException {
+String displayQuizzPreview(QuestionContainerDetail quizz, GraphicElementFactory gef, String m_context,QuizzSessionController quizzScc, MultiSilverpeasBundle resources, SettingBundle settings) throws QuizzException {
   String r = "";
   Question question = null;
   try{
@@ -451,8 +457,7 @@ String displayQuizzPreview(QuestionContainerDetail quizz, GraphicElementFactory 
 			r += displayQuizzHeaderPreview(quizzScc, quizzHeader,resources, gef);
 
 			//Display the questions
-			r += "<form name=\"quizz\" Action=\"quizzQuestionsNew.jsp\" Method=\"Post\">";
-			r += "<input type=\"hidden\" name=\"Action\" value=\"SubmitQuizz\">";
+			r += "<form name=\"quizz\" Action=\"SubmitQuizz\" Method=\"Post\">";
 			Iterator<Question> itQ = questions.iterator();
 			int i = 1;
 			while (itQ.hasNext()) {
@@ -473,7 +478,7 @@ String displayQuizzPreview(QuestionContainerDetail quizz, GraphicElementFactory 
 }
 
 
-String displayQuestionPreview(Question question, int i, String m_context, QuizzSessionController quizzScc,ResourceLocator settings, GraphicElementFactory gef, ResourcesWrapper resources) {
+String displayQuestionPreview(Question question, int i, String m_context, QuizzSessionController quizzScc,SettingBundle settings, GraphicElementFactory gef, MultiSilverpeasBundle resources) {
         Collection<Answer> answers = question.getAnswers();
         Board board = gef.getBoard();
         String r = "<br>";
@@ -547,7 +552,7 @@ String displayQuestionPreview(Question question, int i, String m_context, QuizzS
         return r;
 }
 
-String displayQuizzResult(QuestionContainerDetail quizz, GraphicElementFactory gef, String m_context,QuizzSessionController quizzScc, ResourcesWrapper resources, ResourceLocator settings, int nb_user_votes) throws QuizzException {
+String displayQuizzResult(QuestionContainerDetail quizz, GraphicElementFactory gef, String m_context,QuizzSessionController quizzScc, MultiSilverpeasBundle resources, SettingBundle settings, int nb_user_votes) throws QuizzException {
         String r = "";
         List<String> function = null;
         int quizzUserScore = 0;
@@ -623,7 +628,7 @@ String displayQuizzResult(QuestionContainerDetail quizz, GraphicElementFactory g
 		return r;
 }
 
-  String displayQuizzResultAdmin(QuestionContainerDetail quizz, GraphicElementFactory gef, String m_context,QuizzSessionController quizzScc, ResourcesWrapper resources, ResourceLocator settings, int nb_user_votes) throws QuizzException {
+  String displayQuizzResultAdmin(QuestionContainerDetail quizz, GraphicElementFactory gef, String m_context,QuizzSessionController quizzScc, MultiSilverpeasBundle resources, SettingBundle settings, int nb_user_votes) throws QuizzException {
         String r = "";
         List<String> function = null;
         int quizzUserScore = 0;
@@ -709,7 +714,7 @@ if (roundId == null) {
 if (participationIdSTR != null) {
   session.setAttribute("currentParticipationId", participationIdSTR);
 }
-ResourceLocator settings = quizzScc.getSettings();
+SettingBundle settings = quizzScc.getSettings();
 
 //Icons
 String topicAddSrc = m_context + "/util/icons/folderAdd.gif";
@@ -722,7 +727,7 @@ QuestionContainerDetail quizz = null;
 
 boolean isClosed = false;
 
-if (action.equals("PreviewQuizz") || action.equals("SubmitQuizz")) {
+if (action.equals("PreviewQuizz")) {
       quizz = (QuestionContainerDetail) session.getAttribute("quizzUnderConstruction");
 }
 else {
@@ -755,14 +760,12 @@ else {
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title></title>
-<link type="text/css" href="<%=m_context%>/util/styleSheets/fieldset.css" rel="stylesheet" />
-<view:looknfeel />
+<view:looknfeel withFieldsetStyle="true" withCheckFormScript="true"/>
 <style type="text/css">
 .thumbnailPreviewAndActions {
   display: none;
 }
 </style>
-<script type="text/javascript" src="<%=m_context%>/util/javaScript/checkForm.js"></script>
 <script type="text/javascript">
 <!--
 function confirmCancel()
@@ -777,7 +780,7 @@ function update_suggestion(quizz_id)
    document.quizz.Action.value="UpdateSuggestion";
    if (!isWhitespace(document.quizz.txa_suggestion.value)) {
       if (!isValidTextArea(document.quizz.txa_suggestion)) {
-            errorMsg = "<%=resources.getString("GML.ThisFormContain")%> 1 <%=resources.getString("GML.error")%> : \n";
+            errorMsg = "<%=resources.getString("GML.ThisFormContains")%> 1 <%=resources.getString("GML.error")%> : \n";
             errorMsg += "  - <%=resources.getString("GML.theField")%> '<%=resources.getString("EducationSuggestion")%>' <%=resources.getString("MustContainsLessCar")%> <%=DBUtil.getTextAreaLength()%> <%=resources.getString("Caracters")%>\n";
             window.alert(errorMsg);
             return;
@@ -905,23 +908,8 @@ if (action.equals("RecordQuestionsResponses")) {
   quizzScc.recordReply(quizzId, hash);
   action = "ViewResult";
 } //End if action = ViewResult
-if (action.equals("SubmitQuizz")) {
-  QuestionContainerDetail quizzDetail = (QuestionContainerDetail) session.getAttribute("quizzUnderConstruction");
-  //Vector 2 Collection
-  List questionsV = (List) session.getAttribute("questionsVector");
-  List<Question> q = new ArrayList<Question>();
-  for (int j = 0; j < questionsV.size(); j++) {
-        q.add((Question) questionsV.get(j));
-  }
-  quizzDetail.setQuestions(q);
-  quizzScc.createQuizz(quizzDetail);
-  session.removeAttribute("quizzUnderConstruction");
-  quizzScc.setPositions(null);
-  %>
-  <jsp:forward page='<%=quizzScc.getComponentUrl()+"Main.jsp"%>'/>
-  <%
-  return;
-} else if (action.equals("PreviewQuizz")) {
+
+if (action.equals("PreviewQuizz")) {
     out.println("<body marginheight=5 marginwidth=5 leftmargin=5 topmargin=5 bgcolor=\"#FFFFFF\">");
 
     Window window = gef.getWindow();

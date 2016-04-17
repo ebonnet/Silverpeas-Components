@@ -36,9 +36,9 @@
   response.setDateHeader("Expires", -1); //prevents caching at the proxy server
 %>
 
-<fmt:setLocale value="${sessionScope[sessionController].language}" />
-<view:setBundle basename="com.stratelia.webactiv.kmelia.multilang.kmeliaBundle"/>
-<view:setBundle basename="com.stratelia.silverpeas.pdcPeas.multilang.pdcBundle" var="pdcBundle"/>
+<fmt:setLocale value="${sessionScope['SilverSessionController'].favoriteLanguage}" />
+<view:setBundle basename="org.silverpeas.kmelia.multilang.kmeliaBundle"/>
+<view:setBundle basename="org.silverpeas.pdcPeas.multilang.pdcBundle" var="pdcBundle"/>
 <fmt:message key="GML.validate" var="done"/>
 <fmt:message key="kmelia.publiClassification" var="classification"/>
 <c:set var="importedPublications" value="${requestScope['PublicationsDetails']}"/>
@@ -50,8 +50,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title><c:out value="${classification}"/></title>
-    <link type="text/css" href="<c:url value='/util/styleSheets/fieldset.css'/>" rel="stylesheet" />
-    <view:looknfeel />
+    <view:looknfeel withFieldsetStyle="true"/>
     <script type="text/javascript" src="<c:url value='/util/javaScript/silverpeas-pdc-widgets.js'/>"></script>
     <script type="text/javascript">
       //<![CDATA[
@@ -407,7 +406,7 @@
   </head>
   <body>
     <view:browseBar clickable="false" path="${classification}"/>
-    <view:window browseBarVisible="true">
+    <view:window browseBarVisible="true" popup="true">
       <view:frame>
 		<c:choose>
           <c:when test="${message == null}">

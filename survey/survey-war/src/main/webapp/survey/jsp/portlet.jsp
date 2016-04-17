@@ -26,16 +26,6 @@
 
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view"%>
-<%@ page import="javax.servlet.*"%>
-<%@ page import="javax.servlet.http.*"%>
-<%@ page import="javax.servlet.jsp.*"%>
-<%@ page import="java.io.PrintWriter"%>
-<%@ page import="java.io.IOException"%>
-<%@ page import="java.io.File"%>
-<%@ page import="java.io.FileInputStream"%>
-<%@ page import="java.io.ObjectInputStream"%>
-<%@ page import="java.util.Vector"%>
-<%@ page import="java.beans.*"%>
 
 <%@ include file="checkSurvey.jsp" %>
 
@@ -60,7 +50,7 @@ if (action != null) {
     action_prev = action;
 }
 
-String iconsPath = GeneralPropertiesManager.getString("ApplicationURL");
+String iconsPath = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 
 //Icons
 lockSrc = iconsPath + "/util/icons/lock.gif";
@@ -101,7 +91,7 @@ surveyScc.removeSessionSurveyUnderConstruction();
 surveyScc.removeSessionSurvey();
 surveyScc.removeSessionResponses();
 
-ResourceLocator message = new ResourceLocator("org.silverpeas.survey.multilang.surveyBundle", surveyScc.getLanguage());
+LocalizationBundle message = ResourceLocator.getLocalizationBundle("org.silverpeas.survey.multilang.surveyBundle", surveyScc.getLanguage());
 
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

@@ -1,4 +1,6 @@
-<%--
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.tabs.TabbedPane" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.frame.Frame" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.window.Window" %><%--
 
     Copyright (C) 2000 - 2013 Silverpeas
 
@@ -33,7 +35,7 @@ response.setDateHeader ("Expires",-1); //prevents caching at the proxy server
 
 <%@ include file="checkQuizz.jsp" %>
 
-<jsp:useBean id="currentQuizz" scope="session" class="com.stratelia.webactiv.util.questionContainer.model.QuestionContainerDetail" />
+<jsp:useBean id="currentQuizz" scope="session" class="org.silverpeas.core.questioncontainer.container.model.QuestionContainerDetail" />
 <jsp:useBean id="currentParticipationId" scope="session" class="java.lang.String" />
 
 <%!
@@ -56,7 +58,7 @@ response.setDateHeader ("Expires",-1); //prevents caching at the proxy server
 %>
 
 <%
-String m_context = GeneralPropertiesManager.getString("ApplicationURL");
+String m_context = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 
 String spaceId = quizzScc.getSpaceId();
 String componentId = quizzScc.getComponentId();
@@ -77,8 +79,7 @@ function goto_jsp(jsp) {
   session.removeAttribute("currentQuizz");
   session.removeAttribute("questionsResponses");
 
-  ResourceLocator settings = quizzScc.getSettings();
-  // orig beaujolais ResourceLocator messages = quizzScc.getMessage();
+  SettingBundle settings = quizzScc.getSettings();
   String space = quizzScc.getSpaceLabel();
   String component = quizzScc.getComponentLabel(); 
 

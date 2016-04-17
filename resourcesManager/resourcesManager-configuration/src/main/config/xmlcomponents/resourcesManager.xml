@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2000 - 2013 Silverpeas
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    As a special exception to the terms and conditions of version 3.0 of
+    the GPL, you may redistribute this Program in connection with Free/Libre
+    Open Source Software ("FLOSS") applications as described in Silverpeas's
+    FLOSS exception.  You should have recieved a copy of the text describing
+    the FLOSS exception, and it is also available here:
+    "http://www.silverpeas.org/docs/core/legal/floss_exception.html"
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+<WAComponent xmlns="http://silverpeas.org/xml/ns/component" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://silverpeas.org/xml/ns/component http://www.silverpeas.org/xsd/component.xsd">
+  <name>resourcesManager</name>
+  <label>
+    <message lang="fr">Gestion de ressources</message>
+    <message lang="en">Resources manager</message>
+    <message lang="de">Ressourcen-Manager</message>
+  </label>
+  <description>
+    <message lang="fr">L’application permet de gérer des ressources (salles,
+		véhicules, matériel informatique...). Les utilisateurs créent des réservations sur
+		une ou plusieurs ressources. Seules les ressources disponibles aux dates demandées
+		sont proposées. Un système de validation est activable.
+	</message>
+    <message lang="en">This application manages physical resources and how to book them.</message>
+    <message lang="de">Diese Komponente verwaltet physische Ressourcen und wie man diese buchen kann.</message>
+  </description>
+  <suite>
+    <message lang="fr">02 Gestion Collaborative</message>
+    <message lang="en">02 Collaborative Management</message>
+    <message lang="de">02 kollaborative Verwaltung</message>
+  </suite>
+  <visible>true</visible>
+  <portlet>false</portlet>
+  <profiles>
+    <profile name="admin">
+      <label>
+        <message lang="fr">Gestionnaires</message>
+        <message lang="en">Administrators</message>
+        <message lang="de">Administrator</message>
+      </label>
+      <help>
+        <message lang="fr">Les gestionnaires créent les catégories et les ressources.</message>
+        <message lang="en">Administrators create categories and resources.</message>
+        <message lang="de">Administrator</message>
+      </help>
+    </profile>
+    <profile name="responsable">
+      <label>
+        <message lang="fr">Responsables</message>
+        <message lang="en">Managers</message>
+        <message lang="de">Verwalter</message>
+      </label>
+      <help>
+        <message lang="fr">Les responsables valident les réservations.</message>
+        <message lang="en">Managers validate when a reader book a resource.</message>
+        <message lang="de">Verwalter</message>
+      </help>
+    </profile>
+    <profile name="publisher">
+      <label>
+        <message lang="fr">Lecteurs</message>
+        <message lang="en">Readers</message>
+        <message lang="de">Leser</message>
+      </label>
+      <help>
+        <message lang="fr">Les lecteurs créent des événements et réservent les ressources nécessaires.</message>
+        <message lang="en">Readers create events and book necessary resources.</message>
+        <message lang="de">Leser</message>
+      </help>
+    </profile>
+  </profiles>
+  <parameters>
+    <parameter>
+      <name>defaultDisplay</name>
+      <label>
+        <message lang="fr">Par défaut, afficher</message>
+        <message lang="en">By default, display</message>
+        <message lang="de">By default, display</message>
+      </label>
+      <order>1</order>
+      <mandatory>true</mandatory>
+      <value>allReservations</value>
+      <options>
+        <option>
+          <name>
+            <message lang="fr">toutes les réservations</message>
+            <message lang="en">all reservations</message>
+            <message lang="de">all reservations</message>
+          </name>
+          <value>allReservations</value>
+        </option>
+        <option>
+          <name>
+            <message lang="fr">réservations de l'utilisateur</message>
+            <message lang="en">reservations of user</message>
+            <message lang="de">reservations of user</message>
+          </name>
+          <value>myReservation</value>
+        </option>
+      </options>
+      <type>select</type>
+      <updatable>always</updatable>
+      <help>
+        <message lang="fr">Permet de définir l'affichage par défaut lorsque l'utilisateur arrive sur l'application.</message>
+        <message lang="en">Sets the default display when the user enters the application.</message>
+        <message lang="de">Sets the default display when the user enters the application.</message>
+      </help>
+    </parameter>
+    <parameter>
+      <name>comments</name>
+      <label>
+        <message lang="fr">Commentaires</message>
+        <message lang="en">Comments</message>
+        <message lang="de">Kommentare</message>
+      </label>
+      <order>2</order>
+      <mandatory>true</mandatory>
+      <value>yes</value>
+      <type>checkbox</type>
+      <updatable>always</updatable>
+      <help>
+        <message lang="fr">Les lecteurs peuvent laisser des commentaires sur les ressources.</message>
+        <message lang="en">Readers are able to post comments on resource.</message>
+        <message lang="de">Leser können Kommentare zu Ressourcen posten.</message>
+      </help>
+    </parameter>
+    <parameter>
+      <name>weekendNotVisible</name>
+      <label>
+        <message lang="fr">Masquer les week-ends</message>
+        <message lang="en">Hide week-ends</message>
+        <message lang="de">Wochenenden Verstecken</message>
+      </label>
+      <order>3</order>
+      <mandatory>true</mandatory>
+      <value>no</value>
+      <type>checkbox</type>
+      <updatable>always</updatable>
+      <help>
+        <message lang="fr">Permet d'alléger l'interface et d'optimiser l'affichage du reste de la semaine.</message>
+        <message lang="en">Optimize the GUI by not displaying week-ends.</message>
+        <message lang="de">Erlaubt es, das Interface leichter zu machen und das Anzeigen des Restes der Woche zu optimieren</message>
+      </help>
+    </parameter>
+  </parameters>
+</WAComponent>

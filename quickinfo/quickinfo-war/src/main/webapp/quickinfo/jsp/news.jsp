@@ -24,6 +24,8 @@
 
 --%>
 <%@page import="org.silverpeas.components.quickinfo.model.News"%>
+<%@page import="org.silverpeas.core.admin.user.model.SilverpeasRole" %>
+<%@ page import="org.silverpeas.core.util.URLUtil" %>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -35,15 +37,21 @@
 <view:setBundle bundle="${requestScope.resources.multilangBundle}" />
 
 <c:set var="news" value="${requestScope['News']}"/>
+<jsp:useBean id="news" type="org.silverpeas.components.quickinfo.model.News"/>
 <c:set var="role" value="${requestScope['Role']}"/>
+<jsp:useBean id="role" type="java.lang.String"/>
+<c:set var="greatestUserRole" value="<%=SilverpeasRole.from(role)%>"/>
+<jsp:useBean id="greatestUserRole" type="org.silverpeas.core.admin.user.model.SilverpeasRole"/>
 <c:set var="contributor" value="${role == 'admin' || role == 'publisher'}"/>
 <c:set var="userId" value="${sessionScope['SilverSessionController'].userId}"/>
 <c:set var="appSettings" value="${requestScope['AppSettings']}"/>
-<c:set var="viewOnly" value="${requestScope['ViewOnly']}"/>
+<c:set var="viewOnly" value="${not empty requestScope['ViewOnly'] ? requestScope['ViewOnly'] : false}"/>
+<jsp:useBean id="viewOnly" type="java.lang.Boolean"/>
 
 <%@ include file="checkQuickInfo.jsp" %>
 <%
-pageContext.setAttribute("componentURL", URLManager.getFullApplicationURL(request)+URLManager.getURL("useless", componentId), PageContext.PAGE_SCOPE);
+pageContext.setAttribute("componentURL", URLUtil.getFullApplicationURL(request)+
+		URLUtil.getURL("useless", componentId), PageContext.PAGE_SCOPE);
 %>
 <c:set var="componentURL" value="${pageScope.componentURL}"/>
 
@@ -105,13 +113,14 @@ function submitOnHomepage() {
 	</c:if>
 </view:operationPane>
 </c:if>
-<view:window>
+<view:window popup="${viewOnly}">
 
 <!--INTEGRATION  UNE ACTU -->
 <div class="rightContent">
 	<c:if test="${not empty news.thumbnail}">
 		<div id="illustration"><view:image src="${news.thumbnail.URL}" alt="" size="350x"/></div>
 	</c:if>
+
 	<div class="bgDegradeGris" id="actualityInfoPublication">
 		<c:if test="${not news.draft}">
 			<p id="statInfo">
@@ -130,10 +139,19 @@ function submitOnHomepage() {
 			<input type="text" value="${pageContext.request.scheme}://${header['host']}<c:url value="/Publication/${news.publicationId}"/>" onmouseup="return false" onfocus="select();" />
 		</p>
 	</div>
+
+  <%-- Attachments --%>
+  <c:set var="callbackUrl"><%=
+	URLUtil.getURL("useless", news.getComponentInstanceId()) + (viewOnly ? "ViewOnly" : "View") + "?Id=" + news.getId()%></c:set>
+  <c:set var="greatestUserRoleForAttachments" value="<%=greatestUserRole == SilverpeasRole.user ? SilverpeasRole.user : SilverpeasRole.admin%>"/>
+  <viewTags:displayAttachments componentInstanceId="${news.componentInstanceId}"
+                               resourceId="${news.publicationId}"
+                               greatestUserRole="${greatestUserRoleForAttachments}"
+                               reloadCallbackUrl="${callbackUrl}"/>
                           
-    <viewTags:displayLastUserCRUD createDate="${news.createDate}" createdById="${news.createdBy}" updateDate="${news.updateDate}" updatedById="${news.updaterId}" publishDate="${news.onlineDate}" publishedById="${news.publishedBy}"/>
+  <viewTags:displayLastUserCRUD createDate="${news.createDate}" createdById="${news.createdBy}" updateDate="${news.updateDate}" updatedById="${news.updaterId}" publishDate="${news.onlineDate}" publishedById="${news.publishedBy}"/>
     
-    <view:pdcClassificationPreview componentId="${news.componentInstanceId}" contentId="${news.publicationId}" />
+  <view:pdcClassificationPreview componentId="${news.componentInstanceId}" contentId="${news.publicationId}" />
 </div>
 
 <div class="principalContent" >
@@ -163,7 +181,7 @@ function submitOnHomepage() {
 		${news.content}
 	</div>
     
-    <c:if test="${appSettings.commentsEnabled}">
+    <c:if test="${appSettings.commentsEnabled && not viewOnly}">
 		<view:comments userId="${userId}" componentId="${news.componentInstanceId}" resourceType="<%=News.CONTRIBUTION_TYPE %>" resourceId="${news.id}" indexed="true"/>
 	</c:if>
 </div>

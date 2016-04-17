@@ -1,4 +1,5 @@
-<%--
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.iconpanes.IconPane" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.icons.Icon" %><%--
 
     Copyright (C) 2000 - 2013 Silverpeas
 
@@ -38,9 +39,8 @@ Collection<NodeDetail>	categories	= (Collection<NodeDetail>) request.getAttribut
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title></title>
-<view:looknfeel/>
+<view:looknfeel withCheckFormScript="true"/>
 <view:includePlugin name="popup"/>
-<script type="text/javascript" src="<%=m_context%>/util/javaScript/checkForm.js"></script>
 <script type="text/javascript">
 function addCategory() {
 	// force empty fields

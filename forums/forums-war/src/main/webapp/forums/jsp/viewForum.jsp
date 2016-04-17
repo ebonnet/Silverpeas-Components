@@ -23,7 +23,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@page import="com.stratelia.webactiv.forums.models.Forum"%>
 <%
     response.setHeader("Cache-Control", "no-store"); //HTTP 1.1
     response.setHeader("Pragma", "no-cache"); //HTTP 1.0
@@ -43,24 +42,26 @@
 <view:setBundle bundle="${requestScope.resources.multilangBundle}" />
 <view:setBundle bundle="${requestScope.resources.iconsBundle}" var="icons" />
 
-<%@ page import="com.stratelia.silverpeas.util.ResourcesWrapper"%>
-<%@ page import="com.stratelia.webactiv.util.GeneralPropertiesManager"%>
-<%@ page import="com.stratelia.webactiv.util.ResourceLocator"%>
-<%@ page import="com.stratelia.webactiv.forums.control.helpers.*"%>
-<%@ page import="com.stratelia.webactiv.forums.control.ForumsSessionController"%>
+<%@ page import="org.silverpeas.core.util.MultiSilverpeasBundle"%>
+<%@ page import="org.silverpeas.core.util.ResourceLocator"%>
+<%@ page import="org.silverpeas.components.forums.control.ForumsSessionController"%>
+<%@ page import="org.silverpeas.core.util.LocalizationBundle" %>
+<%@ page import="org.silverpeas.components.forums.control.helpers.ForumListHelper" %>
+<%@ page import="org.silverpeas.components.forums.control.helpers.ForumActionHelper" %>
+<%@ page import="org.silverpeas.components.forums.control.helpers.ForumHelper" %>
 <%
     ForumsSessionController fsc = (ForumsSessionController) request.getAttribute(
         "forumsSessionClientController");
-    ResourcesWrapper resources = (ResourcesWrapper)request.getAttribute("resources");
+    MultiSilverpeasBundle resources = (MultiSilverpeasBundle)request.getAttribute("resources");
     if (fsc == null) {
         // No forums session controller in the request -> security exception
-        String sessionTimeout = GeneralPropertiesManager.getString("sessionTimeout");
+        String sessionTimeout = ResourceLocator.getGeneralSettingBundle().getString("sessionTimeout");
         getServletConfig().getServletContext().getRequestDispatcher(sessionTimeout)
             .forward(request, response);
         return;
     }
-    ResourceLocator resource = new ResourceLocator(
-      "org.silverpeas.forums.multilang.forumsBundle", fsc.getLanguage());
+    LocalizationBundle resource = ResourceLocator.getLocalizationBundle(
+        "org.silverpeas.forums.multilang.forumsBundle", fsc.getLanguage());
     String userId = fsc.getUserId();
     boolean isAdmin = fsc.isAdmin();
     boolean isUser = fsc.isUser();

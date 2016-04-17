@@ -26,16 +26,6 @@
 
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
-<%@ page import="javax.servlet.*"%>
-<%@ page import="javax.servlet.http.*"%>
-<%@ page import="javax.servlet.jsp.*"%>
-<%@ page import="java.io.PrintWriter"%>
-<%@ page import="java.io.IOException"%>
-<%@ page import="java.io.File"%>
-<%@ page import="java.io.FileInputStream"%>
-<%@ page import="java.io.ObjectInputStream"%>
-<%@ page import="java.beans.*"%>
-
 <%@ include file="checkSurvey.jsp" %>
 <%@ include file="surveyUtils.jsp" %>
 
@@ -93,7 +83,7 @@ boolean anonymous = StringUtil.isDefined(anonymousString) && "on".equalsIgnoreCa
 String resultMode = request.getParameter("resultMode");
 String resultView = request.getParameter("resultView");
 
-String m_context = GeneralPropertiesManager.getGeneralResourceLocator().getString("ApplicationURL");
+String m_context = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 
 //Icons
 String mandatoryField = m_context + "/util/icons/mandatoryField.gif";
@@ -160,11 +150,9 @@ if ("UpdateSurveyHeader".equals(action))
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title></title>
-<link type="text/css" href="<%=m_context%>/util/styleSheets/fieldset.css" rel="stylesheet" />
-<view:looknfeel />
+<view:looknfeel withFieldsetStyle="true" withCheckFormScript="true"/>
 <view:includePlugin name="datepicker"/>
 <script type="text/javascript" src="<%=m_context%>/util/javaScript/dateUtils.js"></script>
-<script type="text/javascript" src="<%=m_context%>/util/javaScript/checkForm.js"></script>
 <script type="text/javascript">
 function sendData() {
     if (isCorrectForm()) {

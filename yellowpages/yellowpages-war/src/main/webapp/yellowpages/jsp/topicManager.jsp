@@ -1,5 +1,3 @@
-<%@page import="com.stratelia.silverpeas.peasCore.URLManager"%>
-<%@ page import="com.stratelia.webactiv.yellowpages.control.DisplayContactsHelper" %>
 <%--
 
     Copyright (C) 2000 - 2013 Silverpeas
@@ -25,6 +23,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
+<%@page import="org.silverpeas.core.util.URLUtil"%>
+<%@ page import="org.silverpeas.components.yellowpages.control.DisplayContactsHelper" %>
+<%@ page import="org.silverpeas.components.yellowpages.model.TopicDetail" %>
+<%@ page import="org.silverpeas.core.util.StringUtil" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.window.Window" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.browsebars.BrowseBar" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.operationpanes.OperationPane" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.tabs.TabbedPane" %>
+<%@ page import="org.silverpeas.core.util.EncodeHelper" %>
+
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 response.setHeader("Cache-Control","no-store"); //HTTP 1.1
@@ -35,7 +43,7 @@ response.setDateHeader ("Expires",-1); //prevents caching at the proxy server
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view"%>
 <%@ include file="checkYellowpages.jsp" %>
-<%@ include file="topicReport.jsp.inc" %>
+<%@ include file="topicReport.jsp" %>
 
 <% 
 String rootId = Integer.toString(ROOT_TOPIC);
@@ -62,8 +70,7 @@ if (!StringUtil.isDefined(id)) {
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<view:looknfeel />
-<script type="text/javascript" src="<c:url value="/util/javaScript/checkForm.js" />"></script>
+<view:looknfeel withCheckFormScript="true"/>
 <script type="text/javascript" src="javaScript/spacesInURL.js"></script>
 <view:includePlugin name="popup"/>
 <script type="text/javascript">
@@ -170,22 +177,23 @@ function consult() {
 }
 
 function toAddOrUpdateFolder(action, id) {
+  var dialogTitle = '<%=EncodeHelper.javaStringToJsString(resources.getString("TopicCreationTitle"))%>';
+  if (action === 'ToUpdateFolder') {
+    dialogTitle = '<%=EncodeHelper.javaStringToJsString(resources.getString("TopicUpdateTitle"))%>';
+  }
+
 	$.ajax({
-		url: webContext+'<%=URLManager.getURL("yellowpages", null, componentId)%>'+action+'?Id='+id,
+		url: webContext+'<%=URLUtil.getURL("yellowpages", null, componentId)%>'+action+'?Id='+id,
 		async: false,
 		type: "GET",
 		dataType: "html",
 		success: function(data) {
 			  $('#folderDialog').html(data);
-			  if (action === 'ToUpdateFolder') {
-			  	$('#folderDialog').attr('title', '<%=EncodeHelper.javaStringToJsString(resources.getString("TopicUpdateTitle"))%>');
-			  } else {
-				$('#folderDialog').attr('title', '<%=EncodeHelper.javaStringToJsString(resources.getString("TopicCreationTitle"))%>');
-			  }
-			}
-		});
-	
+		}
+	});
+
 	$('#folderDialog').popup('validation', {
+      title : dialogTitle,
 	    callback : function() {
 	      if (isCorrectForm()) {
 			  window.document.AddAndUpdateFolderForm.submit();
@@ -211,9 +219,9 @@ function toAddOrUpdateFolder(action, id) {
     browseBar.setDomainName(spaceLabel);
 	browseBar.setComponentName(componentLabel);
 	browseBar.setPath(resources.getString("GML.management")+" > "+linkedPathString);
-    
+
     OperationPane operationPane = window.getOperationPane();
-    if (profile.equals("admin")) 
+    if (profile.equals("admin"))
     {
 		if (!id.equals(TRASHCAN_ID)){
 			operationPane.addOperation(resources.getIcon("yellowpages.modelUsed"), resources.getString("yellowpages.ModelUsed"), "ModelUsed");
@@ -227,7 +235,7 @@ function toAddOrUpdateFolder(action, id) {
 			operationPane.addOperation(resources.getIcon("yellowpages.basketDelete"), resources.getString("yellowpages.DeleteBasketContent"), "javascript:onClick=deleteBasketContent()");
 		}
     }
-    
+
 	// Si nous sommes dans la corbeille, alors nous ne pouvons cr�er un contact dedans !!
 	if (!id.equals(TRASHCAN_ID)){
 		operationPane.addOperationOfCreation(resources.getIcon("yellowpages.contactAdd"), yellowpagesScc.getString("ContactCreer"), "javascript:onClick=contactAdd()");
@@ -240,7 +248,7 @@ function toAddOrUpdateFolder(action, id) {
     TabbedPane tabbedPane = gef.getTabbedPane();
     tabbedPane.addTab(yellowpagesScc.getString("Consultation"),"javascript:consult();",false);
     tabbedPane.addTab(resources.getString("GML.management"),"#",true);
-          
+
     out.println(window.printBefore());
     out.println(tabbedPane.print());
 %>
@@ -256,7 +264,7 @@ function toAddOrUpdateFolder(action, id) {
     }
 
 	out.println("<br/>");
-    
+
     if (!id.equals(TRASHCAN_ID))
     	DisplayContactsHelper.displayContactsAdmin(resources.getIcon("yellowpages.contact"), yellowpagesScc,profile,currentTopic.getContactDetails(), (currentTopic.getNodeDetail().getChildrenNumber() > 0), resources.getIcon("yellowpages.contactDelete"), gef, request, session, resources, out);
     else

@@ -31,11 +31,20 @@
 	response.setHeader("Pragma","no-cache"); //HTTP 1.0
 	response.setDateHeader ("Expires",-1); //prevents caching at the proxy server
 	%>
-	<%@ include file="checkAlmanach.jsp" %>
+<%@ page import="org.silverpeas.core.util.DateUtil" %>
+<%@ page import="org.silverpeas.components.almanach.model.Periodicity" %>
+<%@ page import="org.silverpeas.components.almanach.model.EventDetail" %>
+<%@ page import="org.silverpeas.components.almanach.service.AlmanachPrivateException" %>
+<%@ page import="org.silverpeas.core.admin.user.model.UserDetail" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.browsebars.BrowseBar" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.buttonpanes.ButtonPane" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.operationpanes.OperationPane" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.frame.Frame" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.window.Window" %>
+<%@ page import="org.silverpeas.core.util.URLUtil" %>
+<%@ include file="checkAlmanach.jsp" %>
 
 <%
-
-	ResourceLocator generalMessage = GeneralPropertiesManager.getGeneralMultilang(almanach.getLanguage());
 
 	String user = request.getParameter("flag");
 
@@ -61,8 +70,9 @@
 			title = title.substring(0,30) + "....";
 		}
 		link = event.getPermalink();
-		if (StringUtil.isDefined(event.getWysiwyg())) {
-			description = event.getWysiwyg();
+    String wysiwyg = event.getWysiwyg();
+		if (StringUtil.isDefined(wysiwyg)) {
+			description = wysiwyg;
 		}
 		else if (StringUtil.isDefined(event.getDescription())) {
 			description = EncodeHelper.javaStringToHtmlParagraphe(event.getDescription());
@@ -74,10 +84,10 @@
 	 }
 %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title><%=generalMessage.getString("GML.popupTitle")%></title>
+<title><%=resources.getString("GML.popupTitle")%></title>
 <view:looknfeel/>
 <script type="text/javascript">
 
@@ -94,9 +104,8 @@ function goToNotify(url)
     notifyWindow = SP_openWindow(url, windowName, larg, haut, windowParams);
 }
 
-function eventDeleteConfirm(t)
-{
-    if (window.confirm("<%=EncodeHelper.javaStringToJsString(almanach.getString("suppressionConfirmation"))%> '" + t + "' ?")){
+function eventDeleteConfirm() {
+    if (window.confirm("<%=EncodeHelper.javaStringToJsString(almanach.getString("suppressionConfirmation"))%> ?")){
     	<% if (event.isPeriodic()) { %>
     		$("#modalDialogOnDelete").dialog("open");
     	<% } else { %>
@@ -105,13 +114,18 @@ function eventDeleteConfirm(t)
     }
 }
 
+function editEvent() {
+  document.eventForm.action = "editEvent.jsp";
+  document.eventForm.submit();
+}
+
 function sendEvent(mainAction, action) {
 	document.eventForm.action = mainAction;
 	document.eventForm.Action.value = action;
 	document.eventForm.submit();
 }
 
-function closeMessage()
+function closeDialog()
 {
 	$("#modalDialogOnDelete").dialog("close");
 }
@@ -128,8 +142,8 @@ $(document).ready(function(){
 </head>
 <body class="viewEvent" id="<%=instanceId%>">
   <%
-    Window 	window 	= graphicFactory.getWindow();
-    Frame 	frame	= graphicFactory.getFrame();
+    Window window 	= graphicFactory.getWindow();
+    Frame frame	= graphicFactory.getFrame();
     Board 	board 	= graphicFactory.getBoard();
     OperationPane operationPane = window.getOperationPane();
 
@@ -148,19 +162,11 @@ $(document).ready(function(){
     if (!"user".equals(user))
     {
       operationPane.addLine();
-      operationPane.addOperation(m_context + "/util/icons/almanach_to_del.gif", almanach.getString("supprimerEvenement"), "javascript:onClick=eventDeleteConfirm('" + EncodeHelper.javaStringToJsString(title) + "')");
+      operationPane.addOperation(null, almanach.getString("GML.modify"), "javascript:onclick=editEvent()");
+      operationPane.addOperation(m_context + "/util/icons/almanach_to_del.gif", almanach.getString("GML.delete"), "javascript:onclick=eventDeleteConfirm()");
     }
 
     out.println(window.printBefore());
-
-    if (!"user".equals(user))
-    {
-    	TabbedPane tabbedPane = graphicFactory.getTabbedPane();
-		tabbedPane.addTab(almanach.getString("evenement"), "viewEventContent.jsp?Id="+id+"&Date="+startDateString, true);
-		tabbedPane.addTab(almanach.getString("entete"), "editEvent.jsp?Id="+id+"&Date="+startDateString, false);
-		out.println(tabbedPane.print());
-    }
-
     out.println(frame.printBefore());
 %>
 
@@ -311,7 +317,7 @@ $(document).ready(function(){
 				<p id="permalinkInfo">
 					<a href="<%=link%>" title='<%=resources.getString("CopyEventLink")%>'><img src="<%=m_context%>/util/icons/link.gif" border="0" alt='<%=resources.getString("CopyEventLink")%>'/></a>
 					<%=resources.getString("GML.permalink")%> <br />
-					<input class="inputPermalink" type="text" onfocus="select();" value="<%=URLManager.getServerURL(request)+link %>" />
+					<input class="inputPermalink" type="text" onfocus="select();" value="<%=URLUtil.getServerURL(request)+link %>" />
 				</p>
 			<% } %>
 		   </div>
@@ -399,7 +405,8 @@ $(document).ready(function(){
 	%>
 	<form name="eventForm" action="RemoveEvent" method="post">
 		<input type="hidden" name="Action"/>
-   		<input type="hidden" name="Id" value="<%=id%>"/>
+   	<input type="hidden" name="Id" value="<%=id%>"/>
+    <input type="hidden" name="Date" value="<%=startDateString%>"/>
    		<% if (periodicity != null) { %>
    			<input type="hidden" name="EventStartDate" value="<%=startDateString%>"/>
    			<input type="hidden" name="EventEndDate" value="<%=DateUtil.date2SQLDate(endDate)%>"/>
@@ -410,7 +417,7 @@ $(document).ready(function(){
 	ButtonPane buttonPaneOnDelete = graphicFactory.getButtonPane();
 	buttonPaneOnDelete.addButton(graphicFactory.getFormButton(resources.getString("occurenceOnly"), "javascript:onClick=sendEvent('RemoveEvent', 'ReallyDeleteOccurence')", false));
 	buttonPaneOnDelete.addButton(graphicFactory.getFormButton(resources.getString("allEvents"), "javascript:onClick=sendEvent('RemoveEvent', 'ReallyDelete')", false));
-	buttonPaneOnDelete.addButton(graphicFactory.getFormButton(resources.getString("GML.cancel"), "javascript:onClick=closeMessage()", false));
+	buttonPaneOnDelete.addButton(graphicFactory.getFormButton(resources.getString("GML.cancel"), "javascript:onClick=closeDialog()", false));
 	%>
 	<table><tr><td align="center"><br/><%=resources.getString("eventsToDelete") %>
 	<br/><br/>

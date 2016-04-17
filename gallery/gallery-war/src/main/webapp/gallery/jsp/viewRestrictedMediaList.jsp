@@ -36,11 +36,11 @@
 <view:setBundle bundle="${requestScope.resources.multilangBundle}"/>
 <view:setBundle bundle="${requestScope.resources.iconsBundle}" var="icons"/>
 
-<view:setConstant var="publisherRole" constant="com.stratelia.webactiv.SilverpeasRole.writer"/>
-<view:setConstant var="userRole" constant="com.stratelia.webactiv.SilverpeasRole.user"/>
+<view:setConstant var="publisherRole" constant="org.silverpeas.core.admin.user.model.SilverpeasRole.writer"/>
+<view:setConstant var="userRole" constant="org.silverpeas.core.admin.user.model.SilverpeasRole.user"/>
 
 <c:set var="greaterUserRole" value="${requestScope.greaterUserRole}"/>
-<jsp:useBean id="greaterUserRole" type="com.stratelia.webactiv.SilverpeasRole"/>
+<jsp:useBean id="greaterUserRole" type="org.silverpeas.core.admin.user.model.SilverpeasRole"/>
 
 <fmt:message key="gallery.updateSelectedMedia" var="updateSelectedMediaLabel"/>
 <fmt:message key="gallery.updateSelectedMedia" var="updateSelectedMediaIcon" bundle="${icons}"/>
@@ -53,9 +53,9 @@
 <c:url var="addToBasketSelectedMediaIcon" value="${addToBasketSelectedMediaIcon}"/>
 
 <c:set var="mediaList" value="${requestScope.MediaList}"/>
-<jsp:useBean id="mediaList" type="java.util.List<com.silverpeas.gallery.model.Media>"/>
+<jsp:useBean id="mediaList" type="java.util.List<org.silverpeas.components.gallery.model.Media>"/>
 <c:set var="mediaResolution" value="${requestScope.MediaResolution}"/>
-<jsp:useBean id="mediaResolution" type="com.silverpeas.gallery.constant.MediaResolution"/>
+<jsp:useBean id="mediaResolution" type="org.silverpeas.components.gallery.constant.MediaResolution"/>
 <c:set var="nbMediaPerPage" value="${requestScope.NbMediaPerPage}"/>
 <c:set var="currentPageIndex" value="${requestScope.CurrentPageIndex}"/>
 <c:set var="firstMediaIndex" value="${nbMediaPerPage * currentPageIndex}"/>
@@ -66,6 +66,8 @@
 <c:set var="selectedIds" value="${requestScope.SelectedIds}"/>
 <c:set var="isViewNotVisible" value="${requestScope.ViewNotVisible}"/>
 <c:set var="isBasket" value="${requestScope.IsBasket}"/>
+<c:set var="isExportEnable" value="${requestScope.IsExportEnable}"/>
+<c:set var="isMediaSelectable" value="${greaterUserRole eq userRole and isBasket or isExportEnable}"/>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -99,7 +101,7 @@ function sendToBasket() {
     <view:operation action="AllSelected" altText="${allSelectMediaLabel}" icon="${allSelectMediaIcon}"/>
     <view:operation action="javascript:onClick=sendData()" altText="${updateSelectedMediaLabel}" icon="${updateSelectedMediaIcon}"/>
   </c:if>
-  <c:if test="${greaterUserRole eq userRole and isBasket}">
+  <c:if test="${isMediaSelectable}">
     <view:operation action="AllSelected" altText="${allSelectMediaLabel}" icon="${allSelectMediaIcon}"/>
     <view:operation action="javascript:onClick=sendToBasket()" altText="${addToBasketSelectedMediaLabel}" icon="${addToBasketSelectedMediaIcon}"/>
   </c:if>
@@ -114,8 +116,7 @@ function sendToBasket() {
                                  nbMediaPerPage="${nbMediaPerPage}"
                                  currentPageIndex="${currentPageIndex}"
                                  isViewList="${isViewList}"
-                                 greaterUserRole="${greaterUserRole}"
-                                 isBasket="${isBasket}"/>
+                                 selectable="${isMediaSelectable}"/>
     <c:if test="${empty mediaList}">
       <view:board>
         <c:choose>

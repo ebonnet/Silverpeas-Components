@@ -23,15 +23,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 <%@ include file="checkKmelia.jsp" %>
-<%@page import="org.silverpeas.kmelia.jstl.KmeliaDisplayHelper"%>
-<%@page import="com.stratelia.silverpeas.peasCore.URLManager"%>
-<%@ page import="com.silverpeas.publicationTemplate.*"%>
-<%@ page import="com.silverpeas.form.*"%>
+<%@page import="org.silverpeas.core.contribution.content.form.DataRecord"%>
+<%@ page import="org.silverpeas.core.contribution.content.form.Form"%>
+<%@ page import="org.silverpeas.core.contribution.content.form.PagesContext" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.browsebars.BrowseBar" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.board.Board" %>
 
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view" %>
 
 
@@ -45,16 +45,6 @@
       String wizardRow = (String) request.getAttribute("WizardRow");
       String currentLang = (String) request.getAttribute("Language");
       boolean changingTemplateAllowed = ((Boolean) request.getAttribute("IsChangingTemplateAllowed")).booleanValue();
-
-      SilverTrace.debug("kmelia", "xmlForm.jsp", "root.MSG_GEN_ENTER_METHOD", "formUpdate is null ? " + (formUpdate == null));
-      SilverTrace.debug("kmelia", "xmlForm.jsp", "root.MSG_GEN_ENTER_METHOD", "data is null ? " + (data == null));
-      SilverTrace.debug("kmelia", "xmlForm.jsp", "root.MSG_GEN_ENTER_METHOD", "pubDetail is null ? " + (pubDetail == null));
-      SilverTrace.debug("kmelia", "xmlForm.jsp", "root.MSG_GEN_ENTER_METHOD", "xmlFormName is null ? " + (xmlFormName == null));
-      SilverTrace.debug("kmelia", "xmlForm.jsp", "root.MSG_GEN_ENTER_METHOD", "wizardLast is null ? " + (wizardLast == null));
-      SilverTrace.debug("kmelia", "xmlForm.jsp", "root.MSG_GEN_ENTER_METHOD", "wizard is null ? " + (wizard == null));
-      SilverTrace.debug("kmelia", "xmlForm.jsp", "root.MSG_GEN_ENTER_METHOD", "wizardRow is null ? " + (wizardRow == null));
-      SilverTrace.debug("kmelia", "xmlForm.jsp", "root.MSG_GEN_ENTER_METHOD", "currentLang is null ? " + (currentLang == null));
-
       String pubId = pubDetail.getPK().getId();
       String pubName = pubDetail.getName(currentLang);
 
@@ -76,6 +66,7 @@
       }
       boolean isEnd = "2".equals(wizardLast);
 %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
   	<title></title>
@@ -94,7 +85,7 @@
       }
 
       function B_ANNULER_ONCLICK() {
-        location.href = "Main";
+        location.href = "ViewPublication";
       }
 
       function showTranslation(lang) {
@@ -128,7 +119,6 @@
           Window window = gef.getWindow();
           Frame frame = gef.getFrame();
           Board board = gef.getBoard();
-          Board boardHelp = gef.getBoard();
 
           BrowseBar browseBar = window.getBrowseBar();
           browseBar.setDomainName(spaceLabel);
@@ -186,16 +176,37 @@
     </form>
     <%
           out.println(board.printAfter());
-          ButtonPane buttonPane = gef.getButtonPane();
-          if (wizard.equals("progress")) {
+          if (wizard != null && wizard.equals("progress")) {
+            ButtonPane buttonPane = gef.getButtonPane();
             buttonPane.addButton(nextButton);
             buttonPane.addButton(cancelWButton);
+            out.println("<br/><center>" + buttonPane.print() + "</center>");
           } else {
-            buttonPane.addButton(gef.getFormButton(resources.getString("GML.validate"), "javascript:onClick=B_VALIDER_ONCLICK();", false));
-            buttonPane.addButton(gef.getFormButton(resources.getString("GML.cancel"), "javascript:onClick=B_ANNULER_ONCLICK();", false));
-          }
-          out.println("<br/><center>" + buttonPane.print() + "</center>");
+    %>
+          <view:buttonPane>
+            <c:set var="saveLabel"><%=resources.getString("GML.validate")%></c:set>
+            <c:set var="cancelLabel"><%=resources.getString("GML.cancel")%></c:set>
+            <view:button label="${saveLabel}" action="javascript:onClick=B_VALIDER_ONCLICK();">
+              <c:set var="subscriptionManagementContext" value="${requestScope.subscriptionManagementContext}"/>
+              <c:if test="${not empty subscriptionManagementContext}">
+                <c:set var="formData" value="<%=data%>"/>
+                <jsp:useBean id="subscriptionManagementContext" type="org.silverpeas.core.subscription.util.SubscriptionManagementContext"/>
+                <c:if test="${not empty formData and not formData.new
+                              and subscriptionManagementContext.entityStatusBeforePersistAction.validated
+                              and subscriptionManagementContext.entityStatusAfterPersistAction.validated
+                              and subscriptionManagementContext.entityPersistenceAction.update}">
+                  <view:confirmResourceSubscriptionNotificationSending
+                      jsValidationCallbackMethodName="isCorrectForm"
+                      subscriptionResourceType="${subscriptionManagementContext.linkedSubscriptionResource.type}"
+                      subscriptionResourceId="${subscriptionManagementContext.linkedSubscriptionResource.id}"/>
 
+                </c:if>
+              </c:if>
+            </view:button>
+            <view:button label="${cancelLabel}" action="javascript:onClick=B_ANNULER_ONCLICK();"/>
+          </view:buttonPane>
+    <%
+          }
           out.println(frame.printAfter());
           out.println(window.printAfter());%>
 	<script type="text/javascript">

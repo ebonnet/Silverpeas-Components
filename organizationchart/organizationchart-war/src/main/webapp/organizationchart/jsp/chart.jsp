@@ -32,8 +32,8 @@
 <%@ page import="java.util.Set"%>
 <%@ page import="java.util.Iterator"%>
 
-<%@ page import="com.silverpeas.components.organizationchart.model.OrganizationalChart"%>
-<%@ page import="com.silverpeas.components.organizationchart.model.OrganizationalUnit"%>
+<%@ page import="org.silverpeas.components.organizationchart.model.OrganizationalChart"%>
+<%@ page import="org.silverpeas.components.organizationchart.model.OrganizationalUnit"%>
 <%@ include file="check.jsp"%>
 
 <fmt:setLocale value="${sessionScope[sessionController].language}" />
@@ -79,10 +79,10 @@
         $(document).ready(function() {
         	chartinit();
         	$("a").click(function() {
-        		if ($(this).attr("target") != "_blank" && $(this).attr("href") != "javascript:window.print();") {
-            		$.progressMessage();
+        		if ($(this).attr("target") != "_blank" && !$(this).attr("href").startsWith("javascript:")) {
+              $.progressMessage();
         		}
-            });
+          });
         });
         
         function activateUserZoom() {

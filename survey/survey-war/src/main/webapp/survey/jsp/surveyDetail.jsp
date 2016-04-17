@@ -1,4 +1,6 @@
-<%--
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.browsebars.BrowseBar" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.operationpanes.OperationPane" %>
+<%@ page import="org.silverpeas.core.util.SettingBundle" %><%--
 
     Copyright (C) 2000 - 2013 Silverpeas
 
@@ -30,15 +32,6 @@
   response.setHeader("Pragma", "no-cache"); //HTTP 1.0
   response.setDateHeader("Expires", -1); //prevents caching at the proxy server
 %>
-<%@ page import="javax.servlet.*"%>
-<%@ page import="javax.servlet.http.*"%>
-<%@ page import="javax.servlet.jsp.*"%>
-<%@ page import="java.io.PrintWriter"%>
-<%@ page import="java.io.IOException"%>
-<%@ page import="java.io.File"%>
-<%@ page import="java.io.FileInputStream"%>
-<%@ page import="java.io.ObjectInputStream"%>
-<%@ page import="java.beans.*"%>
 
 <%@ include file="checkSurvey.jsp"%>
 <%@ include file="surveyUtils.jsp"%>
@@ -80,11 +73,10 @@
       destinationPath = "surveyDetail.jsp?Action=ViewResult&Participated="+participated+"&SurveyId="+surveyId;
   }
   
-  ResourceLocator settings =
-      new ResourceLocator("org.silverpeas.survey.surveySettings", surveyScc
-          .getLanguage());
+  SettingBundle settings =
+      ResourceLocator.getSettingBundle("org.silverpeas.survey.surveySettings");
   String m_context =
-      GeneralPropertiesManager.getGeneralResourceLocator().getString("ApplicationURL");
+      ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 
 
 
@@ -267,7 +259,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<view:looknfeel />
+<view:looknfeel withFieldsetStyle="true"/>
 </head>
 <body>
     <%
@@ -301,8 +293,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title></title>
-<view:looknfeel />
-<script type="text/javascript" src="<%=m_context%>/util/javaScript/checkForm.js"></script>
+<view:looknfeel withCheckFormScript="true"/>
 </head>
 <body>
 <%
@@ -326,8 +317,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title></title>
-<view:looknfeel />
-<script type="text/javascript" src="<%=m_context%>/util/javaScript/checkForm.js"></script>
+<view:looknfeel withFieldsetStyle="true" withCheckFormScript="true"/>
 <script type="text/javascript">
 function sendVote(roundId) {
   if (isCorrectForm()) {
@@ -499,7 +489,7 @@ function clipboardCopy() {
 </view:window>
 <%
   } else if (action.equals("ViewResult")) {
-    String iconsPath = GeneralPropertiesManager.getString("ApplicationURL");
+    String iconsPath = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
     int resultView = survey.getHeader().getResultView();
 %>
 
@@ -507,7 +497,7 @@ function clipboardCopy() {
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title></title>
-<view:looknfeel />
+<view:looknfeel withFieldsetStyle="true"/>
 <view:includePlugin name="popup"/>
 <script type="text/javascript">
 

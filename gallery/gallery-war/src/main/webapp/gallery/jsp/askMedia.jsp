@@ -1,4 +1,5 @@
-<%--
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.buttonpanes.ButtonPane" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.buttons.Button" %><%--
 
     Copyright (C) 2000 - 2013 Silverpeas
 
@@ -49,16 +50,13 @@
 
 <html>
 <head>
-  <view:looknfeel/>
+  <view:looknfeel withCheckFormScript="true"/>
   <title></title>
-  <script type="text/javascript" src="<c:url value="/util/javaScript/checkForm.js"/>"></script>
   <script type="text/javascript">
 
     function sendData() {
       if (isCorrectForm()) {
-        document.askMediaForm.action = "SendAsk";
         document.askMediaForm.submit();
-        window.close();
       }
     }
 

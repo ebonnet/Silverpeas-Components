@@ -23,19 +23,23 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@page import="com.silverpeas.kmelia.SearchContext"%>
-<%@page import="org.silverpeas.component.kmelia.KmeliaPublicationHelper"%>
-<%@page import="com.stratelia.webactiv.SilverpeasRole"%>
+<%@page import="org.silverpeas.components.kmelia.SearchContext"%>
+<%@page import="org.silverpeas.components.kmelia.KmeliaPublicationHelper"%>
+<%@page import="org.silverpeas.core.admin.user.model.SilverpeasRole"%>
+<%@ page import="org.silverpeas.core.i18n.I18NHelper" %>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <%@ include file="checkKmelia.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view"%>
+<%@ taglib tagdir="/WEB-INF/tags/silverpeas/kmelia" prefix="kmelia" %>
 
 <c:url var="mandatoryFieldUrl" value="/util/icons/mandatoryField.gif"/>
 <fmt:setLocale value="${sessionScope[sessionController].language}" />
 <view:setBundle bundle="${requestScope.resources.multilangBundle}" />
+
+<c:set var='greatestUserRole' value='<%=SilverpeasRole.from((String) request.getAttribute("Profile"))%>'/>
 
 <%
 String		rootId				= "0";
@@ -64,14 +68,7 @@ if (id == null) {
 	id = rootId;
 }
 
-//For Drag And Drop
-boolean dragAndDropEnable = kmeliaScc.isDragAndDropEnable();
-
-String sRequestURL = request.getRequestURL().toString();
-String m_sAbsolute = sRequestURL.substring(0, sRequestURL.length() - request.getRequestURI().length());
-
 String userId = kmeliaScc.getUserId();
-String httpServerBase = GeneralPropertiesManager.getString("httpServerBase", m_sAbsolute);
 
 boolean userCanManageRoot = "admin".equalsIgnoreCase(profile);
 boolean userCanManageTopics = rightsOnTopics.booleanValue() || "admin".equalsIgnoreCase(profile) || kmeliaScc.isTopicManagementDelegated();
@@ -80,40 +77,26 @@ boolean userCanManageTopics = rightsOnTopics.booleanValue() || "admin".equalsIgn
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" id="ng-app" ng-app="silverpeas.kmelia">
 <head>
-<view:looknfeel/>
-<title></title>
-<script type="text/javascript" src="<%=m_context%>/util/javaScript/browseBarComplete.js"></script>
-<script type="text/javascript" src="<%=m_context%>/util/javaScript/jquery/jquery-migrate-1.2.1.min.js"></script>
-<script type="text/javascript" src="<%=m_context%>/util/javaScript/jquery/jquery.jstree.js"></script>
-<script type="text/javascript" src="<%=m_context%>/util/javaScript/jquery/jquery.cookie.js"></script>
-<script type="text/javascript" src="<%=m_context%>/util/javaScript/jquery/splitter.js"></script>
-<script type="text/javascript" src="<%=m_context%>/util/javaScript/upload_applet.js"></script>
-<script type="text/javascript" src="<%=m_context%>/kmelia/jsp/javaScript/dragAndDrop.js"></script>
-<script type="text/javascript" src="<c:url value="/util/javaScript/checkForm.js" />"></script>
+  <title></title>
+  <view:looknfeel withCheckFormScript="true"/>
+<view:script src="/util/javaScript/browseBarComplete.js"/>
+<view:script src="/util/javaScript/jquery/jquery-migrate-1.2.1.min.js"/>
+<view:script src="/util/javaScript/jquery/jquery.jstree.js"/>
+<view:script src="/util/javaScript/jquery/jquery.cookie.js"/>
 
 <view:includePlugin name="popup"/>
 <view:includePlugin name="preview"/>
 <view:includePlugin name="rating" />
 
-<script type="text/javascript" src="javaScript/navigation.js"></script>
-<script type="text/javascript" src="javaScript/searchInTopic.js"></script>
-<script type="text/javascript" src="javaScript/publications.js"></script>
+<view:script src="javaScript/navigation.js"/>
+<view:script src="javaScript/searchInTopic.js"/>
+<view:script src="javaScript/publications.js"/>
 <script type="text/javascript">
 function topicGoTo(id) {
     closeWindows();
     displayTopicContent(id);
     getTreeview().deselect_all();
     getTreeview().select_node($('#'+id));
-}
-
-function showDnD() {
-	<%
-	long maximumFileSize = FileRepositoryManager.getUploadMaximumFileSize();
-	if (profile.equals("publisher") || profile.equals("writer")) { %>
-		showHideDragDrop('<%=URLManager.getFullApplicationURL(request)%>/RImportDragAndDrop/jsp/Drop?NextView=Rkmelia/jsp/validateImportedFilesClassification.jsp&UserId=<%=userId%>&ComponentId=<%=componentId%>&IgnoreFolders=1&SessionId=<%=session.getId()%>','<%=URLManager.getFullApplicationURL(request)%>/upload/ModeNormal_<%=language%>.html','<%=URLManager.getFullApplicationURL(request)%>/RImportDragAndDrop/jsp/Drop?NextView=Rkmelia/jsp/validateImportedFilesClassification.jsp&UserId=<%=userId%>&ComponentId=<%=componentId%>&IgnoreFolders=1&Draft=1&SessionId=<%=session.getId()%>','<%=URLManager.getFullApplicationURL(request)%>/upload/ModeDraft_<%=language%>.html','<%=resources.getString("GML.applet.dnd.alt")%>','<%=maximumFileSize%>','<%=m_context%>','<%=resources.getString("GML.DragNDropExpand")%>','<%=resources.getString("GML.DragNDropCollapse")%>');
-	<% } else { %>
-		showHideDragDrop('<%=URLManager.getFullApplicationURL(request)%>/RImportDragAndDrop/jsp/Drop?NextView=Rkmelia/jsp/validateImportedFilesClassification.jsp&UserId=<%=userId%>&ComponentId=<%=componentId%>&SessionId=<%=session.getId()%>','<%=URLManager.getFullApplicationURL(request)%>/upload/ModeNormal_<%=language%>.html','<%=URLManager.getFullApplicationURL(request)%>/RImportDragAndDrop/jsp/Drop?NextView=Rkmelia/jsp/validateImportedFilesClassification.jsp&UserId=<%=userId%>&ComponentId=<%=componentId%>&Draft=1&SessionId=<%=session.getId()%>','<%=URLManager.getFullApplicationURL(request)%>/upload/ModeDraft_<%=language%>.html','<%=resources.getString("GML.applet.dnd.alt")%>','<%=maximumFileSize%>','<%=m_context%>','<%=resources.getString("GML.DragNDropExpand")%>','<%=resources.getString("GML.DragNDropCollapse")%>');
-	<% } %>
 }
 
 function getCurrentUserId() {
@@ -161,7 +144,7 @@ icons["operation.favorites"] = "<%=resources.getIcon("kmelia.operation.favorites
 
 var params = new Object();
 params["rightsOnTopic"] = <%=rightsOnTopics.booleanValue()%>;
-params["i18n"] = <%=I18NHelper.isI18N%>;
+params["i18n"] = <%=I18NHelper.isI18nContentActivated%>;
 params["nbPublisDisplayed"] = <%=displayNBPublis%>;
 
 var searchInProgress = <%=searchContext != null%>;
@@ -183,9 +166,11 @@ var searchFolderId = "<%=id%>";
     out.println(window.printBefore());
 %>
 	<view:frame>
-			<div id="splitter">
-				<div id="treeDiv1"></div>
-				<div id="rightSide">
+	
+       
+         <div class="wrap">
+            <div class="resizable resizable1"><div id="treeDiv1"></div></div>
+				<div id="rightSide" class="resizable resizable2">
 					<% if (displaySearch.booleanValue()) {
 						Button searchButton = gef.getFormButton(resources.getString("GML.search"), "javascript:onClick=searchInTopic();", false); %>
 						<div id="searchZone">
@@ -198,42 +183,17 @@ var searchFolderId = "<%=id%>";
 					<% } %>
 					<div id="topicDescription"></div>
 					<view:areaOfOperationOfCreation/>
-				<% if (dragAndDropEnable) { %>
-						<div id="DnD">
-						<table width="98%" cellpadding="0" cellspacing="0"><tr><td align="right">
-						<a href="javascript:showDnD()" id="dNdActionLabel"><%=resources.getString("GML.DragNDropExpand")%></a>
-						</td></tr></table>
-						<table width="100%" border="0" id="DropZone">
-						<tr>
-						<%
-							boolean appletDisplayed = false;
-							if (kmeliaScc.isDraftEnabled() && kmeliaScc.isPdcUsed() && kmeliaScc.isPDCClassifyingMandatory()) {
-								//Do not display applet in normal mode.
-								//Only display applet in draft mode
-							} else {
-								appletDisplayed = true;
-						%>
-								<td>
-									<div id="DragAndDrop" style="background-color: #CDCDCD; border: 1px solid #CDCDCD; padding:0px; width:100%" valign="top"><img src="<%=m_context%>/util/icons/colorPix/1px.gif" height="2"/></div>
-								</td>
-						<% } %>
-						<% if (kmeliaScc.isDraftEnabled()) {
-							if (appletDisplayed)
-								out.println("<td width=\"5%\">&nbsp;</td>");
-							%>
-							<td>
-								<div id="DragAndDropDraft" style="background-color: #CDCDCD; border: 1px solid #CDCDCD; padding:0px; width:100%" valign="top"><img src="<%=m_context%>/util/icons/colorPix/1px.gif" height="2"/></div>
-							</td>
-						<% } %>
-						</tr></table>
-						</div>
-				<% } %>
-					<div id="pubList">
-					<br/>
-					<view:board>
-					<br/><center><%=resources.getString("kmelia.inProgressPublications") %><br/><br/><img src="<%=resources.getIcon("kmelia.progress") %>"/></center><br/>
-					</view:board>
-					</div>
+          <div class="dragAndDropUpload" style="min-height: 75px">
+            <div id="pubList">
+              <br/>
+              <view:board>
+                <br/>
+                <center><%=resources.getString("kmelia.inProgressPublications") %>
+                  <br/><br/><img src="<%=resources.getIcon("kmelia.progress") %>"/></center>
+                <br/>
+              </view:board>
+            </div>
+          </div>
 					<div id="footer" class="txtBaseline"></div>
 				</div>
 			</div>
@@ -262,7 +222,7 @@ var searchFolderId = "<%=id%>";
 </form>
 <script type="text/javascript">
 function getComponentPermalink() {
-	return "<%=URLManager.getSimpleURL(URLManager.URL_COMPONENT, componentId, false)%>";
+	return "<%=URLUtil.getSimpleURL(URLUtil.URL_COMPONENT, componentId, false)%>";
 }
 
 function deleteNode(nodeId, nodeLabel) {
@@ -404,7 +364,7 @@ function displayTopicContent(id) {
 	}
 
 	if (id == getToValidateFolderId() || id == "1") {
-		$("#DnD").css({'display':'none'}); //hide dropzone
+		muteDragAndDrop(); //mute dropzone
 		$("#footer").css({'visibility':'hidden'}); //hide footer
 		$("#searchZone").css({'display':'none'}); //hide search
 
@@ -949,17 +909,29 @@ $(document).ready(
 		"plugins" : ["themes","json_data","ui","types","crrm","contextmenu","dnd"]
     });
 
-	$("#splitter").splitter({
-		splitVertical: true,
-		minLeft: 50, sizeLeft: 300, minRight: 250,
-		anchorToWindow: true,
-		resizeToWidth: false,
-		accessKey: 'I'
-	});
+    // init splitter
+    $(".resizable1").resizable({
+      autoHide: true,
+      handles: 'e',
+      maxWidth: 500,
+      resize: function (e, ui) {
+        var parent = ui.element.parent();
+        var remainingSpace = parent.width() - ui.element.outerWidth();
+        var divTwo = ui.element.next();
+        var divTwoWidth = (remainingSpace - (divTwo.outerWidth() - divTwo.width())) / parent.width() * 100 + "%";
+        divTwo.width(divTwoWidth);
+      },
+      stop: function (e, ui) {
+        var parent = ui.element.parent();
+        ui.element.css({
+          width: ui.element.width() / parent.width() * 100 + "%"
+        });
+      }
+    });
 
 	$.i18n.properties({
         name: 'kmeliaBundle',
-        path: webContext + '/services/bundles/com/silverpeas/kmelia/multilang/',
+        path: webContext + '/services/bundles/org/silverpeas/kmelia/multilang/',
         language: '<%=language%>',
         mode: 'map'
     });
@@ -972,10 +944,6 @@ $(document).ready(
 		//Right-click concerns only admins
 		showRightClickHelp();
 	<% } %>
-
-	<% if (settings.getBoolean("DisplayDnDOnLoad", false)) { %>
-		showDnD();
-	<% } %>
 	}
 );
 </script>
@@ -986,7 +954,7 @@ $(document).ready(
 </div>
 <div id="rightClick-message" title="<%=resources.getString("kmelia.help.rightclick.title") %>" style="display: none;">
 	<p>
-    <%=resources.getStringWithParam("kmelia.help.rightclick.content", EncodeHelper.javaStringToHtmlString(componentLabel)) %>
+    <%=resources.getStringWithParams("kmelia.help.rightclick.content", EncodeHelper.javaStringToHtmlString(componentLabel)) %>
 	</p>
 </div>
 <div id="addOrUpdateNode" style="display: none;">
@@ -1030,6 +998,8 @@ $(document).ready(
 
 <%@ include file="../../sharing/jsp/createTicketPopin.jsp" %>
 <view:progressMessage/>
+<kmelia:paste greatestUserRole="${greatestUserRole}" componentInstanceId="<%=componentId%>" />
+<kmelia:dragAndDrop greatestUserRole="${greatestUserRole}" componentInstanceId="<%=componentId%>" contentLanguage="<%=translation%>" />
 <script type="text/javascript">
 /* declare the module myapp and its dependencies (here in the silverpeas module) */
 var myapp = angular.module('silverpeas.kmelia', ['silverpeas.services', 'silverpeas.directives']);

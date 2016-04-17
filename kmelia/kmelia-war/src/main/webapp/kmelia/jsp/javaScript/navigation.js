@@ -78,6 +78,7 @@ function displayTopicDescription(id) {
   $.get(getWebContext() + '/KmeliaAJAXServlet', {Id: id, Action: 'GetTopicWysiwyg', ComponentId: componentId, IEFix: ieFix},
   function(data) {
     $("#topicDescription").html(data);
+    activateIDCards();
   }, "html");
 }
 
@@ -88,9 +89,8 @@ function refreshPublications()
   var componentId = getComponentId();
   $.get(getWebContext() + '/RAjaxPublicationsListServlet', {Id: nodeId, ComponentId: componentId, IEFix: ieFix},
   function(data) {
-    //$('#pubList').html(data);
-	updateHtmlContainingAngularDirectives($('#pubList'), data);
-    activateUserZoom();
+    updateHtmlContainingAngularDirectives($('#pubList'), data);
+      activateUserZoom();
   }, "html");
 }
 
@@ -160,16 +160,6 @@ function displayPublications(id) {
   }, "html");
 }
 
-function activateUserZoom() {
-  $('.userToZoom').each(function() {
-    var $this = $(this);
-    if ($this.data('userZoom') == null)
-      $this.userZoom({
-        id: $this.attr('rel')
-      });
-  });
-}
-
 function displayOperations(id) {
   var ieFix = new Date().getTime();
   var componentId = getComponentId();
@@ -223,7 +213,7 @@ function initOperations(id, op) {
   }
 
   if (op.pdc) {
-    menuItem = new YAHOO.widget.MenuItem(getString('GML.PDCParam'), {url: "javascript:onClick=openSPWindow('" + getWebContext() + "/RpdcUtilization/jsp/Main?ComponentId=" + getComponentId() + "','utilizationPdc1')"});
+    menuItem = new YAHOO.widget.MenuItem(getString('kmelia.PDCParam'), {url: "javascript:onClick=openSPWindow('" + getWebContext() + "/RpdcUtilization/jsp/Main?ComponentId=" + getComponentId() + "','utilizationPdc1')"});
     oMenu.addItem(menuItem, groupIndex);
     groupEmpty = false;
   }
@@ -597,8 +587,6 @@ function displayTopicInformation(id) {
 function writeInConsole(text) {
   if (typeof console !== 'undefined') {
     console.log(text);
-  } else {
-    alert(text);
   }
 }
 
@@ -788,11 +776,10 @@ function emptyTrash() {
 }
 
 function checkDnD(id, operations) {
-  //alert("checkDnD : "+displayIt);
   if (operations.addPubli == true) {
-    $("#DnD").css({'display': 'block'});
+    activateDragAndDrop();
   } else {
-    $("#DnD").css({'display': 'none'});
+    muteDragAndDrop();
   }
 }
 
@@ -833,18 +820,11 @@ function pasteFromOperations() {
 }
 
 function pasteNode(id) {
-  $.progressMessage();
+  checkOnPaste(id);
+}
 
-  var url = getWebContext() + '/KmeliaAJAXServlet';
-  $.post(url, {ComponentId: getComponentId(), Action: 'Paste', Id: id, IEFix: new Date().getTime()},
-  function(data) {
-    $.closeProgressMessage();
-    if (data === "ok") {
-      reloadPage(id);
-    } else {
-      notyError(data);
-    }
-  }, 'text');
+function pasteDone(id) {
+  reloadPage(id);
 }
 
 function reloadPage(id) {

@@ -27,39 +27,20 @@
 
 <%@ page language="java" %>
 
-<%@ page import="javax.servlet.*"%>
-<%@ page import="javax.servlet.http.*"%>
-<%@ page import="javax.servlet.jsp.*"%>
-<%@ page import="java.io.PrintWriter"%>
-<%@ page import="java.io.IOException"%>
-<%@ page import="java.io.FileInputStream"%>
-<%@ page import="java.io.ObjectInputStream"%>
-<%@ page import="java.util.*"%>
-<%@ page import="java.beans.*"%>
-
-<%@ page import="com.stratelia.webactiv.util.node.model.NodeDetail, java.util.Collection, java.util.Iterator"%>
-<%@ page import="com.stratelia.webactiv.util.node.model.NodePK"%>
-<%@ page import="javax.ejb.RemoveException, javax.ejb.CreateException, java.sql.SQLException, javax.naming.NamingException, java.rmi.RemoteException, javax.ejb.FinderException"%>
-<%@ page import="com.stratelia.webactiv.util.*"%>
-<%@ page import="com.stratelia.webactiv.kmelia.control.KmeliaSessionController"%>
-
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.GraphicElementFactory"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.Encode"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.board.Board"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.buttons.Button"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.buttonPanes.ButtonPane"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.arrayPanes.ArrayPane"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.arrayPanes.ArrayLine"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.arrayPanes.ArrayColumn"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.iconPanes.IconPane"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.icons.Icon"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.navigationList.NavigationList"%>
-
-<%@ page import="com.silverpeas.util.i18n.*"%>
-<%@ page import="com.stratelia.silverpeas.util.ResourcesWrapper"%>
+<%@ page import="org.silverpeas.core.node.model.NodeDetail, java.util.Collection, java.util.Iterator"%>
+<%@ page import="org.silverpeas.components.kmelia.control.KmeliaSessionController"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.GraphicElementFactory"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.Encode"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.board.Board"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.buttons.Button"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.buttonpanes.ButtonPane"%>
+<%@ page import="org.silverpeas.core.util.MultiSilverpeasBundle"%>
+<%@ page import="org.silverpeas.core.i18n.I18NHelper" %>
+<%@ page import="org.silverpeas.core.util.LocalizationBundle" %>
+<%@ page import="java.util.ArrayList" %>
 <%!
 
-String m_context = GeneralPropertiesManager.getGeneralResourceLocator().getString("ApplicationURL");
+String m_context = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 //Icons
 String axisUpdate = m_context + "/util/icons/update.gif";
 
@@ -75,7 +56,7 @@ String getAxisAllLabel(int valueMaxLength, KmeliaSessionController kmeliaScc) {
       return allLabel;
 }
 
-String getTimeAxis(KmeliaSessionController kmeliaScc, ResourceLocator timeSettings, String defaultValue) throws CreateException, SQLException, NamingException, RemoteException, FinderException {
+String getTimeAxis(KmeliaSessionController kmeliaScc, LocalizationBundle timeSettings, String defaultValue) {
 
       List keys = kmeliaScc.getTimeAxisKeys();
       StringBuffer axis = new StringBuffer(1000);
@@ -110,7 +91,7 @@ String getTimeAxis(KmeliaSessionController kmeliaScc, ResourceLocator timeSettin
     return axis.toString();
 }
 
-List getAxis(KmeliaSessionController kmeliaScc, boolean axisLinked, List combination, String translation) throws CreateException, SQLException, NamingException, RemoteException, FinderException {
+List getAxis(KmeliaSessionController kmeliaScc, boolean axisLinked, List combination, String translation) {
       List list = kmeliaScc.getAxis();
       Iterator iterator = list.iterator();
       ArrayList axisList = new ArrayList();
@@ -139,9 +120,9 @@ List getAxis(KmeliaSessionController kmeliaScc, boolean axisLinked, List combina
                                   axis.append("<label for=\"axe"+node.getNodePK().getId()+"\">"+Encode.javaStringToHtmlString(node.getName(translation))+"</label>");
                               
                                         if (axisLinked)
-                                          axis.append("<select id=\"axe"+node.getNodePK().getId()+"\" name=\""+node.getNodePK().getId()+"\" size=\"1\" onchange=\"positionManage(this)\">");
+                                          axis.append("<select class=\"axis\" id=\"axe"+node.getNodePK().getId()+"\" name=\""+node.getNodePK().getId()+"\" size=\"1\" onchange=\"positionManage(this)\">");
                                         else
-                                          axis.append("<select id=\"axe"+node.getNodePK().getId()+"\" name=\""+node.getNodePK().getId()+"\" size=\"1\">");
+                                          axis.append("<select class=\"axis\" id=\"axe"+node.getNodePK().getId()+"\" name=\""+node.getNodePK().getId()+"\" size=\"1\">");
                                         axis.append("<option value=\""+node.getPath()+node.getNodePK().getId()+"\">"+kmeliaScc.getString("AllComponents")+"</option>");
                   } else if (node.getLevel() == 3) {
                       selectValue = "";
@@ -167,17 +148,17 @@ List getAxis(KmeliaSessionController kmeliaScc, boolean axisLinked, List combina
       return axisList;
 }
 
-String displayAxisCombinationToUsers(KmeliaSessionController kmeliaScc, GraphicElementFactory gef, List combination, String timeCriteria, String translation) throws CreateException, SQLException, NamingException, RemoteException, FinderException {
+String displayAxisCombinationToUsers(KmeliaSessionController kmeliaScc, GraphicElementFactory gef, List combination, String timeCriteria, String translation) {
     String result = displayAxis(kmeliaScc, gef, false, true, combination, timeCriteria, kmeliaScc.isTimeAxisUsed(), null, translation);
     return result;
 }
 
-String displayAxisToUsers(KmeliaSessionController kmeliaScc, GraphicElementFactory gef, String translation) throws CreateException, SQLException, NamingException, RemoteException, FinderException {
+String displayAxisToUsers(KmeliaSessionController kmeliaScc, GraphicElementFactory gef, String translation) {
     String result = displayAxis(kmeliaScc, gef, false, true, new ArrayList(), null, kmeliaScc.isTimeAxisUsed(), null, translation);
     return result;
 }
 
-String displayAxisToPublish(KmeliaSessionController kmeliaScc, GraphicElementFactory gef, String translation) throws CreateException, SQLException, NamingException, RemoteException, FinderException {
+String displayAxisToPublish(KmeliaSessionController kmeliaScc, GraphicElementFactory gef, String translation) {
 	String result;
 	List currentCombination = new ArrayList();
 	if (kmeliaScc.getCurrentCombination() != null)
@@ -186,18 +167,18 @@ String displayAxisToPublish(KmeliaSessionController kmeliaScc, GraphicElementFac
     return result;
 }
 
-String displayAxisToAdmins(KmeliaSessionController kmeliaScc, GraphicElementFactory gef, String translation) throws CreateException, SQLException, NamingException, RemoteException, FinderException {
+String displayAxisToAdmins(KmeliaSessionController kmeliaScc, GraphicElementFactory gef, String translation) {
     String result = displayAxis(kmeliaScc, gef, true, false, new ArrayList(), null, false, kmeliaScc.getString("AdminExplaination"), translation);
     return result;
 }
 
-String displayAxis(KmeliaSessionController kmeliaScc, GraphicElementFactory gef, boolean axisLinked, boolean searchEnabled, List combination,  String timeCriteriaValue, boolean timeAxisEnabled, String explaination, String translation) throws CreateException, SQLException, NamingException, RemoteException, FinderException {
+String displayAxis(KmeliaSessionController kmeliaScc, GraphicElementFactory gef, boolean axisLinked, boolean searchEnabled, List combination,  String timeCriteriaValue, boolean timeAxisEnabled, String explaination, String translation) {
     StringBuffer result = new StringBuffer(1000);
     List axisList = getAxis(kmeliaScc, axisLinked, combination, translation);
     
     if (timeAxisEnabled && axisList.size() > 0) {
         //get the time axis
-        ResourceLocator timeSettings = new ResourceLocator("com.stratelia.webactiv.kmelia.multilang.timeAxisBundle", kmeliaScc.getLanguage());
+        LocalizationBundle timeSettings = ResourceLocator.getLocalizationBundle("org.silverpeas.kmelia.multilang.timeAxisBundle", kmeliaScc.getLanguage());
         axisList.add(getTimeAxis(kmeliaScc, timeSettings,  timeCriteriaValue));
     }
     
@@ -243,8 +224,7 @@ String displayAxis(KmeliaSessionController kmeliaScc, GraphicElementFactory gef,
 	return result.toString();
 }
 
-String displayAxisManageView(KmeliaSessionController kmeliaScc, GraphicElementFactory gef, String axisId, String mandatoryFieldSrc, ResourcesWrapper resources, String translation)
-	 throws CreateException, SQLException, NamingException, RemoteException, FinderException {
+String displayAxisManageView(KmeliaSessionController kmeliaScc, GraphicElementFactory gef, String axisId, String mandatoryFieldSrc, MultiSilverpeasBundle resources, String translation) {
     NodeDetail axis = kmeliaScc.getNodeHeader(axisId);
     StringBuffer result = new StringBuffer(1000);
     
@@ -312,7 +292,7 @@ String displayAxisManageView(KmeliaSessionController kmeliaScc, GraphicElementFa
     return result.toString();
 }
 
-String displayComponentManageView(KmeliaSessionController kmelia, GraphicElementFactory gef, String componentId, String path, String mandatoryFieldSrc, ResourcesWrapper resources, String translation) throws CreateException, SQLException, NamingException, RemoteException, FinderException {
+String displayComponentManageView(KmeliaSessionController kmelia, GraphicElementFactory gef, String componentId, String path, String mandatoryFieldSrc, MultiSilverpeasBundle resources, String translation) {
     NodeDetail nodeDetail = kmelia.getNodeHeader(componentId);
     StringBuffer result = new StringBuffer(1000);
     Board board = gef.getBoard();

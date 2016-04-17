@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2000 - 2013 Silverpeas
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    As a special exception to the terms and conditions of version 3.0 of
+    the GPL, you may redistribute this Program in connection with Free/Libre
+    Open Source Software ("FLOSS") applications as described in Silverpeas's
+    FLOSS exception.  You should have received a copy of the text describing
+    the FLOSS exception, and it is also available here:
+    "http://www.silverpeas.org/docs/core/legal/floss_exception.html"
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+<WAComponent xmlns="http://silverpeas.org/xml/ns/component" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://silverpeas.org/xml/ns/component http://www.silverpeas.org/xsd/component.xsd">
+  <name>formsOnline</name>
+  <label>
+    <message lang="fr">Formulaires en ligne</message>
+    <message lang="en">Online Forms</message>
+    <message lang="de">Online Formulare</message>
+  </label>
+  <description>
+    <message lang="fr">Application très pratique basée sur des formulaires
+		entièrement personnalisables, elle permet aux utilisateurs de soumettre des
+		demandes structurées de toutes natures. Ensuite, les destinataires valident ou
+		refusent les demandes reçues. Les notifications permettent un suivi parfait des
+		demandes.
+	</message>
+    <message lang="en">Online forms</message>
+    <message lang="de">Online Formulare</message>
+  </description>
+  <suite>
+    <message lang="fr">02 Gestion Collaborative</message>
+    <message lang="en">02 Collaborative Management</message>
+    <message lang="de">02 Collaborative Verwaltung</message>
+  </suite>
+  <visible>true</visible>
+  <portlet>false</portlet>
+  <profiles>
+    <profile name="Administrator">
+      <label>
+        <message lang="fr">Gestionnaires</message>
+        <message lang="en">Administrators</message>
+        <message lang="de">Administrator</message>
+      </label>
+      <help>
+        <message lang="fr">Les gestionnaires gèrent les formulaires et déterminent les droits d'utilisation sur chaque formulaire (émetteurs / valideurs).</message>
+        <message lang="en">Administrators manage forms and assign rights on each form (senders/validators).</message>
+        <message lang="de">Administrator</message>
+      </help>
+    </profile>
+    <profile name="SenderReceiver">
+      <label>
+        <message lang="fr">Demandeurs et Valideurs</message>
+        <message lang="en">Senders and Validators</message>
+        <message lang="de">Sender und Empfänger</message>
+      </label>
+      <help>
+        <message lang="fr">Utilisateurs pouvant envoyer ou valider une demande.</message>
+        <message lang="en">Users than can send or validate a request.</message>
+        <message lang="de">Sender und Empfänger</message>
+      </help>
+    </profile>
+  </profiles>
+  <parameters>
+    <parameter>
+      <name>workgroup</name>
+      <label>
+        <message lang="fr">Travail de groupe</message>
+        <message lang="en">Team work</message>
+        <message lang="en">Zusammenspiel</message>
+      </label>
+      <order>1</order>
+      <mandatory>true</mandatory>
+      <value>false</value>
+      <type>checkbox</type>
+      <updatable>always</updatable>
+      <help>
+        <message lang="fr">Permet d'avoir une visibilité totale de toutes les demandes
+          (non traitées et traitées par n'importe quel valideur) sur les formulaires autorisés.
+          Si ce paramètre n'est pas activé, seules les demandes non traitées et celles traitées par
+          le valideur connecté sont visibles.
+        </message>
+        <message lang="en">Provides a total visibility of all requests (untreated and treated by any
+          validator) on permitted forms. If this setting is not enabled, only the untreated requests
+          and those treated by the connected validator are visible.
+        </message>
+        <message lang="de">Provides a total visibility of all requests (untreated and treated by any
+          validator) on permitted forms. If this setting is not enabled, only the untreated requests
+          and those treated by the connected validator are visible.
+        </message>
+      </help>
+    </parameter>
+  </parameters>
+</WAComponent>

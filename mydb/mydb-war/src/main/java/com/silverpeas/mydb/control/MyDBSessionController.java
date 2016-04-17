@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2000 - 2013 Silverpeas
+/*
+ * Copyright (C) 2000 - 2016 Silverpeas
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the
  * GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -20,32 +20,10 @@
  */
 package com.silverpeas.mydb.control;
 
-import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.sql.Types;
-import java.text.MessageFormat;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Vector;
-
-import org.silverpeas.mydb.control.DriverManager;
-
-import com.silverpeas.form.DataRecord;
-import com.silverpeas.form.Form;
-import com.silverpeas.form.FormException;
+import org.silverpeas.core.contribution.content.form.DataRecord;
+import org.silverpeas.core.contribution.content.form.Form;
+import org.silverpeas.core.contribution.content.form.FormException;
+import org.silverpeas.core.contribution.content.form.fieldType.DateField;
 import com.silverpeas.mydb.control.ejb.MyDBBm;
 import com.silverpeas.mydb.data.datatype.DataTypeList;
 import com.silverpeas.mydb.data.date.DateFormatter;
@@ -63,19 +41,29 @@ import com.silverpeas.mydb.exception.MyDBException;
 import com.silverpeas.mydb.model.MyDBConnectionInfoDetail;
 import com.silverpeas.mydb.model.MyDBConnectionInfoPK;
 import com.silverpeas.mydb.model.MyDBRuntimeException;
-
-import com.stratelia.silverpeas.peasCore.AbstractComponentSessionController;
-import com.stratelia.silverpeas.peasCore.ComponentContext;
-import com.stratelia.silverpeas.peasCore.MainSessionController;
-import com.stratelia.silverpeas.selectionPeas.jdbc.JdbcConnectorSetting;
-import com.stratelia.silverpeas.silvertrace.SilverTrace;
-import com.stratelia.silverpeas.util.ResourcesWrapper;
+import org.silverpeas.core.web.mvc.controller.AbstractComponentSessionController;
+import org.silverpeas.core.web.mvc.controller.ComponentContext;
+import org.silverpeas.core.web.mvc.controller.MainSessionController;
+import org.silverpeas.core.web.selection.jdbc.JdbcConnectorSetting;
+import org.silverpeas.core.silvertrace.SilverTrace;
 import com.stratelia.webactiv.persistence.PersistenceException;
-import com.stratelia.webactiv.util.DBUtil;
-import com.stratelia.webactiv.util.EJBUtilitaire;
-import com.stratelia.webactiv.util.JNDINames;
-import com.stratelia.webactiv.util.exception.SilverpeasException;
-import com.stratelia.webactiv.util.exception.UtilException;
+import org.silverpeas.mydb.control.DriverManager;
+import org.silverpeas.util.DBUtil;
+import org.silverpeas.util.MultiSilverpeasBundle;
+import org.silverpeas.core.util.ServiceProvider;
+import org.silverpeas.util.exception.SilverpeasException;
+
+import java.math.BigDecimal;
+import java.sql.*;
+import java.text.MessageFormat;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Vector;
 
 /**
  * MyDB session control.
@@ -97,7 +85,7 @@ public class MyDBSessionController extends AbstractComponentSessionController {
   private FormManager formManager;
   private String[][] formParameters;
   private TableManager tableManager;
-  private ResourcesWrapper resources;
+  private MultiSilverpeasBundle resources;
   private DateFormatter dateFormatter;
 
   /**
@@ -110,8 +98,8 @@ public class MyDBSessionController extends AbstractComponentSessionController {
       ComponentContext componentContext) {
     super(mainSessionCtrl, componentContext,
         "org.silverpeas.mydb.multilang.myDBBundle",
-        "org.silverpeas.mydb.settings.myDBIcons");
-    resources = new ResourcesWrapper(getMultilang(), getIcon(), getSettings(),
+        "org.silverpeas.mydb.settings.myDBIcons","org.silverpeas.mydb.settings.myDBSettings");
+    resources = new MultiSilverpeasBundle(getMultilang(), getIcon(), getSettings(),
         getLanguage());
     driverManager = new DriverManager();
     dateFormatter = new DateFormatter(resources.getString("DatePattern"));
@@ -189,7 +177,7 @@ public class MyDBSessionController extends AbstractComponentSessionController {
         setTableName("");
       }
     } catch (MyDBException e) {
-      SilverTrace.warn("myDB", "MyDBSessionController.checkTableName()",
+      SilverTrace.warn("mydb", "MyDBSessionController.checkTableName()",
           "myDB.MSG_TABLE_NAME_CHECK_FAILED", "TableName=" + tableName, e);
     }
     return false;
@@ -212,25 +200,24 @@ public class MyDBSessionController extends AbstractComponentSessionController {
           throw new MyDBRuntimeException("myDBSessionController.initMyDB()",
               SilverpeasException.FATAL, "myDB.EX_MUST_BE_ONLY_ONE_CONNECTION");
         }
-
         Iterator<MyDBConnectionInfoDetail> i = c.iterator();
         if (i.hasNext()) {
           myDBDetail = i.next();
         }
       } catch (MyDBException e) {
-        SilverTrace.error("myDB", "myDBSessionController.initMyDB()",
+        SilverTrace.error("mydb", "myDBSessionController.initMyDB()",
             "myDB.EX_CONNECTION_SETTING_INIT_FAILED", e);
         throw new MyDBRuntimeException("myDBSessionController.initMyDB()",
             SilverpeasException.FATAL,
             "myDB.EX_CONNECTION_SETTING_INIT_FAILED", e);
       } catch (PersistenceException e) {
-        SilverTrace.error("myDB", "myDBSessionController.initMyDB()",
+        SilverTrace.error("mydb", "myDBSessionController.initMyDB()",
             "myDB.EX_CONNECTION_SETTING_INIT_FAILED", e);
         throw new MyDBRuntimeException("myDBSessionController.initMyDB()",
             SilverpeasException.FATAL,
             "myDB.EX_CONNECTION_SETTING_INIT_FAILED", e);
       } catch (MyDBRuntimeException e) {
-        SilverTrace.error("myDB", "myDBSessionController.initMyDB()",
+        SilverTrace.error("mydb", "myDBSessionController.initMyDB()",
             "myDB.EX_CONNECTION_SETTING_INIT_FAILED", e);
         throw new MyDBRuntimeException("myDBSessionController.initMyDB()",
             SilverpeasException.FATAL,
@@ -265,8 +252,8 @@ public class MyDBSessionController extends AbstractComponentSessionController {
   private MyDBBm getMyDBBm() throws MyDBException {
     if (myDBEjb == null) {
       try {
-        myDBEjb = EJBUtilitaire.getEJBObjectRef(JNDINames.MYDBBM_EJBHOME, MyDBBm.class);
-      } catch (UtilException e) {
+        myDBEjb = ServiceProvider.getService(MyDBBm.class);
+      } catch (Exception e) {
         throw new MyDBException("myDBSessionController.getMyDBBm()",
             SilverpeasException.ERROR, "myDB.EX_EJB_CREATION_FAILED", e);
       }
@@ -330,7 +317,7 @@ public class MyDBSessionController extends AbstractComponentSessionController {
     tableManager = null;
   }
 
-  public ResourcesWrapper getResources() {
+  public MultiSilverpeasBundle getResources() {
     return resources;
   }
 
@@ -440,7 +427,7 @@ public class MyDBSessionController extends AbstractComponentSessionController {
       try {
         connection = getConnection();
       } catch (SQLException e) {
-        SilverTrace.warn("myDB", "MyDBSessionController.startConnection()",
+        SilverTrace.warn("mydb", "MyDBSessionController.startConnection()",
             "myDB.MSG_CONNECTION_NOT_STARTED", e);
         connection = null;
       }
@@ -465,7 +452,7 @@ public class MyDBSessionController extends AbstractComponentSessionController {
         connection = null;
       }
     } catch (SQLException e) {
-      SilverTrace.warn("myDB", "MyDBSessionController.closeConnection()",
+      SilverTrace.warn("mydb", "MyDBSessionController.closeConnection()",
           "myDB.MSG_CONNECTION_NOT_CLOSED", e);
     }
   }
@@ -482,7 +469,7 @@ public class MyDBSessionController extends AbstractComponentSessionController {
         driverManager.resetDriver();
       }
     } catch (SQLException e) {
-      SilverTrace.warn("myDB", "MyDBSessionController.checkConnection()",
+      SilverTrace.warn("mydb", "MyDBSessionController.checkConnection()",
           "myDB.MSG_CONNECTION_NOT_CHECKED", e);
     } finally {
       closeConnection();
@@ -497,7 +484,7 @@ public class MyDBSessionController extends AbstractComponentSessionController {
     Vector<String> tableVector = new Vector<String>();
     startConnection();
     if (connection == null) {
-      SilverTrace.warn("myDB", "MyDBSessionController.getTableNames()",
+      SilverTrace.warn("mydb", "MyDBSessionController.getTableNames()",
           "myDB.MSG_CONNECTION_NOT_STARTED");
     } else {
       try {
@@ -545,7 +532,13 @@ public class MyDBSessionController extends AbstractComponentSessionController {
             rs = dbMetaData.getColumns(null, "%", tableName, "%");
             while (rs.next()) {
               String columnName = rs.getString(DbColumn.COLUMN_NAME);
+              
+              //In jdbc Oracle, override mapping between DATE and java.sql.Date instead of DATE and java.sql.Timestamp
               int dataType = rs.getInt(DbColumn.DATA_TYPE);
+              if (DateField.TYPE.equalsIgnoreCase(rs.getString("TYPE_NAME"))) {
+                dataType = java.sql.Types.DATE;
+              }
+
               int dataSize = rs.getInt(DbColumn.COLUMN_SIZE);
               int nullable = rs.getInt(DbColumn.NULLABLE);
               boolean isNull = (nullable == 1);
@@ -811,7 +804,7 @@ public class MyDBSessionController extends AbstractComponentSessionController {
           }
         }
       } catch (SQLException e) {
-        SilverTrace.warn("myDB", "MyDBSessionController.getLineCreationErrorMessage()",
+        SilverTrace.warn("mydb", "MyDBSessionController.getLineCreationErrorMessage()",
             "myDB.MSG_CANNOT_CHECK_LINE_CREATION", e);
       } finally {
         closeConnection();
@@ -859,7 +852,7 @@ public class MyDBSessionController extends AbstractComponentSessionController {
       prepStmt.executeUpdate();
     } catch (SQLException e) {
       SilverTrace.
-          warn("myDB", "MyDBSessionController.createDbLine()", "myDB.MSG_CANNOT_CREATE_LINE", e);
+          warn("mydb", "MyDBSessionController.createDbLine()", "myDB.MSG_CANNOT_CREATE_LINE", e);
       return MessageFormat.format(resources.getString("LineCreationError"), e.getMessage());
     } finally {
       closeConnection();
@@ -920,7 +913,7 @@ public class MyDBSessionController extends AbstractComponentSessionController {
       prepStmt.executeUpdate();
     } catch (SQLException e) {
       SilverTrace.
-          warn("myDB", "MyDBSessionController.updateDbData()", "myDB.MSG_CANNOT_UPDATE_LINE", e);
+          warn("mydb", "MyDBSessionController.updateDbData()", "myDB.MSG_CANNOT_UPDATE_LINE", e);
       return MessageFormat.format(resources.getString("LineUpdateError"), e.getMessage());
     } finally {
       closeConnection();
@@ -1000,7 +993,7 @@ public class MyDBSessionController extends AbstractComponentSessionController {
           }
         }
       } catch (SQLException e) {
-        SilverTrace.warn("myDB", "MyDBSessionController.getLineDeletionErrorMessage()",
+        SilverTrace.warn("mydb", "MyDBSessionController.getLineDeletionErrorMessage()",
             "myDB.MSG_CANNOT_CHECK_LINE_DELETION", e);
       } finally {
         closeConnection();
@@ -1039,7 +1032,7 @@ public class MyDBSessionController extends AbstractComponentSessionController {
       prepStmt.executeUpdate();
       closeConnection();
     } catch (SQLException e) {
-      SilverTrace.warn("myDB", "MyDBSessionController.deleteDbData()",
+      SilverTrace.warn("mydb", "MyDBSessionController.deleteDbData()",
           "myDB.MSG_CANNOT_DELETE_LINE", e);
       return MessageFormat.format(resources.getString("LineDeletionError"), e.getMessage());
     } finally {
@@ -1155,7 +1148,7 @@ public class MyDBSessionController extends AbstractComponentSessionController {
 
       return true;
     } catch (SQLException e) {
-      SilverTrace.warn("myDB", "MyDBSessionController.createTable()",
+      SilverTrace.warn("mydb", "MyDBSessionController.createTable()",
           "myDB.MSG_CANNOT_CREATE_TABLE", e);
       tableManager.setErrorLabel(MessageFormat.format(resources.getString("TableCreationError"), 
           e.getMessage()));
@@ -1186,7 +1179,7 @@ public class MyDBSessionController extends AbstractComponentSessionController {
       }
       return true;
     } catch (SQLException e) {
-      SilverTrace.warn("myDB", "MyDBSessionController.dropTable()",
+      SilverTrace.warn("mydb", "MyDBSessionController.dropTable()",
           "myDB.MSG_CANNOT_DELETE_TABLE", e);
       tableManager.setErrorLabel(MessageFormat.format(resources.getString("TableDeletionError"), 
           e.getMessage()));
@@ -1315,7 +1308,7 @@ public class MyDBSessionController extends AbstractComponentSessionController {
           try {
             prepStmt.setDate(index, dateFormatter.stringToSql(value));
           } catch (ParseException e) {
-            SilverTrace.warn("myDB", "MyDBSessionController.setValueByType()",
+            SilverTrace.warn("mydb", "MyDBSessionController.setValueByType()",
                 "myDB.MSG_CANNOT_PARSE_DATE", "Date=" + value, e);
             prepStmt.setNull(index, Types.DATE);
           }

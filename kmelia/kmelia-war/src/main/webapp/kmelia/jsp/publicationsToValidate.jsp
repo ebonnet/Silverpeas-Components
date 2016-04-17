@@ -34,7 +34,7 @@ String translation = (String) request.getAttribute("Language");
 <HTML>
 <HEAD>
 <view:looknfeel/>
-<script type="text/javascript" src="javaScript/navigation.js"></script>
+<view:script src="javaScript/navigation.js"/>
 <script type="text/javascript">
 
 function getCurrentUserId() {
@@ -51,6 +51,10 @@ function getComponentId() {
 
 function getToValidateFolderId() {
 	return "<%=KmeliaHelper.SPECIALFOLDER_TOVALIDATE%>";
+}
+
+function getPubIdToHighlight() {
+	return "";
 }
 
 $(document).ready(function() {

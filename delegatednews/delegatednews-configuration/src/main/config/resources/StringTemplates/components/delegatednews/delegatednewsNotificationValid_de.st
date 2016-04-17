@@ -1,0 +1,1 @@
+Your news <b>$publicationName$</b> has been accepted to appear in homepage.

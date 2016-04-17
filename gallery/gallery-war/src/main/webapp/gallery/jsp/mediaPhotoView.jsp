@@ -37,15 +37,15 @@
 
 <c:url var="downloadWatermarkIconUrl" value="${downloadWatermarkIcon}"/>
 
-<view:setConstant var="PREVIEW_RESOLUTION" constant="com.silverpeas.gallery.constant.MediaResolution.PREVIEW"/>
-<view:setConstant var="WATERMARK_RESOLUTION" constant="com.silverpeas.gallery.constant.MediaResolution.WATERMARK"/>
+<view:setConstant var="WATERMARK_RESOLUTION" constant="org.silverpeas.components.gallery.constant.MediaResolution.WATERMARK"/>
 
 <c:set var="isViewMetadata" value="${requestScope.IsViewMetadata}"/>
 <c:set var="isWatermark" value="${requestScope.IsWatermark}"/>
+<c:set var="ImageResolutionPreview" value="${requestScope.ImageResolutionPreview}"/>
 
 <gallery:viewMediaLayout>
   <jsp:attribute name="headerBloc">
-    <jsp:useBean id="media" scope="request" type="com.silverpeas.gallery.model.Photo"/>
+    <jsp:useBean id="media" scope="request" type="org.silverpeas.components.gallery.model.Photo"/>
     <jsp:useBean id="mediaUrl" scope="request" type="java.lang.String"/>
   </jsp:attribute>
 
@@ -74,7 +74,7 @@
 
   <jsp:attribute name="mediaPreviewBloc">
     <a href="#" onclick="javascript:startSlideshow('${media.id}')">
-      <img alt="<c:out value="${media.name}"/>" src="${media.getApplicationThumbnailUrl(PREVIEW_RESOLUTION)}"/>
+      <img alt="<c:out value="${media.name}"/>" src="${media.getApplicationThumbnailUrl(ImageResolutionPreview)}"/>
     </a>
   </jsp:attribute>
 </gallery:viewMediaLayout>

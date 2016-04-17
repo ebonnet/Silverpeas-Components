@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2000 - 2013 Silverpeas
+/*
+ * Copyright (C) 2000 - 2016 Silverpeas
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the
  * GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -20,29 +20,31 @@
  */
 package com.stratelia.silverpeas.chat.control;
 
-import jChatBox.Chat.Chatroom;
-import jChatBox.Chat.ChatroomManager;
-
-import java.rmi.RemoteException;
-import java.util.Iterator;
-import java.util.Vector;
-
+import org.silverpeas.core.admin.user.model.UserDetail;
+import org.silverpeas.core.index.indexing.model.FullIndexEntry;
+import org.silverpeas.core.index.indexing.model.IndexEngineProxy;
+import org.silverpeas.core.index.indexing.model.IndexEntryPK;
+import org.silverpeas.core.ui.DisplayI18NHelper;
 import com.stratelia.silverpeas.alertUser.AlertUser;
 import com.stratelia.silverpeas.chat.ChatDataAccess;
 import com.stratelia.silverpeas.chat.ChatException;
 import com.stratelia.silverpeas.chat.ChatRoomDetail;
-import com.stratelia.silverpeas.notificationManager.NotificationMetaData;
-import com.stratelia.silverpeas.notificationManager.NotificationParameters;
-import com.stratelia.silverpeas.peasCore.AbstractComponentSessionController;
-import com.stratelia.silverpeas.peasCore.ComponentContext;
-import com.stratelia.silverpeas.peasCore.MainSessionController;
-import com.stratelia.silverpeas.silvertrace.SilverTrace;
-import com.stratelia.silverpeas.util.PairObject;
-import com.stratelia.webactiv.beans.admin.UserDetail;
-import com.stratelia.webactiv.util.ResourceLocator;
-import org.silverpeas.search.indexEngine.model.FullIndexEntry;
-import org.silverpeas.search.indexEngine.model.IndexEngineProxy;
-import org.silverpeas.search.indexEngine.model.IndexEntryPK;
+import org.silverpeas.core.notification.user.client.NotificationMetaData;
+import org.silverpeas.core.notification.user.client.NotificationParameters;
+import org.silverpeas.core.web.mvc.controller.AbstractComponentSessionController;
+import org.silverpeas.core.web.mvc.controller.ComponentContext;
+import org.silverpeas.core.web.mvc.controller.MainSessionController;
+import org.silverpeas.core.silvertrace.SilverTrace;
+import jChatBox.Chat.Chatroom;
+import jChatBox.Chat.ChatroomManager;
+import org.silverpeas.util.Link;
+import org.silverpeas.core.util.LocalizationBundle;
+import org.silverpeas.util.Pair;
+import org.silverpeas.core.util.ResourceLocator;
+
+import java.rmi.RemoteException;
+import java.util.Iterator;
+import java.util.Vector;
 
 public class ChatSessionController extends AbstractComponentSessionController {
   // utilisation de userPanel/ userpanelPeas
@@ -175,7 +177,7 @@ public class ChatSessionController extends AbstractComponentSessionController {
     sel.setHostSpaceName(getSpaceLabel()); // set nom de l'espace pour browsebar
     sel.setHostComponentId(getComponentId()); // set id du composant pour appel
     // selectionPeas (extra param permettant de filtrer les users ayant acces au composant)
-    PairObject hostComponentName = new PairObject(getComponentLabel(), null); // set
+    Pair<String, String> hostComponentName = new Pair<>(getComponentLabel(), null); // set
     // nom du composant pour browsebar
     // (PairObject(nom_composant, lien_vers_composant))
     // NB : seul le 1er element est actuellement utilisé
@@ -209,41 +211,33 @@ public class ChatSessionController extends AbstractComponentSessionController {
         Integer.parseInt(currentRoomId));
     String roomName = chatroom.getParams().getName();
 
-    ResourceLocator message = new ResourceLocator(
-        "org.silverpeas.chat.multilang.chatBundle", "fr");
-    ResourceLocator message_en = new ResourceLocator(
-        "org.silverpeas.chat.multilang.chatBundle", "en");
-
+    LocalizationBundle message =
+        ResourceLocator.getLocalizationBundle("org.silverpeas.chat.multilang.chatBundle",
+            DisplayI18NHelper.getDefaultLanguage());
     String subject = getNotificationSubject(message);
     String body = getNotificationBody(message, senderName, roomName);
-
-    // english notifications
-    String subject_en = getNotificationSubject(message_en);
-    String body_en = getNotificationBody(message_en, senderName, roomName);
-
-    NotificationMetaData notification_message = new NotificationMetaData(
+    NotificationMetaData notifMetaData = new NotificationMetaData(
         NotificationParameters.NORMAL, subject, body);
-    notification_message.addLanguage("en", subject_en, body_en);
 
-    // German notifications
-    ResourceLocator message_de = new ResourceLocator(
-        "org.silverpeas.chat.multilang.chatBundle", "de");
-    if (message_de != null) {
-      String subject_de = getNotificationSubject(message_de);
-      String body_de = getNotificationBody(message_de, senderName, roomName);
-      notification_message.addLanguage("de", subject_de, body_de);
+    for (String language : DisplayI18NHelper.getLanguages()) {
+      message = ResourceLocator.getLocalizationBundle("org.silverpeas.chat.multilang.chatBundle",
+          language);
+      subject = getNotificationSubject(message);
+      body = getNotificationBody(message, senderName, roomName);
+      notifMetaData.addLanguage(language, subject, body);
+
+      Link link = new Link(url, message.getString("chat.notifLinkLabel"));
+      notifMetaData.setLink(link, language);
     }
-
-    notification_message.setLink(url);
-    notification_message.setSender(this.currentUser.getId());
-    return notification_message;
+    notifMetaData.setSender(this.currentUser.getId());
+    return notifMetaData;
   }
 
-  private String getNotificationSubject(ResourceLocator message) {
+  private String getNotificationSubject(LocalizationBundle message) {
     return message.getString("chat.SUBJECT");
   }
 
-  private String getNotificationBody(ResourceLocator message,
+  private String getNotificationBody(LocalizationBundle message,
       String senderName, String roomName) {
     StringBuilder messageText = new StringBuilder();
     messageText.append(senderName).append(" ");

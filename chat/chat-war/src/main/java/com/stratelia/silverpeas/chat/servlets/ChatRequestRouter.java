@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2000 - 2013 Silverpeas
+/*
+ * Copyright (C) 2000 - 2016 Silverpeas
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -25,12 +25,11 @@
 package com.stratelia.silverpeas.chat.servlets;
 
 import com.stratelia.silverpeas.chat.control.ChatSessionController;
-import com.stratelia.silverpeas.peasCore.ComponentContext;
-import com.stratelia.silverpeas.peasCore.MainSessionController;
-import com.stratelia.silverpeas.peasCore.servlets.ComponentRequestRouter;
-import com.stratelia.silverpeas.silvertrace.SilverTrace;
+import org.silverpeas.core.web.mvc.controller.ComponentContext;
+import org.silverpeas.core.web.mvc.controller.MainSessionController;
+import org.silverpeas.core.web.mvc.route.ComponentRequestRouter;
 import jChatBox.Chat.ChatroomManager;
-import org.silverpeas.servlet.HttpRequest;
+import org.silverpeas.core.web.http.HttpRequest;
 
 import java.util.Vector;
 
@@ -61,15 +60,12 @@ public class ChatRequestRouter extends ComponentRequestRouter<ChatSessionControl
   public ChatSessionController createComponentSessionController(
       MainSessionController mainSessionCtrl, ComponentContext componentContext) {
     return new ChatSessionController(mainSessionCtrl, componentContext,
-        "com.stratelia.silverpeas.chat.multilang.chatBundle",
-        "com.stratelia.silverpeas.chat.settings.chatIcons");
+        "org.silverpeas.chat.multilang.chatBundle",
+        "org.silverpeas.chat.settings.chatIcons");
   }
 
   public String getDestination(String function,
       ChatSessionController chatSC, HttpRequest request) {
-    SilverTrace.debug("chat", "ChatRequestRouter.getDestination()",
-        "root.MSG_GEN_ENTER_METHOD", "function = " + function);
-
     String flag = getFlag(chatSC.getUserRoles());
     String destination = "";
     String chat_fullName = "";
@@ -178,20 +174,7 @@ public class ChatRequestRouter extends ComponentRequestRouter<ChatSessionControl
 
         destination = "/chat/jsp/admin/" + function;
       } else if (function.startsWith("ToUserPanel")) {
-
-        SilverTrace.debug("chat", "ChatRequestRouter.getDestination()",
-            "root.MSG_GEN_PARAM_VALUE", "ToUserPanel: function = " + function);
-        SilverTrace.debug("chat", "ChatRequestRouter.getDestination()",
-            "root.MSG_GEN_PARAM_VALUE", "ToUserPanel: function = " + function
-            + " spaceId=" + chatSC.getSpaceId() + " componentId="
-            + chatSC.getComponentId() + " room="
-            + chatSC.getCurrentSilverObjectId());
-
         destination = chatSC.initUserPanel();
-
-        SilverTrace.debug("chat", "ChatRequestRouter.getDestination()",
-            "root.MSG_GEN_PARAM_VALUE", "ToUserPanel: function = " + function
-            + "=> destination=" + destination);
       } else if (function.startsWith("close.jsp")) {
         destination = "/chat/jsp/" + function;
       }
@@ -220,8 +203,7 @@ public class ChatRequestRouter extends ComponentRequestRouter<ChatSessionControl
       destination = "/admin/jsp/errorpageMain.jsp";
     }
 
-    SilverTrace.info("chat", "ChatRequestRooter.getDestination()",
-        "root.MSG_GEN_PARAM_VALUE", "destination" + destination);
+
     return destination;
 
   }

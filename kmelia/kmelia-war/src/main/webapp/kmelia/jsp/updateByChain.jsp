@@ -25,7 +25,11 @@
 --%>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view"%>
-<%@ page import="com.stratelia.webactiv.kmelia.model.updatechain.*" %>
+<%@ page import="org.silverpeas.components.kmelia.model.KmeliaPublication" %>
+<%@ page import="org.silverpeas.components.kmelia.model.updatechain.Fields" %>
+<%@ page import="org.silverpeas.components.kmelia.model.updatechain.FieldsContext" %>
+<%@ page import="java.util.StringTokenizer" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.Encode" %>
 <%
 response.setHeader("Cache-Control","no-store"); //HTTP 1.1
 response.setHeader("Pragma","no-cache"); //HTTP 1.0
@@ -55,7 +59,7 @@ Integer				nbPublis			= (Integer) request.getAttribute("NbPublis");
 String 				linkedPathString 	= (String) request.getAttribute("LinkedPathString");
 List	 			topics				= (List) request.getAttribute("Topics");
 String 				fileUrl				= (String) request.getAttribute("FileUrl");
-Fields				fields				= (Fields) request.getAttribute("SaveFields");
+Fields fields				= (Fields) request.getAttribute("SaveFields");
 
 String				pubName				= "";
 
@@ -97,7 +101,7 @@ Button updateAllButton = (Button) gef.getFormButton(resources.getString("kmelia.
 <HTML>
 <HEAD>
 <TITLE></TITLE>
-<view:looknfeel/>
+<view:looknfeel withCheckFormScript="true"/>
 <style>
 .content {
 	padding-left: 0px;
@@ -123,7 +127,6 @@ Button updateAllButton = (Button) gef.getFormButton(resources.getString("kmelia.
 
 </style>
 <script type="text/javascript" src="<%=m_context%>/util/javaScript/dateUtils.js"></script>
-<script type="text/javascript" src="<%=m_context%>/util/javaScript/checkForm.js"></script>
 <script language="javascript">
 function topicGoTo(id) {
 	location.href="GoToTopic?Id="+id;

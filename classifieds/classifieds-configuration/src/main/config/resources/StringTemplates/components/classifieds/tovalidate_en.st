@@ -1,0 +1,1 @@
+The ad <b>$classified.title$</b> has to be validated.

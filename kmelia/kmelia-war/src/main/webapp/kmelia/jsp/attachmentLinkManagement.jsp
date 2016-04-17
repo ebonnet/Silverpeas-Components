@@ -31,18 +31,14 @@
 			response.setDateHeader("Expires", -1); //prevents caching at the proxy server
 %>
 <%-- Import area --%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.frame.Frame"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.buttonPanes.ButtonPane"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.buttons.Button"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.window.Window"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.Encode"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.GraphicElementFactory"%>
-<%@ page import="com.stratelia.webactiv.util.ResourceLocator"%>
-<%@ page import="org.silverpeas.wysiwyg.control.WysiwygController"%>
-<%@page import="java.util.List"%>
-<%@page import="com.stratelia.webactiv.util.GeneralPropertiesManager"%>
-<%@page import="com.silverpeas.treeMenu.process.TreeHandler"%>
-<%@page import="com.silverpeas.treeMenu.model.MenuConstants"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.frame.Frame"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.buttonpanes.ButtonPane"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.buttons.Button"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.window.Window"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.GraphicElementFactory"%>
+<%@ page import="org.silverpeas.core.util.ResourceLocator"%>
+<%@page import="org.silverpeas.core.web.treemenu.process.TreeHandler"%>
+<%@page import="org.silverpeas.core.web.treemenu.model.MenuConstants"%>
 
 <%@ taglib uri="http://www.silverpeas.com/tld/menuTree" prefix="menuTree"%>
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view"%>
@@ -51,11 +47,13 @@
 GraphicElementFactory gef = (GraphicElementFactory) session.getAttribute("SessionGraphicElementFactory");
 String language = (String) session.getAttribute("WYSIWYG_Language");
 String userId = (String) session.getAttribute("WYSIWYG_UserId");
-ResourceLocator message = new ResourceLocator("org.silverpeas.wysiwyg.multilang.wysiwygBundle", language);
-String contextName = GeneralPropertiesManager.getString("ApplicationURL");
+LocalizationBundle message = ResourceLocator.getLocalizationBundle("org.silverpeas.wysiwyg.multilang.wysiwygBundle", language);
+String contextName = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 %>
 
-<%@page import="com.stratelia.webactiv.beans.admin.ComponentInstLight"%><html>
+<%@page import="org.silverpeas.core.admin.component.model.ComponentInstLight"%>
+<%@ page import="org.silverpeas.core.util.LocalizationBundle" %>
+<html>
 <head>
 <title></title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">

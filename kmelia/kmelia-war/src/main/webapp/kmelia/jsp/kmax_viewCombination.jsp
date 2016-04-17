@@ -30,9 +30,10 @@ response.setHeader("Cache-Control","no-store"); //HTTP 1.1
 response.setHeader("Pragma","no-cache"); //HTTP 1.0
 response.setDateHeader ("Expires",-1); //prevents caching at the proxy server
 %>
-<%@ page import="com.stratelia.webactiv.util.coordinates.model.Coordinate"%>
-<%@ page import="com.stratelia.webactiv.util.coordinates.model.CoordinatePoint"%>
-<%@ page import="org.silverpeas.kmelia.jstl.KmeliaDisplayHelper"%>
+<%@ page import="org.silverpeas.core.node.coordinates.model.Coordinate"%>
+<%@ page import="org.silverpeas.core.node.coordinates.model.CoordinatePoint"%>
+<%@ page import="org.silverpeas.components.kmelia.jstl.KmeliaDisplayHelper"%>
+<%@ page import="org.silverpeas.core.silvertrace.SilverTrace" %>
 
 
 <%@ include file="checkKmelia.jsp" %>
@@ -79,27 +80,25 @@ CoordinatePoint getPoint(NodeDetail nodeDetail, Collection points, String transl
 <view:looknfeel/>
 <script type="text/javascript">
 	function search() {
-	    z = "";
-	    nbSelectedAxis = 0;
-      // -1 because of security tokens
-      // before, it was :
-      //  - i < document.axisForm.length
-	    for (var i=0; i<(document.axisForm.length-1); i++) {
-	        if (document.axisForm.elements[i].value.length != 0) {
-	            if (nbSelectedAxis != 0)
-	                z += ",";
-	            nbSelectedAxis = 1;
-	            truc = document.axisForm.elements[i].value.split("|");
-	            z += truc[0];
-	        }
-	    }
-	    if (nbSelectedAxis != 1) {
-	            window.alert("Vous devez sélectionnez au moins un axe !");
-	    } else {
-	            document.managerForm.action = "KmaxAddCoordinate";
-	            document.managerForm.SearchCombination.value = z;
-	            document.managerForm.submit();
-	    }
+    var criterias = "";
+    $(".axis").each(function() {
+      var val = $(this).val();
+      if (val.length != 0) {
+        if (criterias.length != 0) {
+          criterias += ",";
+        }
+        truc = val.split("|");
+        criterias += truc[0];
+      }
+    });
+
+    if (criterias.length == 0) {
+      window.alert("Vous devez sélectionnez au moins un axe !");
+    } else {
+      document.managerForm.action = "KmaxAddCoordinate";
+      document.managerForm.SearchCombination.value = criterias;
+      document.managerForm.submit();
+    }
 	}
 
 	function deleteCoordinate(coordinateId) {

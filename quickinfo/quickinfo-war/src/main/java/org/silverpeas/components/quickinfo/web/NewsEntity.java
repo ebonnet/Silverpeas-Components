@@ -1,21 +1,3 @@
-package org.silverpeas.components.quickinfo.web;
-
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.Date;
-
-import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlElement;
-
-import org.silverpeas.components.quickinfo.model.News;
-import org.silverpeas.util.UnitUtil;
-import org.silverpeas.util.time.TimeData;
-import org.silverpeas.util.time.TimeUnit;
-
-import com.silverpeas.thumbnail.model.ThumbnailDetail;
-import com.silverpeas.web.Exposable;
-import com.stratelia.webactiv.util.DateUtil;
-
 /*
  * Copyright (C) 2000 - 2014 Silverpeas
  *
@@ -39,7 +21,25 @@ import com.stratelia.webactiv.util.DateUtil;
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class NewsEntity implements Exposable {
+package org.silverpeas.components.quickinfo.web;
+
+import java.math.BigDecimal;
+import java.net.URI;
+import java.util.Date;
+
+import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlElement;
+
+import org.silverpeas.core.webapi.base.WebEntity;
+import org.silverpeas.components.quickinfo.model.News;
+import org.silverpeas.core.util.UnitUtil;
+import org.silverpeas.core.util.time.TimeData;
+import org.silverpeas.core.util.time.TimeUnit;
+
+import org.silverpeas.core.io.media.image.thumbnail.model.ThumbnailDetail;
+import org.silverpeas.core.util.DateUtil;
+
+public class NewsEntity implements WebEntity {
 
   private static final long serialVersionUID = 1L;
   
@@ -53,6 +53,10 @@ public class NewsEntity implements Exposable {
   @XmlElement
   @NotNull
   private String publicationId;
+
+  @XmlElement
+  @NotNull
+  private String componentId;
 
   @XmlElement
   @NotNull
@@ -73,6 +77,10 @@ public class NewsEntity implements Exposable {
   @XmlElement
   @NotNull
   private String permalink;
+
+  @XmlElement
+  @NotNull
+  private int numberOfAttachments;
   
   public static NewsEntity fromNews(News news) {
     NewsEntity entity = new NewsEntity();
@@ -82,11 +90,13 @@ public class NewsEntity implements Exposable {
     entity.setPermalink(news.getPermalink());
     entity.setId(news.getId());
     entity.setPublicationId(news.getPublicationId());
+    entity.setComponentId(news.getComponentInstanceId());
     entity.setContent(news.getContent());
     ThumbnailDetail thumbnail = news.getThumbnail();
     if (thumbnail != null) {
       entity.setThumbnailURL(thumbnail.getURL());
     }
+    entity.setNumberOfAttachments(news.getNumberOfAttachments());
     return entity;
   }
   
@@ -150,6 +160,14 @@ public class NewsEntity implements Exposable {
   public String getPublicationId() {
     return publicationId;
   }
+
+  public void setComponentId(String componentId) {
+    this.componentId = componentId;
+  }
+
+  public String getComponentId() {
+    return componentId;
+  }
   
   @XmlElement
   public String getPublishedFor() {
@@ -186,5 +204,12 @@ public class NewsEntity implements Exposable {
     return thumbnailURL;
   }
 
+  public void setNumberOfAttachments(int numberOfAttachments) {
+    this.numberOfAttachments = numberOfAttachments;
+  }
+
+  public int getNumberOfAttachments() {
+    return numberOfAttachments;
+  }
 
 }

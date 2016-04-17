@@ -1,4 +1,3 @@
-<%@ page import="com.silverpeas.util.EncodeHelper" %>
 <%--
 
     Copyright (C) 2000 - 2013 Silverpeas
@@ -26,13 +25,15 @@
 --%>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
-<jsp:useBean id="quizzUnderConstruction" scope="session" class="com.stratelia.webactiv.util.questionContainer.model.QuestionContainerDetail" />
+<jsp:useBean id="quizzUnderConstruction" scope="session" class="org.silverpeas.core.questioncontainer.container.model.QuestionContainerDetail" />
 
 <%@ include file="checkQuizz.jsp" %>
+<%@ page import="org.silverpeas.core.util.EncodeHelper" %>
+<%@ page import="org.silverpeas.core.persistence.jdbc.DBUtil" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view"%>
 <fmt:setLocale value="${sessionScope['SilverSessionController'].favoriteLanguage}" />
-<view:setBundle basename="com.stratelia.webactiv.quizz.multilang.quizz"/>
+<view:setBundle basename="org.silverpeas.quizz.multilang.quizz"/>
 
 <%
 //Retrieve parameter
@@ -49,7 +50,7 @@ String nbAnswersNeeded = "1";
 String nbAnswersMax = "1";
 String nextAction = "";
 
-String m_context = GeneralPropertiesManager.getGeneralResourceLocator().getString("ApplicationURL");
+String m_context = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 String mandatoryField = m_context + "/util/icons/mandatoryField.gif";
 
 String space = quizzScc.getSpaceLabel();
@@ -79,10 +80,8 @@ if (action == null) {
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title></title>
-<link type="text/css" href="<%=m_context%>/util/styleSheets/fieldset.css" rel="stylesheet" />
-<view:looknfeel/>
+<view:looknfeel withFieldsetStyle="true" withCheckFormScript="true"/>
 <view:includePlugin name="datepicker"/>
-<script type="text/javascript" src="<%=m_context%>/util/javaScript/checkForm.js"></script>
 <script language="javascript">
 function sendData() {
   if (isCorrectForm()) {
@@ -195,12 +194,12 @@ function isCorrectForm() {
         result = true;
         break;
     case 1 :
-        errorMsg = "<%=resources.getString("GML.ThisFormContain")%> 1 <%=resources.getString("GML.error")%> : \n" + errorMsg;
+        errorMsg = "<%=resources.getString("GML.ThisFormContains")%> 1 <%=resources.getString("GML.error")%> : \n" + errorMsg;
         window.alert(errorMsg);
         result = false;
         break;
     default :
-        errorMsg = "<%=resources.getString("GML.ThisFormContain")%> " + errorNb + " <%=resources.getString("GML.errors")%> :\n" + errorMsg;
+        errorMsg = "<%=resources.getString("GML.ThisFormContains")%> " + errorNb + " <%=resources.getString("GML.errors")%> :\n" + errorMsg;
         window.alert(errorMsg);
         result = false;
         break;

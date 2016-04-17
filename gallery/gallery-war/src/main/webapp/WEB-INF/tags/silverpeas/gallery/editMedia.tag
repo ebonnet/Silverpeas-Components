@@ -28,14 +28,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view" %>
 
-<view:setConstant var="MediaTitleInputName" constant="com.silverpeas.gallery.ParameterNames.MediaTitle"/>
-<view:setConstant var="MediaDescriptionInputName" constant="com.silverpeas.gallery.ParameterNames.MediaDescription"/>
-<view:setConstant var="MediaBeginDownloadDateInputName" constant="com.silverpeas.gallery.ParameterNames.MediaBeginDownloadDate"/>
-<view:setConstant var="MediaEndDownloadDateInputName" constant="com.silverpeas.gallery.ParameterNames.MediaEndDownloadDate"/>
-<view:setConstant var="MediaBeginVisibilityDateInputName" constant="com.silverpeas.gallery.ParameterNames.MediaBeginVisibilityDate"/>
-<view:setConstant var="MediaEndVisibilityDateInputName" constant="com.silverpeas.gallery.ParameterNames.MediaEndVisibilityDate"/>
-<view:setConstant var="MediaTypePhoto" constant="com.silverpeas.gallery.constant.MediaType.Photo"/>
-<view:setConstant var="MediaTypeStreaming" constant="com.silverpeas.gallery.constant.MediaType.Streaming"/>
+<view:setConstant var="MediaTitleInputName" constant="org.silverpeas.components.gallery.ParameterNames.MediaTitle"/>
+<view:setConstant var="MediaDescriptionInputName" constant="org.silverpeas.components.gallery.ParameterNames.MediaDescription"/>
+<view:setConstant var="MediaBeginDownloadDateInputName" constant="org.silverpeas.components.gallery.ParameterNames.MediaBeginDownloadDate"/>
+<view:setConstant var="MediaEndDownloadDateInputName" constant="org.silverpeas.components.gallery.ParameterNames.MediaEndDownloadDate"/>
+<view:setConstant var="MediaBeginVisibilityDateInputName" constant="org.silverpeas.components.gallery.ParameterNames.MediaBeginVisibilityDate"/>
+<view:setConstant var="MediaEndVisibilityDateInputName" constant="org.silverpeas.components.gallery.ParameterNames.MediaEndVisibilityDate"/>
+<view:setConstant var="MediaTypePhoto" constant="org.silverpeas.components.gallery.constant.MediaType.Photo"/>
+<view:setConstant var="MediaTypeStreaming" constant="org.silverpeas.components.gallery.constant.MediaType.Streaming"/>
 
 <c:set var="_language" value="${requestScope.resources.language}"/>
 <fmt:setLocale value="${_language}"/>
@@ -60,26 +60,28 @@
 <c:set var="defaultDownload" value="${silfn:booleanValue(defaultDownload)}"/>
 
 <%-- Media --%>
-<%@ attribute name="media" required="true" type="com.silverpeas.gallery.model.Media"
+<%@ attribute name="media" required="true" type="org.silverpeas.components.gallery.model.Media"
               description="A media bean (Media.java). The label of the current value is handled." %>
-<%@ attribute name="mediaType" required="true" type="com.silverpeas.gallery.constant.MediaType"
+<%@ attribute name="mediaType" required="true" type="org.silverpeas.components.gallery.constant.MediaType"
               description="A type of media to create/update." %>
 <%@ attribute name="isUsePdc" required="true" type="java.lang.Boolean"
               description="Indicates if PDC is used or not." %>
-<%@ attribute name="formUpdate" required="true" type="com.silverpeas.form.Form"
+<%@ attribute name="formUpdate" required="true" type="org.silverpeas.core.contribution.content.form.Form"
               description="Instance of a form." %>
 <%@ attribute name="supportedMediaMimeTypes" required="true"
               type="java.util.Set"
               description="Supported media types." %>
+<%@ attribute name="isUpdateMediaFromAlbumCase" required="true"
+              type="java.lang.Boolean"
+              description="Indicates if the user comes directly from an album (instead the view of a media)." %>
 <c:if test="${not empty supportedMediaMimeTypes}">
-  <jsp:useBean id="supportedMediaMimeTypes" type="java.util.Set<com.silverpeas.gallery.constant.MediaMimeType>"/>
+  <jsp:useBean id="supportedMediaMimeTypes" type="java.util.Set<org.silverpeas.components.gallery.constant.MediaMimeType>"/>
 </c:if>
 
 <c:set var="isNewMediaCase" value="${empty media.id}"/>
 <c:set var="internalMedia" value="${media.internalMedia}"/>
 
-<script type="text/javascript" src="<c:url value="/util/javaScript/checkForm.js" />"></script>
-<view:includePlugin name="datepicker"/>
+<view:script src="/util/javaScript/checkForm.js"/>
 <script type="text/javascript">
 
   // Form validation
@@ -207,6 +209,7 @@
 
 </script>
 
+<input type="hidden" name="isUpdateMediaFromAlbumCase" value="${isUpdateMediaFromAlbumCase}">
 <fieldset id="${fn:toLowerCase(mediaType)}Info" class="skinFieldset">
   <legend><fmt:message key="GML.bloc.information.principals"/></legend>
   <div class="fields">
@@ -280,7 +283,7 @@
 
         <div class="champs">
           <c:set var="downloadChecked" value=""/>
-          <c:if test="${media.downloadable || (isNewMediaCase && defaultDownload)}">
+          <c:if test="${media.internalMedia.downloadAuthorized || (isNewMediaCase && defaultDownload)}">
             <c:set var="downloadChecked" value="checked=\"checked\""/>
           </c:if>
           <input id="download" type="checkbox" name="SP$$MediaDownloadAuthorized" value="true" ${downloadChecked} />

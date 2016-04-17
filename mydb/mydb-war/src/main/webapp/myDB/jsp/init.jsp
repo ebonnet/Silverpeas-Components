@@ -33,10 +33,10 @@
 %><%@ page import="java.util.Collection"
 %><%@ page import="java.util.Iterator"
 %><%@ page import="java.util.List"
-%><%@ page import="com.silverpeas.form.DataRecord"
-%><%@ page import="com.silverpeas.form.Form"
-%><%@ page import="com.silverpeas.form.PagesContext"
-%><%@ page import="com.silverpeas.form.Util"
+%><%@ page import="org.silverpeas.core.contribution.content.form.DataRecord"
+%><%@ page import="org.silverpeas.core.contribution.content.form.Form"
+%><%@ page import="org.silverpeas.core.contribution.content.form.PagesContext"
+%><%@ page import="org.silverpeas.core.contribution.content.form.Util"
 %><%@ page import="com.silverpeas.mydb.MyDBConstants"
 %><%@ page import="org.silverpeas.mydb.control.DriverManager"
 %><%@ page import="com.silverpeas.mydb.control.MyDBSessionController"
@@ -56,32 +56,32 @@
 %><%@ page import="com.silverpeas.mydb.data.key.PrimaryKey"
 %><%@ page import="com.silverpeas.mydb.data.key.UnicityKey"
 %><%@ page import="com.silverpeas.mydb.data.key.UnicityKeys"
-%><%@ page import="com.stratelia.silverpeas.util.ResourcesWrapper"
-%><%@ page import="com.stratelia.webactiv.util.DBUtil"
-%><%@ page import="com.stratelia.webactiv.util.GeneralPropertiesManager"
-%><%@ page import="com.stratelia.webactiv.util.viewGenerator.html.GraphicElementFactory"
-%><%@ page import="com.stratelia.webactiv.util.viewGenerator.html.arrayPanes.ArrayCellText"
-%><%@ page import="com.stratelia.webactiv.util.viewGenerator.html.arrayPanes.ArrayColumn"
-%><%@ page import="com.stratelia.webactiv.util.viewGenerator.html.arrayPanes.ArrayLine"
-%><%@ page import="com.stratelia.webactiv.util.viewGenerator.html.arrayPanes.ArrayPane"
-%><%@ page import="com.stratelia.webactiv.util.viewGenerator.html.browseBars.BrowseBar"
-%><%@ page import="com.stratelia.webactiv.util.viewGenerator.html.buttons.Button"
-%><%@ page import="com.stratelia.webactiv.util.viewGenerator.html.buttonPanes.ButtonPane"
-%><%@ page import="com.stratelia.webactiv.util.viewGenerator.html.frame.Frame"
-%><%@ page import="com.stratelia.webactiv.util.viewGenerator.html.iconPanes.IconPane"
-%><%@ page import="com.stratelia.webactiv.util.viewGenerator.html.icons.Icon"
-%><%@ page import="com.stratelia.webactiv.util.viewGenerator.html.operationPanes.OperationPane"
-%><%@ page import="com.stratelia.webactiv.util.viewGenerator.html.tabs.TabbedPane"
-%><%@ page import="com.stratelia.webactiv.util.viewGenerator.html.window.Window"
-%><%
+%><%@ page import="org.silverpeas.core.util.MultiSilverpeasBundle"
+%><%@ page import="org.silverpeas.core.persistence.jdbc.DBUtil"
+%><%@ page import="org.silverpeas.core.web.util.viewgenerator.html.GraphicElementFactory"
+%><%@ page import="org.silverpeas.core.web.util.viewgenerator.html.arraypanes.ArrayCellText"
+%><%@ page import="org.silverpeas.core.web.util.viewgenerator.html.arraypanes.ArrayColumn"
+%><%@ page import="org.silverpeas.core.web.util.viewgenerator.html.arraypanes.ArrayLine"
+%><%@ page import="org.silverpeas.core.web.util.viewgenerator.html.arraypanes.ArrayPane"
+%><%@ page import="org.silverpeas.core.web.util.viewgenerator.html.browsebars.BrowseBar"
+%><%@ page import="org.silverpeas.core.web.util.viewgenerator.html.buttons.Button"
+%><%@ page import="org.silverpeas.core.web.util.viewgenerator.html.buttonpanes.ButtonPane"
+%><%@ page import="org.silverpeas.core.web.util.viewgenerator.html.frame.Frame"
+%><%@ page import="org.silverpeas.core.web.util.viewgenerator.html.iconpanes.IconPane"
+%><%@ page import="org.silverpeas.core.web.util.viewgenerator.html.icons.Icon"
+%><%@ page import="org.silverpeas.core.web.util.viewgenerator.html.operationpanes.OperationPane"
+%><%@ page import="org.silverpeas.core.web.util.viewgenerator.html.tabs.TabbedPane"
+%><%@ page import="org.silverpeas.core.web.util.viewgenerator.html.window.Window"
+%>
+<%@ page import="org.silverpeas.core.util.ResourceLocator" %><%
 	response.setHeader("Cache-Control", "no-store"); // HTTP 1.1
 	response.setHeader("Pragma", "no-cache");        // HTTP 1.0
 	response.setDateHeader("Expires", -1);           // prevents caching at the proxy server
 
 	MyDBSessionController myDBSC = (MyDBSessionController)request.getAttribute("MyDB");
-	ResourcesWrapper resource = (ResourcesWrapper)request.getAttribute("resources");
+	MultiSilverpeasBundle resource = (MultiSilverpeasBundle)request.getAttribute("resources");
 	String userRoleLevel = (String)request.getAttribute("userRoleLevel");
-	String applicationURL = GeneralPropertiesManager.getString("ApplicationURL");
+	String applicationURL = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 	
 	GraphicElementFactory gef = (GraphicElementFactory)session.getAttribute("SessionGraphicElementFactory");
 	Window window = gef.getWindow();

@@ -23,10 +23,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@page import="com.stratelia.webactiv.yellowpages.ImportReport"%>
+<%@page import="org.silverpeas.components.yellowpages.ImportReport"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.buttonpanes.ButtonPane" %>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view"%>
 <%@ include file="checkYellowpages.jsp" %>
+
+<c:set var="help"><%=resources.getString("yellowpages.importCSVHelp1")%><br/><%=resources.getString("yellowpages.importCSVHelp2")%></c:set>
 
 <html>
 <head>
@@ -42,8 +46,8 @@
 		}
 	}
 %>
-<view:looknfeel/>
-<script type="text/javascript" src="<%=m_context%>/util/javaScript/checkForm.js"></script>
+<view:looknfeel withCheckFormScript="true"/>
+<view:includePlugin name="qtip"/>
 <script type="text/javascript" src="<%=m_context%>/util/javaScript/infoHighlight.js"></script>
 <script type="text/javascript">
 
@@ -73,6 +77,10 @@ function SubmitWithVerif(verifParams)
         window.alert(errorMsg);
     }
 }
+
+whenSilverpeasReady(function() {
+  TipManager.simpleHelp(".highlight-silver", "${help}");
+});
 
 </script>
 </head>
@@ -107,7 +115,7 @@ function SubmitWithVerif(verifParams)
 		        <tr>
 		            <td class="txtlibform">
 		                <%=resources.getString("GML.csvFile") %> :
-							<a href="#" class="highlight-silver" title="<%=resources.getString("yellowpages.importCSVHelp1")%><br><%=resources.getString("yellowpages.importCSVHelp2")%>"><img src="<%=m_context%>/util/icons/info.gif" alt="<%=resources.getString("yellowpages.importCSVHelp1")%> <%=resources.getString("yellowpages.importCSVHelp2")%>"></a>
+							<a href="#" class="highlight-silver"><img src="<%=m_context%>/util/icons/info.gif" alt=""></a>
 		            </td>
 		            <td align="left" valign="baseline">
 		                <input type="file" name="file_upload" size="50" maxlength="50" VALUE="">

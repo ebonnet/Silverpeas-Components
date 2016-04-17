@@ -25,27 +25,15 @@
 --%>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
-<%@ page import="javax.servlet.*"%>
-<%@ page import="javax.servlet.http.*"%>
-<%@ page import="javax.servlet.jsp.*"%>
-<%@ page import="java.io.PrintWriter"%>
-<%@ page import="java.io.IOException"%>
-<%@ page import="java.io.FileInputStream"%>
-<%@ page import="java.io.ObjectInputStream"%>
-<%@ page import="java.beans.*"%>
-<%@ page import="java.util.*"%>
-
-<%@ page import="com.stratelia.webactiv.util.node.model.NodeDetail"%>
-<%@ page import="com.stratelia.webactiv.util.node.model.NodePK"%>
-<%@ page import="com.stratelia.webactiv.util.ResourceLocator"%>
-<%@ page import="com.stratelia.webactiv.util.DBUtil"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.operationPanes.OperationPane"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.browseBars.BrowseBar"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.window.Window"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.tabs.TabbedPane"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.navigationList.NavigationList"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.frame.Frame"%>
-<%@ page import="com.silverpeas.util.EncodeHelper"%>
+<%@ page import="org.silverpeas.core.node.model.NodeDetail"%>
+<%@ page import="org.silverpeas.core.persistence.jdbc.DBUtil"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.operationpanes.OperationPane"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.browsebars.BrowseBar"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.window.Window"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.tabs.TabbedPane"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.frame.Frame"%>
+<%@ page import="org.silverpeas.core.util.EncodeHelper"%>
+<%@ page import="org.silverpeas.core.i18n.I18NHelper" %>
 
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view"%>
 
@@ -80,8 +68,7 @@ if (action == null) {
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title></title>
-<view:looknfeel/>
-<script type="text/javascript" src="<%=m_context%>/util/javaScript/checkForm.js"></script>
+<view:looknfeel withCheckFormScript="true"/>
 <script type="text/javascript" src="<%=m_context%>/util/javaScript/i18n.js"></script>
 <script type="text/javascript">
 <!--
@@ -113,7 +100,7 @@ function axisUpdate() {
         document.managerForm.AxisName.value = document.axisManagerForm.Name.value;
         document.managerForm.AxisDescription.value = document.axisManagerForm.Description.value;
         document.managerForm.AxisId.value = document.axisManagerForm.Id.value;
-        <% if (I18NHelper.isI18N)  { %>
+        <% if (I18NHelper.isI18nContentActivated)  { %>
         	document.managerForm.I18NLanguage.value = document.axisManagerForm.I18NLanguage[document.axisManagerForm.I18NLanguage.selectedIndex].value;
         <% } %>
         if (document.getElementById('TranslationRemoveIt'))  { 
@@ -211,7 +198,7 @@ function positionUpdate() {
       document.managerForm.PositionName.value = document.axisManagerForm.Name.value;
       document.managerForm.PositionDescription.value = document.axisManagerForm.Description.value;
       document.managerForm.PositionId.value = document.axisManagerForm.Id.value;
-      <% if (I18NHelper.isI18N)  { %>
+      <% if (I18NHelper.isI18nContentActivated)  { %>
       	document.managerForm.I18NLanguage.value = document.axisManagerForm.I18NLanguage[document.axisManagerForm.I18NLanguage.selectedIndex].value;
       <% } %>
       if (document.getElementById('TranslationRemoveIt'))  { 

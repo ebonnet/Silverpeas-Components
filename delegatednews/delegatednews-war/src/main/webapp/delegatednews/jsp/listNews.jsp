@@ -23,13 +23,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@page import="com.stratelia.webactiv.util.viewGenerator.html.UserNameGenerator"%>
-<%@page import="com.stratelia.webactiv.util.viewGenerator.html.arrayPanes.ArrayCell"%>
-<%@page import="com.stratelia.webactiv.util.viewGenerator.html.arrayPanes.ArrayCellLink"%>
+<%@page import="org.silverpeas.core.web.util.viewgenerator.html.UserNameGenerator"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.List"%>
-<%@ page import="com.silverpeas.delegatednews.model.DelegatedNews"%>
+<%@ page import="org.silverpeas.components.delegatednews.model.DelegatedNews"%>
 
 <%@ include file="check.jsp"%>
 <fmt:setLocale value="${requestScope.resources.language}" />
@@ -37,16 +35,19 @@
 <view:setBundle bundle="${requestScope.resources.iconsBundle}" var="icons" />
 
 <c:set var="listNewsJSON" value="${requestScope.ListNewsJSON}"/>
-  
+
 <%
-  List<DelegatedNews> listNews = (List<DelegatedNews>) request.getAttribute("ListNews"); //List<DelegatedNews>
+  List<DelegatedNews> listNews = (List<DelegatedNews>) request.getAttribute("ListNews");
+  boolean isAdmin = newsScc.isAdmin();
 %>
+
+<c:set var="isAdmin" value="<%=isAdmin%>"/>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <view:looknfeel />
+    <view:looknfeel withCheckFormScript="true"/>
     <view:includePlugin name="datepicker"/>
-    <script type="text/javascript" src="<c:url value='/util/javaScript/checkForm.js'/>"></script>
     <script type="text/javascript">
     <!--
     function openPublication(pubId, instanceId) {
@@ -306,15 +307,19 @@
     </script>
   </head>  
   <body>
-    <fmt:message key="delegatednews.icons.delete" var="deleteIcon" bundle="${icons}" />
-    <fmt:message key="delegatednews.action.delete" var="deleteAction" />
-    <view:operationPane>
-      <view:operation altText="${deleteAction}" icon="${deleteIcon}" action="javascript:onClick=deleteSelectedDelegatedNews();" />
-    </view:operationPane>
+    <c:if test="${isAdmin}">
+      <fmt:message key="delegatednews.icons.delete" var="deleteIcon" bundle="${icons}" />
+      <fmt:message key="delegatednews.action.delete" var="deleteAction" />
+      <view:operationPane>
+        <view:operation altText="${deleteAction}" icon="${deleteIcon}" action="javascript:onClick=deleteSelectedDelegatedNews();" />
+      </view:operationPane>
+    </c:if>
     <view:window>
       <view:frame>
-      <div class="inlineMessage"><fmt:message key="delegatednews.homePageMessage"/></div>
-      <br clear="all"/>
+        <c:if test="${isAdmin}">
+          <div class="inlineMessage"><fmt:message key="delegatednews.homePageMessage"/></div>
+          <br clear="all"/>
+        </c:if>
       <form name="tabForm" method="post">
   <%
     ArrayPane arrayPane = gef.getArrayPane("newsList", "Main", request, session);
@@ -328,9 +333,8 @@
     arrayPane.addArrayColumn(resources.getString("delegatednews.news.state"));
     arrayPane.addArrayColumn(resources.getString("delegatednews.visibilityBeginDate"));
     arrayPane.addArrayColumn(resources.getString("delegatednews.visibilityEndDate"));
-    
-    boolean isAdmin = newsScc.isAdmin();
-      if(isAdmin) {
+
+    if(isAdmin) {
       ArrayColumn arrayColumnOp = arrayPane.addArrayColumn(resources.getString("GML.operations"));
       arrayColumnOp.setSortable(false);
       arrayPane.addArrayColumn("");

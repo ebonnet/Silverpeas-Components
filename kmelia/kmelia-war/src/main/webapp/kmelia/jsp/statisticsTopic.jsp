@@ -31,12 +31,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view"%>
 
-<%@ page import="com.silverpeas.kmelia.model.*"%>
-
 <fmt:setLocale value="${sessionScope['SilverSessionController'].favoriteLanguage}" />
 <view:setBundle bundle="${requestScope.resources.multilangBundle}" />
-<view:setBundle basename="com.stratelia.webactiv.util.date.multilang.date" var="dateBundle" />
-
+<view:setBundle basename="org.silverpeas.util.date.multilang.date" var="dateBundle" />
 
 <c:set var="filterGroups" value="${requestScope.filterGroups}" />
 <c:set var="querySearchs" value="${requestScope.mostInterestedSearch}" />
@@ -56,9 +53,8 @@
 <html>
 <head>
 <title><fmt:message key="kmelia.stat.title" /></title>
-<view:looknfeel />
+<view:looknfeel withCheckFormScript="true"/>
 <view:includePlugin name="datepicker"/>
-<script type="text/javascript" src="<%=m_context%>/util/javaScript/checkForm.js"></script>
 <script type="text/javascript">
 function filterStat() {
   if (isCorrectForm()) {

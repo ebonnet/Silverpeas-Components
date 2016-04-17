@@ -24,6 +24,7 @@
 
 --%>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="org.silverpeas.core.util.ResourceLocator" %>
 <%
 	response.setHeader( "Expires", "Tue, 21 Dec 1993 23:59:59 GMT" );
 	response.setHeader( "Pragma", "no-cache" );
@@ -31,14 +32,13 @@
 	response.setHeader( "Last-Modified", "Fri, Jan 25 2099 23:59:59 GMT" );
 	response.setStatus( HttpServletResponse.SC_CREATED );
 %>
-<%@ page import="com.stratelia.webactiv.util.GeneralPropertiesManager"%>
 
 <%
 String componentId 	= request.getParameter("ComponentId");
 String language 	= request.getParameter("Language");
 String fieldName    = request.getParameter("FieldName");
 
-String m_context = GeneralPropertiesManager.getString("ApplicationURL");
+String m_context = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 %>
 
 <html>

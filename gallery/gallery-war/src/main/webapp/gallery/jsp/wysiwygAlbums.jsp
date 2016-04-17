@@ -23,19 +23,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@page import="com.silverpeas.util.EncodeHelper"%>
+<%@page import="org.silverpeas.core.node.model.NodeDetail"%>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="org.silverpeas.core.util.EncodeHelper"%>
+<%@ page import="org.silverpeas.core.util.ResourceLocator"%>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.GraphicElementFactory"%>
 <%@ page import="java.util.List"%>
-<%@ page import="java.util.Collection"%>
-<%@ page import="javax.servlet.*"%>
-<%@ page import="javax.servlet.http.*"%>
-<%@ page import="javax.servlet.jsp.*"%>
-<%@ page import="com.stratelia.webactiv.util.node.model.NodeDetail"%>
-<%@ page import="com.stratelia.webactiv.util.viewGenerator.html.*"%>
-<%@ page import="com.stratelia.webactiv.util.GeneralPropertiesManager"%>
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view"%>
 <%
-    String m_context = GeneralPropertiesManager.getString("ApplicationURL");
+    String m_context = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
       GraphicElementFactory gef = (GraphicElementFactory) session.getAttribute(
           "SessionGraphicElementFactory");            
       List albums = (List) request.getAttribute("Albums");

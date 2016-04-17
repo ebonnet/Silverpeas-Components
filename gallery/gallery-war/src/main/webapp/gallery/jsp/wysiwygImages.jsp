@@ -25,14 +25,14 @@
 --%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view"%>
-<%@ page import="java.util.Iterator"%>
-<%@ page import="java.util.List"%>
-<%@ page import="com.stratelia.webactiv.util.ResourceLocator"%>
-<%@ page import="com.stratelia.webactiv.util.GeneralPropertiesManager"%>
-<%@ page import="com.silverpeas.util.StringUtil"%>
-<%@ page import="com.silverpeas.util.EncodeHelper"%>
-<%@ page import="com.silverpeas.gallery.model.Media" %>
-<%@ page import="com.silverpeas.gallery.model.Photo" %>
+<%@ page import="org.silverpeas.components.gallery.model.Media" %>
+<%@ page import="org.silverpeas.components.gallery.model.Photo" %>
+<%@ page import="org.silverpeas.core.util.EncodeHelper" %>
+<%@ page import="org.silverpeas.core.util.LocalizationBundle" %>
+<%@ page import="org.silverpeas.core.util.ResourceLocator" %>
+<%@ page import="org.silverpeas.core.util.StringUtil" %>
+<%@ page import="java.util.Iterator" %>
+<%@ page import="java.util.List" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
@@ -43,14 +43,14 @@
 <c:set var="language" value="${requestScope.Language}"/>
 
 <fmt:setLocale value="${language}" />
-<view:setBundle basename="com.silverpeas.gallery.multilang.galleryBundle"/>
+<view:setBundle basename="org.silverpeas.gallery.multilang.galleryBundle"/>
 
 <c:set var="instanceId" value="${requestScope.ComponentId}"/>
 <c:set var="medias" value="${requestScope.MediaList}" />
 
 
 <%
-String m_context = GeneralPropertiesManager.getString("ApplicationURL");
+String m_context = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 
 List<Media> mediaList = (List) request.getAttribute("MediaList");
 String language = (String) request.getAttribute("Language");
@@ -59,7 +59,9 @@ String language = (String) request.getAttribute("Language");
 int nbAffiche = 0;
 int nbParLigne = 4;
 
-ResourceLocator multilang = new ResourceLocator("com.silverpeas.gallery.multilang.galleryBundle", language);
+  LocalizationBundle multilang =
+      ResourceLocator.getLocalizationBundle("org.silverpeas.gallery.multilang.galleryBundle",
+          language);
 %>
 
 <html>

@@ -24,28 +24,22 @@
 
 --%>
 
-<%@page import="com.stratelia.webactiv.util.DateUtil"%>
-<%@page import="com.silverpeas.util.StringUtil"%>
-<%@page import="org.silverpeas.components.quickinfo.model.News"%>
-<%@page import="java.util.List"%>
-<%@page import="javax.portlet.RenderRequest"%>
-<%@page import="com.silverpeas.util.EncodeHelper"%>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
-<%@ page import="com.silverpeas.portlets.FormNames" %>
-
-<%@ page import="com.stratelia.webactiv.util.publication.model.PublicationDetail" %>
-<%@ page import="com.stratelia.webactiv.beans.admin.UserDetail" %>
 
 <%@ include file="../portletImport.jsp"%>
 
 <%@ taglib uri="http://java.sun.com/portlet" prefix="portlet" %>
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.silverpeas.com/tld/silverFunctions" prefix="silfn" %>
 
 <c:set var="appSettings" value="${requestScope['AppSettings']}"/>
 <c:set var="fromApp" value="${not empty appSettings}"/>
+
+<fmt:setLocale value="${sessionScope[SilverSessionController].favoriteLanguage}" />
+<view:setBundle basename="org.silverpeas.quickinfo.multilang.quickinfo" />
+
 
 <c:choose>
 <c:when test="${fromApp}">
@@ -78,7 +72,7 @@
 <link rel="stylesheet" href="<%=m_sContext %>/portlets/jsp/quickInfos/css/themes.css" />
 <script type="text/javascript" >
 $(document).ready(function() {
-	$(".slider-actuality-portlet").responsiveSlides({
+  $(".slider-actuality-portlet").responsiveSlides({
 			auto: true,
 			pager: false,
 			nav: true,
@@ -89,27 +83,58 @@ $(document).ready(function() {
 		});
 });
 </script>
-	<div class="rslides">	
-	<ul class="slider-actuality-portlet">
+<div class="rslides">	
+<ul class="slider-actuality-portlet">
 </c:if>
+
 <c:if test="${not slideshow}">
+<script type="text/javascript" >
+$(document).ready(function() {
+  var step = 5;
+  var $lis = $(".listing-actuality-portlet li");
+  var nbNews = $lis.length;
+  if (nbNews <= step) {
+    $('#portlet-nextNews').hide();
+  } else {
+	$lis.hide();
+  	$lis.slice(0, step).show();
+  	var end = step;
+  	$('#portlet-nextNews').click(function () {
+      end += step;
+      $lis.slice(0, end).show();
+      if (end >= $lis.length) {
+        $('#portlet-nextNews').hide();
+      }
+	  return false;
+  	});
+  }
+});
+</script>
 	<ul class="listing-actuality-portlet">
 </c:if>
 
 	<c:forEach items="${allNews}" var="news">
 			<c:choose>
 				<c:when test="${not empty news.thumbnail}">
-					<li>
+					<li onclick="javascript:location.href='${news.permalink}'">
 					<div class="content-actuality-illustration"><view:image src="${news.thumbnail.URL}" alt="" size="350x" css="actuality-illustration"/></div>
 				</c:when>
 				<c:otherwise>
-					<li class="actuality-without-illustration">
+					<li onclick="javascript:location.href='${news.permalink}'" class="actuality-without-illustration">
 				</c:otherwise>
 			</c:choose>
 			<h3 class="actuality-title"><a href="${news.permalink}">${news.title}</a></h3>
 			<div class="actuality-info-fonctionality">
-				<span class="actuality-date">${silfn:formatDate(news.updateDate, _language)}</span>
-				<a href="${news.permalink}#commentaires" class="actuality-nb-commentaires"><img src="/silverpeas/util/icons/talk2user.gif" alt="commentaire" /> ${news.numberOfComments}</a> 
+				<span class="actuality-publishing">
+					<span class="actuality-date"><span class="actuality-date-label"><fmt:message key="GML.publishedAt"/></span> ${silfn:formatDate(news.updateDate, _language)}</span>
+					<c:if test="${not fromApp}">
+						<span class="actuality-source"><fmt:message key="GML.by"/></span><view:componentPath componentId="${news.componentInstanceId}"/></span>
+					</c:if>
+				</span>
+        <view:componentParam var="isCommentEnabled" componentId="${news.componentInstanceId}" parameter="comments"/>
+        <c:if test="${silfn:booleanValue(isCommentEnabled)}">
+          <a href="${news.permalink}#commentaires" class="actuality-nb-commentaires"><img src="/silverpeas/util/icons/talk2user.gif" alt="commentaire"/> ${news.numberOfComments}</a>
+        </c:if>
 			</div>
 			<p class="actuality-teasing">${news.description}</p>
 		</li>
@@ -122,6 +147,7 @@ $(document).ready(function() {
 <c:if test="${not slideshow}">
 	</ul>
 	<br clear="both" />
+	<a class="linkMore" href="#" id="portlet-nextNews"><span><fmt:message key="quickinfo.portlet.news.more"/></span></a>
 </c:if>
 
 <c:if test="${fromApp}">

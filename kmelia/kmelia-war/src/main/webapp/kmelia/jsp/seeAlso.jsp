@@ -1,6 +1,3 @@
-<%@page import="org.silverpeas.kmelia.jstl.KmeliaDisplayHelper"%>
-<%@page import="org.silverpeas.search.SearchEngineFactory"%>
-<%@ page import="org.silverpeas.search.SearchEngine" %>
 <%--
 
     Copyright (C) 2000 - 2013 Silverpeas
@@ -35,7 +32,12 @@ response.setDateHeader ("Expires",-1); //prevents caching at the proxy server
 %>
 
 <%@ include file="checkKmelia.jsp" %>
-<%@ include file="publicationsList.jsp.inc" %>
+<%@ include file="publicationsList.jsp" %>
+<%@page import="org.silverpeas.components.kmelia.jstl.KmeliaDisplayHelper"%>
+<%@page import="org.silverpeas.core.index.search.SearchEngineProvider"%>
+<%@ page import="org.silverpeas.core.index.search.model.QueryDescription" %>
+<%@ page import="org.silverpeas.core.index.search.model.MatchingIndexEntry" %>
+<%@ page import="org.silverpeas.core.util.URLUtil" %>
 
 <%!
  //Icons
@@ -133,7 +135,7 @@ function topicGoTo(id) {
 }
 
 function publicationGoTo(id, action){
-    document.pubForm.action = "<%=URLManager.getApplicationURL() + URLManager.getURL("kmelia", "useless", instanceId)%>ViewPublication";
+    document.pubForm.action = "<%=URLUtil.getApplicationURL() + URLUtil.getURL("kmelia", "useless", instanceId)%>ViewPublication";
     document.pubForm.CheckPath.value = "1";
     document.pubForm.PubId.value = id;
     document.pubForm.submit();
@@ -210,7 +212,7 @@ function closeWindows() {
             query.setSearchingUser(kmeliaScc.getUserDetail().getId());
             query.addSpaceComponentPair(kmeliaScc.getSpaceId(), kmeliaScc.getComponentId());
             
-            List<MatchingIndexEntry> results = SearchEngineFactory.getSearchEngine().search(query).getEntries();
+            List<MatchingIndexEntry> results = SearchEngineProvider.getSearchEngine().search(query).getEntries();
             
             displaySearchResults(results, resources.getString("PubDeMemeSujet"), kmeliaScc, id, resources, out);
         }else if(action.equals("PubReferencedBy")){

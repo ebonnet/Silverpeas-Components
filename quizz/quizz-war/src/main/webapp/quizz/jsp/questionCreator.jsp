@@ -1,4 +1,3 @@
-<%@ page import="org.silverpeas.servlet.HttpRequest" %>
 <%--
 
     Copyright (C) 2000 - 2013 Silverpeas
@@ -26,21 +25,27 @@
 --%>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
-<jsp:useBean id="quizzUnderConstruction" scope="session" class="com.stratelia.webactiv.util.questionContainer.model.QuestionContainerDetail" />
+<jsp:useBean id="quizzUnderConstruction" scope="session" class="org.silverpeas.core.questioncontainer.container.model.QuestionContainerDetail" />
 <jsp:useBean id="questionsVector" scope="session" class="java.util.ArrayList" />
 
 <%@ include file="checkQuizz.jsp" %>
+<%@ page import="org.silverpeas.core.web.http.HttpRequest" %>
+<%@ page import="org.silverpeas.core.persistence.jdbc.DBUtil" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.buttonpanes.ButtonPane" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.board.Board" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.buttons.Button" %>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view"%>
 <fmt:setLocale value="${sessionScope['SilverSessionController'].favoriteLanguage}" />
-<view:setBundle basename="com.stratelia.webactiv.quizz.multilang.quizz"/>
+<view:setBundle basename="org.silverpeas.quizz.multilang.quizz"/>
 
 <%
 
 //Retrieve parameter
 String nextAction = "";
-String m_context = GeneralPropertiesManager.getString("ApplicationURL");
+String m_context = ResourceLocator.getGeneralSettingBundle().getString("ApplicationURL");
 
 int nbZone = 4; // number of field to control
 List<ComponentInstLight> galleries = quizzScc.getGalleries();
@@ -52,8 +57,8 @@ if (galleries != null) {
 String mandatoryField = m_context + "/util/icons/mandatoryField.gif";
 String ligne = m_context + "/util/icons/colorPix/1px.gif";
 
-ResourceLocator uploadSettings = new ResourceLocator("com.stratelia.webactiv.util.uploads.uploadSettings", quizzScc.getLanguage());
-ResourceLocator quizzSettings = quizzScc.getSettings();
+SettingBundle uploadSettings = ResourceLocator.getSettingBundle("org.silverpeas.util.uploads.uploadSettings");
+SettingBundle quizzSettings = quizzScc.getSettings();
 
 Button validateButton = null;
 Button cancelButton = null;
@@ -82,15 +87,13 @@ attachmentSuffix = form.getAttachmentSuffix();
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title></title>
-<link type="text/css" href="<%=m_context%>/util/styleSheets/fieldset.css" rel="stylesheet" />
-<view:looknfeel />
+<view:looknfeel withFieldsetStyle="true" withCheckFormScript="true"/>
 <style type="text/css">
 .thumbnailPreviewAndActions {
   display: none;
 }
 </style>
 <script type="text/javascript" src="<%=m_context%>/util/javaScript/dateUtils.js"></script>
-<script type="text/javascript" src="<%=m_context%>/util/javaScript/checkForm.js"></script>
 <script language="javascript">
 
 function sendData() {
@@ -218,12 +221,12 @@ function isCorrectForm()
           result = true;
           break;
       case 1 :
-          errorMsg = "<%=resources.getString("GML.ThisFormContain")%> 1 <%=resources.getString("GML.error")%> : \n" + errorMsg;
+          errorMsg = "<%=resources.getString("GML.ThisFormContains")%> 1 <%=resources.getString("GML.error")%> : \n" + errorMsg;
           window.alert(errorMsg);
           result = false;
           break;
       default :
-          errorMsg = "<%=resources.getString("GML.ThisFormContain")%> " + errorNb + " <%=resources.getString("GML.errors")%> :\n" + errorMsg;
+          errorMsg = "<%=resources.getString("GML.ThisFormContains")%> " + errorNb + " <%=resources.getString("GML.errors")%> :\n" + errorMsg;
           window.alert(errorMsg);
           result = false;
           break;
@@ -288,12 +291,12 @@ function isCorrectForm2()
           result = true;
           break;
       case 1 :
-          errorMsg = "<%=resources.getString("GML.ThisFormContain")%> 1 <%=resources.getString("GML.error")%> : \n" + errorMsg;
+          errorMsg = "<%=resources.getString("GML.ThisFormContains")%> 1 <%=resources.getString("GML.error")%> : \n" + errorMsg;
           window.alert(errorMsg);
           result = false;
           break;
       default :
-          errorMsg = "<%=resources.getString("GML.ThisFormContain")%> " + errorNb + " <%=resources.getString("GML.errors")%> :\n" + errorMsg;
+          errorMsg = "<%=resources.getString("GML.ThisFormContains")%> " + errorNb + " <%=resources.getString("GML.errors")%> :\n" + errorMsg;
           window.alert(errorMsg);
           result = false;
           break;
@@ -611,11 +614,11 @@ if ((action.equals("CreateQuestion")) || (action.equals("SendQuestionForm"))) {
         </div>
     
         <div class="thumbnailInputs">
-        <img title="<%=resources.getString("survey.answer.image.select")%>" alt="<%=resources.getString("survey.answer.image.select")%>" src="/silverpeas/util/icons/images.png" /> <input type="file" id="thumbnailFile" size="40" name="image<%=i%>" />
+        <img title="<%=surveyResource.getString("survey.answer.image.select")%>" alt="<%=surveyResource.getString("survey.answer.image.select")%>" src="/silverpeas/util/icons/images.png" /> <input type="file" id="thumbnailFile" size="40" name="image<%=i%>" />
         <%if (galleries != null) {%>
         <span class="txtsublibform"> ou </span><input type="hidden" name="valueImageGallery<%= i %>" id="valueImageGallery<%= i %>"/>
          <select class="galleries" name="galleries" onchange="choixGallery(this, '<%= i %>');this.selectedIndex=0;"> 
-           <option selected><%= resources.getString("survey.galleries") %></option>
+           <option selected><%= surveyResource.getString("survey.galleries") %></option>
 <%
           for (ComponentInstLight gallery : galleries) { %>
              <option value="<%= gallery.getId() %>"><%= gallery.getLabel() %></option> 

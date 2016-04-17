@@ -36,17 +36,21 @@ response.setDateHeader ("Expires",-1); //prevents caching at the proxy server
 
 <%@include file="checkKmelia.jsp" %>
 
-<%@page import="com.silverpeas.publicationTemplate.*"%>
-<%@page import="com.silverpeas.form.*"%>
-<%@page import="org.silverpeas.kmelia.jstl.KmeliaDisplayHelper"%>
+<%@page import="org.silverpeas.core.contribution.content.form.DataRecord"%>
+<%@page import="org.silverpeas.core.contribution.content.form.Form"%>
+<%@page import="org.silverpeas.core.contribution.content.form.PagesContext"%>
+<%@ page import="org.silverpeas.components.kmelia.model.KmeliaPublication" %>
+<%@ page import="org.silverpeas.core.exception.SilverpeasException" %>
+<%@ page import="org.silverpeas.core.web.util.viewgenerator.html.browsebars.BrowseBar" %>
+<%@ page import="org.silverpeas.core.util.URLUtil" %>
 
 <%
-  	ResourceLocator publicationSettings = new ResourceLocator("com.stratelia.webactiv.util.publication.publicationSettings", resources.getLanguage());
+	SettingBundle publicationSettings = ResourceLocator.getSettingBundle("org.silverpeas.util.publication.publicationSettings");
 
 	//Recuperation des parametres
 	String 					profile 		= (String) request.getAttribute("Profile");
 	String 					action 			= (String) request.getAttribute("Action");
-	KmeliaPublication 		kmeliaPublication = (KmeliaPublication) request.getAttribute("Publication");
+	KmeliaPublication kmeliaPublication = (KmeliaPublication) request.getAttribute("Publication");
 	boolean 				attachmentsEnabled = (Boolean) request.getAttribute("AttachmentsEnabled");
 	boolean 				userCanValidate = (Boolean) request.getAttribute("UserCanValidate");
 	boolean draftOutTaxonomyOK = (Boolean) request.getAttribute("TaxonomyOK");
@@ -69,10 +73,6 @@ response.setDateHeader ("Expires",-1); //prevents caching at the proxy server
 	String pubValidateSrc	= m_context + "/util/icons/publicationValidate.gif";
 	String pubUnvalidateSrc	= m_context + "/util/icons/publicationUnvalidate.gif";
 	String deletePubliSrc	= m_context + "/util/icons/publicationDelete.gif";
-	String inDraftSrc		= m_context + "/util/icons/masque.gif";
-	String outDraftSrc		= m_context + "/util/icons/visible.gif";
-	String validateSrc		= m_context + "/util/icons/ok.gif";
-	String refusedSrc		= m_context + "/util/icons/wrong.gif";
 	String pubDraftOutSrc	= m_context + "/util/icons/publicationDraftOut.gif";
 
 	String screenMessage = "";
@@ -126,10 +126,14 @@ response.setDateHeader ("Expires",-1); //prevents caching at the proxy server
         }
 	}
 
-  	String author 	= pubDetail.getAuthor();
+  if (isOwner && kmeliaScc.isDraftEnabled() && pubDetail.isDraft()) {
+    screenMessage = "<div class=\"inlineMessage\">" + resources.getString(
+        "kmelia.publication.draft.info") + "</div>";
+  }
 
-  	String creatorId = pubDetail.getCreatorId();
-	String updaterId = pubDetail.getUpdaterId();
+  String author = pubDetail.getAuthor();
+  String creatorId = pubDetail.getCreatorId();
+  String updaterId = pubDetail.getUpdaterId();
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -185,7 +189,7 @@ function closeWindows() {
 }
 
 function viewPublicVersions(docId) {
-	url = "<%=m_context+URLManager.getURL("VersioningPeas", spaceId, componentId)%>ListPublicVersionsOfDocument?DocId="+docId;
+	url = "<%=m_context+URLUtil.getURL("VersioningPeas", spaceId, componentId)%>ListPublicVersionsOfDocument?DocId="+docId;
     windowName = "publicVersionsWindow";
 	larg = "550";
 	haut = "350";
@@ -297,26 +301,16 @@ $(function() {
 		    out.println("<a name=\"attachments\"></a>");
 			try {
 				out.flush();
-				if (kmeliaScc.isVersionControlled()) {
-					getServletConfig().getServletContext().getRequestDispatcher(
-                "/attachment/jsp/displayAttachedFiles.jsp?Id=" + id + "&ComponentId=" + componentId
-                + "&Context=attachment&Language=" + resources.getLanguage()
-                    + "&AttachmentPosition="
-                + resources.getSetting("attachmentPosition") + "&ShowIcon=" + showIcon
-                + "&ShowTitle=" + showTitle + "&ShowFileSize=" + showFileSize
-                + "&ShowDownloadEstimation=" + showDownloadEstimation + "&ShowInfo=" + showInfo)
-                .include(request, response);
-				} else {
-					getServletConfig().getServletContext().getRequestDispatcher(
-                "/attachment/jsp/displayAttachedFiles.jsp?Id=" + id + "&ComponentId=" + componentId
-                + "&Context=attachment&AttachmentPosition=" + resources.getSetting(
-                "attachmentPosition") + "&ShowIcon=" + showIcon + "&ShowTitle=" + showTitle
-                      + "&ShowFileSize=" + showFileSize + "&ShowDownloadEstimation="
-                      + showDownloadEstimation + "&ShowInfo=" + showInfo + "&Profile=" + profile)
-                      .include(request, response);
-				}
+        getServletConfig().getServletContext().getRequestDispatcher(
+            "/attachment/jsp/displayAttachedFiles.jsp?Id=" + id + "&ComponentId=" + componentId +
+                "&Context=attachment&AttachmentPosition=" +
+                resources.getSetting("attachmentPosition") + "&ShowIcon=" + showIcon +
+                "&ShowTitle=" + showTitle + "&ShowFileSize=" + showFileSize +
+                "&ShowDownloadEstimation=" + showDownloadEstimation + "&ShowInfo=" + showInfo +
+                "&Profile=" + profile).include(request, response);
 			} catch (Exception e) {
-				throw new KmeliaException("JSPpublicationManager.displayUserModelAndAttachmentsView()",SilverpeasException.ERROR,"root.EX_DISPLAY_ATTACHMENTS_FAILED", e);
+				throw new KmeliaException("JSPpublicationManager.displayUserModelAndAttachmentsView()",
+            SilverpeasException.ERROR,"root.EX_DISPLAY_ATTACHMENTS_FAILED", e);
 			}
     	}
 
@@ -360,22 +354,6 @@ $(function() {
 	        out.print("<h2 class=\"publiName\">");
 
 	        out.print(pubDetail.getName());
-
-	     	if (!"user".equals(profile)) {
-	          if (pubDetail.isValidationRequired()) {
-	            out.println(" <img src=\"" + outDraftSrc + "\" alt=\"" + resources.getString(
-	                "PubStateToValidate") + "\"  id=\"status\"/>");
-	          } else if (pubDetail.isDraft()) {
-	            out.println(
-	                " <img src=\"" + inDraftSrc + "\" alt=\"" + resources.getString("PubStateDraft") + "\"  id=\"status\"/>");
-	          } else if (pubDetail.isValid()) {
-	            out.println(" <img src=\"" + validateSrc + "\" alt=\"" + resources.getString(
-	                "PublicationValidated") + "\"  id=\"status\"/>");
-	          } else if (pubDetail.isRefused()) {
-	            out.println(" <img src=\"" + refusedSrc + "\" alt=\"" + resources.getString(
-	                "PublicationRefused") + "\"  id=\"status\"/>");
-	          }
-			}
 
 	        out.println("</h2>");
 

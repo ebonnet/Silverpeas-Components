@@ -25,9 +25,9 @@
 --%>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://www.silverpeas.com/tld/viewGenerator" prefix="view"%>
-<%@ page import="com.stratelia.webactiv.util.publication.model.Alias" %>
-<%@ page import="com.stratelia.webactiv.kmelia.model.Treeview" %>
-<%@page import="org.silverpeas.kmelia.jstl.KmeliaDisplayHelper"%>
+<%@ page import="org.silverpeas.core.contribution.publication.model.Alias" %>
+<%@ page import="org.silverpeas.components.kmelia.model.Treeview" %>
+<%@page import="org.silverpeas.components.kmelia.jstl.KmeliaDisplayHelper"%>
 <%
 response.setHeader("Cache-Control","no-store"); //HTTP 1.1
 response.setHeader("Pragma","no-cache"); //HTTP 1.0
@@ -218,7 +218,7 @@ function getObjects(selected) {
     				name = ind + name;	
     				
     				// recherche si ce th�me est dans la liste des alias de la publication
-					String usedCheck = "";
+					  String usedCheck = "";
     				for (NodePK node : pathList) {
 	    				String nodeId = node.getId();
 	    				if (Integer.toString(topic.getId()).equals(nodeId)) {
@@ -299,12 +299,16 @@ function getObjects(selected) {
 	    		    				}
 	    		    			}
 	    	    				boolean displayCheckbox = false;
-	    	    				if (topic.getUserRole()==null || topic.getUserRole().equals("admin") || topic.getUserRole().equals("publisher")) {
+                    String readonlyCheckbox = "";
+	    	    				if (topic.getUserRole()==null || !topic.getUserRole().equals("user")) {
 	    	    					displayCheckbox = true;
+                      if ("writer".equals(topic.getUserRole())) {
+                        readonlyCheckbox = " onclick=\"return false\"";
+                      }
 	    	    				}
 	    	    	        	out.println("<tr><td width=\"10px\">");
 	    	    	        	if (displayCheckbox) {
-	    	    	        		out.println("<input type=\"checkbox\" valign=\"absmiddle\" name=\"topicChoice\" value=\""+topic.getId()+","+topic.getNodePK().getInstanceId()+"\""+checked+">");
+	    	    	        		out.println("<input type=\"checkbox\" valign=\"absmiddle\" name=\"topicChoice\" value=\""+topic.getId()+","+topic.getNodePK().getInstanceId()+"\""+checked+readonlyCheckbox+">");
 	    	    	        	} else {
 	    	    	        		out.println("&nbsp;");
 	    	    	        	}

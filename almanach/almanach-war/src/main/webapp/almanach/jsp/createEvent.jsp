@@ -23,9 +23,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@page import="com.stratelia.silverpeas.peasCore.URLManager"%>
-<%@page import="com.silverpeas.util.StringUtil"%>
-<%@page import="com.stratelia.webactiv.util.ResourceLocator"%>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -56,12 +53,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title><fmt:message key="GML.popupTitle"/></title>
-<view:looknfeel/>
+<view:looknfeel withFieldsetStyle="true" withCheckFormScript="true"/>
 <view:includePlugin name="datepicker"/>
 <view:includePlugin name="wysiwyg"/>
 <view:includePlugin name="popup"/>
-<link type="text/css" href="<c:url value='/util/styleSheets/fieldset.css'/>" rel="stylesheet" />
-<script type="text/javascript" src="<c:url value='/util/javaScript/checkForm.js'/>"></script>
 <script type="text/javascript">
 function reallyAdd() {
 	$('.WeekDayWeek').attr("disabled", false); 
@@ -228,19 +223,15 @@ $(document).ready(function() {
 	$('#eventPeriodicityChoiceMonthArea').hide();
 	$('#eventFrequencyArea').hide();
 	$('.eventPeriodicityDateArea').hide();
-	
-	<view:wysiwyg replace="Description" language="${language}" width="600" height="300" toolbar="almanach" displayFileBrowser="${false}"/>
+
+	<view:wysiwyg replace="Description" language="${language}" width="98%" height="300" toolbar="almanach" displayFileBrowser="${true}" objectId="${event.id}" componentId="${event.instanceId}"/>
 });
 </script>
 </head>
 <body onload="document.eventForm.Title.focus()" class="eventManager">
-<fmt:message key="evenement" var="eventTab"/>
-<fmt:message key="accueil" var="currentPathLabel"/>
+<fmt:message key="event.new" var="currentPathLabel"/>
 <view:browseBar componentId="${instanceId}" extraInformations="${currentPathLabel}"/>
 <view:window>
-  <view:tabs>
-    <view:tab action="#" label="${eventTab}" selected="true"/>
-  </view:tabs>
   <view:frame>
       <form name="eventForm" action="editEvent.jsp" method="post">
       
@@ -296,7 +287,7 @@ $(document).ready(function() {
 				</div>
 				
 				<div class="field" id="eventPriorityArea">
-					<label for="eventPriority" class="txtlibform"><fmt:message key='GML.priority'/></label>
+					<label for="eventPriority" class="txtlibform"><fmt:message key='event.important'/></label>
 					<div class="champs">
 						<input type="checkbox" class="checkbox" name="Priority" id="eventPriority" value="checkbox"/>
 					</div>
@@ -405,7 +396,7 @@ $(document).ready(function() {
 		</div>
 		
 		<input type="hidden" name="Action"/>
-        <input type="hidden" name="Id"/>
+        <input type="hidden" name="Id" value="${event.id}"/>
         <input type="hidden" name="Positions"/>
       </form>
     <br/>

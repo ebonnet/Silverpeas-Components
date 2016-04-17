@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.silverpeas</groupId>
-    <artifactId>parent</artifactId>
-    <version>28-SNAPSHOT</version>
+    <groupId>org.silverpeas</groupId>
+    <artifactId>silverpeas-project</artifactId>
+    <version>1-SNAPSHOT</version>
   </parent>
 
   <scm>
@@ -29,61 +29,38 @@
     </repository>
   </repositories>
 
-  <groupId>com.silverpeas</groupId>
+  <groupId>org.silverpeas</groupId>
   <artifactId>components</artifactId>
-  <version>5.15-SNAPSHOT</version>
+  <version>6.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Silverpeas Components</name>
   <url>http://www.silverpeas.org/docs/components</url>
   <description>The different applications that are deployed in standard in Silverpeas</description>
 
   <properties>
-    <!-- Default JDBC properties for test, can be overriden by -D arguments -->
-    <test.jdbc.driver>org.postgresql.Driver</test.jdbc.driver>
-    <test.jdbc.url>jdbc:postgresql://localhost:5432/SilverpeasV5</test.jdbc.url>
-    <test.jdbc.user>postgres</test.jdbc.user>
-    <test.jdbc.password>postgres</test.jdbc.password>
-    <!-- Version of Silverpeas-Core on which it depends -->
-    <core.version>5.15-SNAPSHOT</core.version>
+    <core.version>${project.version}</core.version>
   </properties>
 
   <dependencies>
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
+      <groupId>javax</groupId>
+      <artifactId>javaee-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>javax.servlet.jsp</groupId>
-      <artifactId>jsp-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.ejb</groupId>
-      <artifactId>ejb-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.jms</groupId>
-      <artifactId>jms-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.transaction</groupId>
-      <artifactId>jta</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-orm</artifactId>
+      <groupId>org.silverpeas.core</groupId>
+      <artifactId>silverpeas-core-api</artifactId>
+      <version>${core.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-core</artifactId>
+      <groupId>org.silverpeas.core</groupId>
+      <artifactId>silverpeas-core</artifactId>
+      <version>${core.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-entitymanager</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.silverpeas.core</groupId>
-      <artifactId>test-core</artifactId>
+      <groupId>org.silverpeas.core</groupId>
+      <artifactId>silverpeas-core-test</artifactId>
       <version>${core.version}</version>
       <scope>test</scope>
     </dependency>
@@ -101,7 +78,7 @@
           <appendAssemblyId>true</appendAssemblyId>
           <attach>true</attach>
           <skipAssembly>true</skipAssembly>
-          <finalName>${project.artifactId}-${project.version}-configuration</finalName>
+          <finalName>${project.artifactId}-${project.version}</finalName>
         </configuration>
         <executions>
           <execution>
@@ -114,8 +91,8 @@
         </executions>
         <dependencies>
           <dependency>
-            <groupId>com.silverpeas</groupId>
-            <artifactId>assembly-configuration</artifactId>
+            <groupId>org.silverpeas</groupId>
+            <artifactId>configuration-assembly</artifactId>
             <version>${config.version}</version>
           </dependency>
         </dependencies>
@@ -186,26 +163,25 @@
 
   <modules>
     <module>hyperlink</module>
-    <module>datawarning</module>
+    <module>dataWarning</module>
     <module>quickinfo</module>
     <module>quizz</module>
-    <module>jdbc-connector</module>
-    <module>rssaggregator</module>
-    <module>mydb</module>
-    <module>project-manager</module>
-    <module>websites</module>
-    <module>whitepages</module>
-    <module>question-reply</module>
-    <module>webpages</module>
-    <module>chat</module>
+    <module>jdbcConnector</module>
+    <module>rssAggregator</module>
+    <!-- DEACTIVATED (to remove later): <module>mydb</module> -->
+    <module>projectManager</module>
+    <module>webSites</module>
+    <module>whitePages</module>
+    <module>questionReply</module>
+    <module>webPages</module>
+    <!-- DEACTIVATED (to remove later): <module>chat</module> -->
     <module>mailinglist</module>
-    <module>infoletter</module>
-    <module>wiki</module>
+    <module>infoLetter</module>
     <module>almanach</module>
     <module>yellowpages</module>
-    <module>silvercrawler</module>
-    <module>resources-manager</module>
-    <module>process-manager</module>
+    <module>silverCrawler</module>
+    <module>resourcesManager</module>
+    <module>processManager</module>
     <module>forums</module>
     <module>blog</module>
     <module>survey</module>
@@ -214,10 +190,9 @@
     <module>kmelia</module>
     <module>organizationchart</module>
     <module>classifieds</module>
-    <module>formsonline</module>
-    <module>scheduleevent</module>
-    <module>crm</module>
-    <module>suggestion-box</module>
+    <module>formsOnline</module>
+    <module>scheduleEvent</module>
+    <module>suggestionBox</module>
     <module>spaceMembers</module>
   </modules>
 

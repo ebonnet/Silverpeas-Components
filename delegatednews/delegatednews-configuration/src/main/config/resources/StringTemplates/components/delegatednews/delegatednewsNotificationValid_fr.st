@@ -1,0 +1,1 @@
+Votre actualité <b>$publicationName$</b> a été validée pour apparaître en page d'accueil.
